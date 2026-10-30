@@ -64,7 +64,7 @@ export function ContextEvaluatorCard({ selectedPolicy }: ContextEvaluatorCardPro
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <CardTitle className="text-sm md:text-base">
-              {isAcademic ? "Interpreter Evaluation Sandbox" : "Policy Rule Compliance Sandbox"}
+              {isAcademic ? "Interpreter Evaluation Sandbox" : "Live Policy Compliance Sandbox"}
             </CardTitle>
             <Badge variant="purple" className="text-[10px]">
               {isAcademic ? "Interpreter Pattern" : "Compliance Engine"}
@@ -75,45 +75,78 @@ export function ContextEvaluatorCard({ selectedPolicy }: ContextEvaluatorCardPro
           </span>
         </div>
         <CardDescription>
-          Adjust simulated sensor context and evaluate rule expressions dynamically
+          {isAcademic
+            ? "Adjust simulated sensor context and evaluate rule expressions dynamically"
+            : "Test live sensor telemetry against municipal noise, traffic, and environmental standards"}
         </CardDescription>
       </CardHeader>
 
       <CardContent className="space-y-4">
-        {/* Expression Input */}
-        <div className="space-y-1.5">
-          <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">Target Policy Expression:</label>
-          <div className="flex items-center gap-2">
-            <input
-              type="text"
-              value={expression}
-              onChange={(e) => setExpression(e.target.value)}
-              className="flex-1 rounded-lg border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-950/80 px-3 py-2 font-mono text-xs text-cyan-800 dark:text-cyan-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500 shadow-xs"
-            />
+        {/* Expression Input / Rule Display */}
+        {isAcademic ? (
+          <div className="space-y-1.5">
+            <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+              Target Policy Expression (DSL Abstract Syntax Tree):
+            </label>
+            <div className="flex items-center gap-2">
+              <input
+                type="text"
+                value={expression}
+                onChange={(e) => setExpression(e.target.value)}
+                className="flex-1 rounded-lg border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-950/80 px-3 py-2 font-mono text-xs text-cyan-800 dark:text-cyan-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500 shadow-xs"
+              />
+              <Button
+                size="sm"
+                onClick={handleEvaluate}
+                disabled={loading || !expression.trim()}
+                className="gap-1 text-xs shrink-0"
+              >
+                <Play className="h-3.5 w-3.5 fill-current" />
+                <span>Evaluate AST</span>
+              </Button>
+            </div>
+          </div>
+        ) : (
+          <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-950/50 p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div>
+              <p className="text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                Active Policy Rule Under Evaluation:
+              </p>
+              <h4 className="text-sm font-bold text-slate-900 dark:text-white mt-0.5">
+                {selectedPolicy ? selectedPolicy.name : "Residential Night Silence Ordinance"}
+              </h4>
+              <p className="text-xs text-slate-600 dark:text-slate-300 mt-0.5">
+                {selectedPolicy ? selectedPolicy.description : "Restricts excessive noise above 60 dB after 10 PM in residential zones"}
+              </p>
+            </div>
             <Button
               size="sm"
               onClick={handleEvaluate}
-              disabled={loading || !expression.trim()}
-              className="gap-1 text-xs shrink-0"
+              disabled={loading}
+              className="gap-1.5 text-xs shrink-0 self-start sm:self-auto"
             >
               <Play className="h-3.5 w-3.5 fill-current" />
-              <span>{isAcademic ? "Evaluate AST" : "Evaluate Rule"}</span>
+              <span>{loading ? "Checking..." : "Evaluate Rule"}</span>
             </Button>
           </div>
-        </div>
+        )}
 
         {/* Sensor Context Sliders */}
         <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/60 p-3.5 space-y-3">
           <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 block">
-            Simulated Runtime Sensor Context
+            {isAcademic ? "Simulated Runtime Sensor Context" : "Simulated Zone Telemetry Sliders"}
           </span>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             {/* Noise */}
             <div className="space-y-1 rounded-lg border border-slate-200 dark:border-slate-800/80 bg-white dark:bg-slate-900/50 p-2.5 shadow-xs">
               <div className="flex justify-between text-xs">
-                <span className="text-slate-500 dark:text-slate-400">NOISE_LEVEL (dB):</span>
-                <span className="font-mono text-cyan-700 dark:text-cyan-400 font-bold">{noiseLevel}</span>
+                <span className="text-slate-600 dark:text-slate-400 font-medium">
+                  {isAcademic ? "NOISE_LEVEL (dB):" : "Noise Level:"}
+                </span>
+                <span className="font-mono text-cyan-700 dark:text-cyan-400 font-bold">
+                  {noiseLevel} dB
+                </span>
               </div>
               <input
                 type="range"
@@ -129,8 +162,12 @@ export function ContextEvaluatorCard({ selectedPolicy }: ContextEvaluatorCardPro
             {/* Vehicle Speed */}
             <div className="space-y-1 rounded-lg border border-slate-200 dark:border-slate-800/80 bg-white dark:bg-slate-900/50 p-2.5 shadow-xs">
               <div className="flex justify-between text-xs">
-                <span className="text-slate-500 dark:text-slate-400">VEHICLE_SPEED (km/h):</span>
-                <span className="font-mono text-cyan-700 dark:text-cyan-400 font-bold">{vehicleSpeed}</span>
+                <span className="text-slate-600 dark:text-slate-400 font-medium">
+                  {isAcademic ? "VEHICLE_SPEED (km/h):" : "Vehicle Speed:"}
+                </span>
+                <span className="font-mono text-cyan-700 dark:text-cyan-400 font-bold">
+                  {vehicleSpeed} km/h
+                </span>
               </div>
               <input
                 type="range"
@@ -146,8 +183,12 @@ export function ContextEvaluatorCard({ selectedPolicy }: ContextEvaluatorCardPro
             {/* Air Quality */}
             <div className="space-y-1 rounded-lg border border-slate-200 dark:border-slate-800/80 bg-white dark:bg-slate-900/50 p-2.5 shadow-xs">
               <div className="flex justify-between text-xs">
-                <span className="text-slate-500 dark:text-slate-400">AIR_QUALITY_AQI:</span>
-                <span className="font-mono text-cyan-700 dark:text-cyan-400 font-bold">{airQuality}</span>
+                <span className="text-slate-600 dark:text-slate-400 font-medium">
+                  {isAcademic ? "AIR_QUALITY_AQI:" : "Air Quality Index:"}
+                </span>
+                <span className="font-mono text-cyan-700 dark:text-cyan-400 font-bold">
+                  {airQuality} AQI
+                </span>
               </div>
               <input
                 type="range"
@@ -163,8 +204,12 @@ export function ContextEvaluatorCard({ selectedPolicy }: ContextEvaluatorCardPro
             {/* Energy */}
             <div className="space-y-1 rounded-lg border border-slate-200 dark:border-slate-800/80 bg-white dark:bg-slate-900/50 p-2.5 shadow-xs">
               <div className="flex justify-between text-xs">
-                <span className="text-slate-500 dark:text-slate-400">ENERGY_KW:</span>
-                <span className="font-mono text-cyan-700 dark:text-cyan-400 font-bold">{energyKw}</span>
+                <span className="text-slate-600 dark:text-slate-400 font-medium">
+                  {isAcademic ? "ENERGY_KW:" : "Power Consumption:"}
+                </span>
+                <span className="font-mono text-cyan-700 dark:text-cyan-400 font-bold">
+                  {energyKw.toLocaleString()} kW
+                </span>
               </div>
               <input
                 type="range"
@@ -180,9 +225,11 @@ export function ContextEvaluatorCard({ selectedPolicy }: ContextEvaluatorCardPro
             {/* Parking Hour */}
             <div className="space-y-1 rounded-lg border border-slate-200 dark:border-slate-800/80 bg-white dark:bg-slate-900/50 p-2.5 shadow-xs">
               <div className="flex justify-between text-xs">
-                <span className="text-slate-500 dark:text-slate-400">PARKING_HOUR (24h):</span>
+                <span className="text-slate-600 dark:text-slate-400 font-medium">
+                  {isAcademic ? "PARKING_HOUR (24h):" : "Time of Day (24h):"}
+                </span>
                 <span className="font-mono text-cyan-700 dark:text-cyan-400 font-bold">
-                  {parkingHour}:00
+                  {parkingHour.toString().padStart(2, "0")}:00
                 </span>
               </div>
               <input
@@ -215,7 +262,7 @@ export function ContextEvaluatorCard({ selectedPolicy }: ContextEvaluatorCardPro
                   <AlertTriangle className="h-5 w-5 text-rose-600 dark:text-rose-400" />
                 )}
                 <span className="font-bold text-sm">
-                  {result.passed ? "RULE VERIFIED: COMPLIANT" : "RULE TRIGGERED: VIOLATION DETECTED"}
+                  {result.passed ? "RULE COMPLIANT: WITHIN LEGAL LIMITS" : "VIOLATION DETECTED: ACTION REQUIRED"}
                 </span>
               </div>
               <Badge variant={result.passed ? "success" : "danger"} className="text-[10px]">
@@ -223,10 +270,18 @@ export function ContextEvaluatorCard({ selectedPolicy }: ContextEvaluatorCardPro
               </Badge>
             </div>
 
-            <p className="text-slate-800 dark:text-slate-200 leading-relaxed font-mono">{result.evaluatedConditionExplanation}</p>
+            <p className="text-slate-800 dark:text-slate-200 leading-relaxed font-sans text-xs">
+              {isAcademic ? (
+                <span className="font-mono">{result.evaluatedConditionExplanation}</span>
+              ) : result.passed ? (
+                `Verified compliant: The recorded readings satisfy the requirements of ${selectedPolicy?.name || "this policy"}.`
+              ) : (
+                `Threshold exceeded: The recorded readings exceed the maximum permitted standards set by ${selectedPolicy?.name || "this policy"}.`
+              )}
+            </p>
 
-            <div className="flex items-center justify-between pt-2 border-t border-slate-200 dark:border-slate-800/60 text-[11px] text-slate-500 dark:text-slate-400">
-              <span>Automated Action: {result.actionRecommended}</span>
+            <div className="flex items-center justify-between pt-2 border-t border-slate-200 dark:border-slate-800/60 text-[11px] text-slate-600 dark:text-slate-400">
+              <span className="font-medium">Action: {result.actionRecommended}</span>
               <span className="font-mono">{new Date(result.timestamp).toLocaleTimeString()}</span>
             </div>
           </div>

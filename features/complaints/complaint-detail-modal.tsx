@@ -10,6 +10,7 @@ import { ComplaintsService } from "@/lib/api/complaints-service";
 import { EscalationTimeline } from "@/features/complaints/escalation-timeline";
 import { ArrowUpRight, CheckCircle2, MessageSquare, Send } from "lucide-react";
 import { formatDate } from "@/lib/utils";
+import { useAppMode } from "@/components/mode-provider";
 
 interface ComplaintDetailModalProps {
   isOpen: boolean;
@@ -24,6 +25,7 @@ export function ComplaintDetailModal({
   complaint,
   onUpdated,
 }: ComplaintDetailModalProps) {
+  const { isAcademic } = useAppMode();
   const [escalateReason, setEscalateReason] = React.useState("");
   const [newNote, setNewNote] = React.useState("");
   const [resolveSummary, setResolveSummary] = React.useState("");
@@ -93,7 +95,9 @@ export function ComplaintDetailModal({
       footer={
         <div className="flex items-center justify-between w-full">
           <span className="text-[11px] text-slate-500 dark:text-slate-400">
-            Chain of Responsibility Pattern Handler Evaluation
+            {isAcademic
+              ? "Chain of Responsibility Pattern Handler Evaluation"
+              : "Municipal Incident Resolution Protocol"}
           </span>
           <Button variant="secondary" onClick={onClose}>
             Close

@@ -118,9 +118,15 @@ export default function DashboardPage() {
                 </div>
               </div>
               <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
-                Commands like <code className="text-cyan-700 dark:text-cyan-300 font-semibold">SHUTDOWN</code> and{" "}
-                <code className="text-cyan-700 dark:text-cyan-300 font-semibold">REPORT_USAGE</code> apply
-                uniformly to leaves and composites.
+                {isAcademic ? (
+                  <>
+                    Commands like <code className="text-cyan-700 dark:text-cyan-300 font-semibold">SHUTDOWN</code> and{" "}
+                    <code className="text-cyan-700 dark:text-cyan-300 font-semibold">REPORT_USAGE</code> apply
+                    uniformly to leaves and composites.
+                  </>
+                ) : (
+                  "Emergency shutdown, restart, and energy audit commands cascade seamlessly across entire districts and individual buildings."
+                )}
               </p>
             </CardContent>
           </div>
@@ -213,12 +219,20 @@ export default function DashboardPage() {
                   <span className="font-semibold text-slate-900 dark:text-white">5 Policies Active</span>
                 </div>
                 <div className="flex justify-between text-xs">
-                  <span className="text-slate-500 dark:text-slate-400">Grammar Operators:</span>
-                  <span className="text-purple-700 dark:text-purple-300 font-mono text-[11px]">&lt;=, &gt;=, BETWEEN, AND</span>
+                  <span className="text-slate-500 dark:text-slate-400">
+                    {isAcademic ? "Grammar Operators:" : "Monitored Domains:"}
+                  </span>
+                  <span className="text-purple-700 dark:text-purple-300 font-medium text-[11px]">
+                    {isAcademic ? "<=, >=, BETWEEN, AND" : "Noise, Speed, Air Quality, Power"}
+                  </span>
                 </div>
                 <div className="flex justify-between text-xs">
-                  <span className="text-slate-500 dark:text-slate-400">Execution Safety:</span>
-                  <span className="text-emerald-600 dark:text-emerald-400 font-medium">Safe AST (No eval)</span>
+                  <span className="text-slate-500 dark:text-slate-400">
+                    {isAcademic ? "Execution Safety:" : "Enforcement Action:"}
+                  </span>
+                  <span className="text-emerald-600 dark:text-emerald-400 font-medium">
+                    {isAcademic ? "Safe AST (No eval)" : "Automated Incident Alert"}
+                  </span>
                 </div>
                 <div className="flex justify-between text-xs">
                   <span className="text-slate-500 dark:text-slate-400">Last Evaluation:</span>
@@ -226,7 +240,9 @@ export default function DashboardPage() {
                 </div>
               </div>
               <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
-                Expressions parsed into AST nodes at runtime without compiling or executing arbitrary code.
+                {isAcademic
+                  ? "Expressions parsed into AST nodes at runtime without compiling or executing arbitrary code."
+                  : "Continuous automated compliance monitoring evaluating live city sensor feeds and notifying field teams."}
               </p>
             </CardContent>
           </div>

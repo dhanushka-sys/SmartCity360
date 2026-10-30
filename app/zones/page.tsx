@@ -151,20 +151,19 @@ export default function ZonesPage() {
                     className="pl-8 text-xs h-8"
                   />
                 </div>
-                <div className="flex items-center gap-1 text-[11px] overflow-x-auto">
-                  {["ALL", "CITY", "DISTRICT", "STREET", "BUILDING"].map((t) => (
-                    <button
-                      key={t}
-                      onClick={() => setTypeFilter(t)}
-                      className={`px-2 py-0.5 rounded-md font-medium transition-colors ${
-                        typeFilter === t
-                          ? "bg-slate-100 dark:bg-slate-800 text-blue-700 dark:text-blue-300 font-semibold"
-                          : "text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200"
-                      }`}
-                    >
-                      {t}
-                    </button>
-                  ))}
+                <div className="flex items-center gap-1.5 pt-0.5">
+                  <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">Type:</span>
+                  <select
+                    value={typeFilter}
+                    onChange={(e) => setTypeFilter(e.target.value)}
+                    className="h-8 flex-1 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-2.5 text-xs text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-1 focus:ring-blue-500 shadow-xs cursor-pointer"
+                  >
+                    <option value="ALL">All Types</option>
+                    <option value="CITY">City Level</option>
+                    <option value="DISTRICT">Districts</option>
+                    <option value="STREET">Streets</option>
+                    <option value="BUILDING">Buildings</option>
+                  </select>
                 </div>
               </div>
             </CardHeader>

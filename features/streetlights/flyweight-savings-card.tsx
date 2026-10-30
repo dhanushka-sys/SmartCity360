@@ -20,10 +20,10 @@ export function FlyweightSavingsCard({ analysis }: FlyweightSavingsCardProps) {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <CardTitle className="text-sm md:text-base">
-              {isAcademic ? "Flyweight Memory Optimization Analysis" : "Fleet Memory & Profile Optimization Analysis"}
+              {isAcademic ? "Flyweight Memory Optimization Analysis" : "Fleet Cloud Memory & Resource Efficiency"}
             </CardTitle>
             <Badge variant="success" className="text-[10px]">
-              {isAcademic ? "Flyweight Pattern" : "Resource Optimization"}
+              {isAcademic ? "Flyweight Pattern" : "Efficiency Score"}
             </Badge>
           </div>
           <span className="text-xs text-emerald-600 dark:text-emerald-400 font-bold font-mono">
@@ -33,7 +33,7 @@ export function FlyweightSavingsCard({ analysis }: FlyweightSavingsCardProps) {
         <CardDescription>
           {isAcademic
             ? "Comparison between standard duplicated object instances vs. Flyweight shared intrinsic profiles"
-            : "Comparison between un-optimized per-unit telemetry allocations vs. centralized shared hardware profiles"}
+            : "Real-time comparison: standard redundant telemetry storage vs. centralized shared model profiles"}
         </CardDescription>
       </CardHeader>
 
@@ -44,7 +44,7 @@ export function FlyweightSavingsCard({ analysis }: FlyweightSavingsCardProps) {
           <div className="rounded-xl border border-rose-200 dark:border-rose-900/30 bg-rose-50/70 dark:bg-rose-950/10 p-3.5 space-y-2">
             <div className="flex items-center justify-between text-xs">
               <span className="font-semibold text-rose-800 dark:text-rose-300">
-                {isAcademic ? "Without Flyweight (Duplicated State)" : "Standard Per-Unit Allocation (Duplicated Payloads)"}
+                {isAcademic ? "Without Flyweight (Duplicated State)" : "Standard Per-Pole Storage (Redundant Payloads)"}
               </span>
               <span className="font-mono text-rose-600 dark:text-rose-400 font-bold">
                 {(analysis.estimatedMemoryWithoutFlyweightKb / 1024).toFixed(1)} MB
@@ -54,8 +54,9 @@ export function FlyweightSavingsCard({ analysis }: FlyweightSavingsCardProps) {
               <div className="h-full bg-rose-500 rounded-full w-full" />
             </div>
             <p className="text-[11px] text-slate-600 dark:text-slate-400 leading-snug">
-              Every light duplicates optical curves, wattages, maintenance schedules, and warranty payloads
-              (1,024 B/light × {analysis.totalLightCount.toLocaleString()} units).
+              {isAcademic
+                ? `Every light duplicates optical curves, wattages, maintenance schedules, and warranty payloads (1,024 B/light × ${analysis.totalLightCount.toLocaleString()} units).`
+                : `Storing complete hardware specifications separately on every individual pole (${analysis.totalLightCount.toLocaleString()} poles).`}
             </p>
           </div>
 
@@ -63,7 +64,7 @@ export function FlyweightSavingsCard({ analysis }: FlyweightSavingsCardProps) {
           <div className="rounded-xl border border-emerald-200 dark:border-emerald-900/30 bg-emerald-50/70 dark:bg-emerald-950/10 p-3.5 space-y-2">
             <div className="flex items-center justify-between text-xs">
               <span className="font-semibold text-emerald-800 dark:text-emerald-300">
-                {isAcademic ? "With Flyweight Pattern (Shared Profiles)" : "Centralized Profile Optimization (Shared Instances)"}
+                {isAcademic ? "With Flyweight Pattern (Shared Profiles)" : "Optimized Shared Model Fleet (Zero Redundancy)"}
               </span>
               <span className="font-mono text-emerald-600 dark:text-emerald-400 font-bold">
                 {(analysis.estimatedMemoryWithFlyweightKb / 1024).toFixed(1)} MB
@@ -76,8 +77,9 @@ export function FlyweightSavingsCard({ analysis }: FlyweightSavingsCardProps) {
               />
             </div>
             <p className="text-[11px] text-slate-600 dark:text-slate-400 leading-snug">
-              Only {analysis.uniqueProfilesCount} shared hardware profiles allocated in memory pool.
-              Saved ~{(analysis.memorySavedKb / 1024).toFixed(1)} MB RAM.
+              {isAcademic
+                ? `Only ${analysis.uniqueProfilesCount} shared hardware profiles allocated in memory pool. Saved ~${(analysis.memorySavedKb / 1024).toFixed(1)} MB RAM.`
+                : `All ${analysis.totalLightCount.toLocaleString()} streetlights share ${analysis.uniqueProfilesCount} central hardware models. Saved ~${(analysis.memorySavedKb / 1024).toFixed(1)} MB memory.`}
             </p>
           </div>
         </div>
@@ -85,7 +87,7 @@ export function FlyweightSavingsCard({ analysis }: FlyweightSavingsCardProps) {
         {/* Profile Breakdown Pills */}
         <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-950/50 p-3 shadow-xs">
           <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 block pb-2">
-            {isAcademic ? "Shared Intrinsic Profile Reference Distribution" : "Active Hardware Profile Distribution"}
+            {isAcademic ? "Shared Intrinsic Profile Reference Distribution" : "Active Streetlight Fleet Distribution"}
           </span>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
             {analysis.profileUsageBreakdown.map((item) => (

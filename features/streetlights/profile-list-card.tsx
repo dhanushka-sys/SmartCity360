@@ -5,23 +5,30 @@ import { Lightbulb, Zap, Clock, ShieldCheck, Thermometer } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { StreetlightProfile } from "@/types/streetlight";
+import { useAppMode } from "@/components/mode-provider";
 
 interface ProfileListCardProps {
   profiles: StreetlightProfile[];
 }
 
 export function ProfileListCard({ profiles }: ProfileListCardProps) {
+  const { isAcademic } = useAppMode();
+
   return (
     <Card className="border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/70 shadow-sm">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-sm md:text-base">Flyweight Profile Pool (Intrinsic State)</CardTitle>
+          <CardTitle className="text-sm md:text-base">
+            {isAcademic ? "Flyweight Profile Pool (Intrinsic State)" : "Hardware Models & Specifications"}
+          </CardTitle>
           <Badge variant="success" className="text-[10px]">
-            {profiles.length} Flyweights Cached
+            {profiles.length} {isAcademic ? "Flyweights Cached" : "Active Models"}
           </Badge>
         </div>
         <CardDescription>
-          Immutable hardware definitions shared across all light pole instances
+          {isAcademic
+            ? "Immutable hardware definitions shared across all light pole instances"
+            : "Standardized hardware specifications assigned across municipal streetlights"}
         </CardDescription>
       </CardHeader>
       <CardContent>

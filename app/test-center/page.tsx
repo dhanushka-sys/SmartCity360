@@ -174,7 +174,7 @@ export default function TestCenterPage() {
       </div>
 
       {/* Pattern / Subsystem Selector Tabs */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-1">
+      <div className="flex flex-wrap items-center gap-2 pb-1">
         {patterns.map((p) => {
           const Icon = p.icon;
           const isSelected = selectedPattern === p.key;

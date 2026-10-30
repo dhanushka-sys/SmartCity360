@@ -20,11 +20,11 @@ export function EscalationTimeline({ history, currentRole }: EscalationTimelineP
       case "CITIZEN":
         return <Badge variant="outline">Citizen Portal</Badge>;
       case "LOCAL_STAFF":
-        return <Badge variant="info">Local Staff</Badge>;
+        return <Badge variant="info">{isAcademic ? "Local Staff (Tier 1)" : "Local Service Desk"}</Badge>;
       case "SUPERVISOR":
-        return <Badge variant="warning">Supervisor</Badge>;
+        return <Badge variant="warning">{isAcademic ? "Supervisor (Tier 2)" : "District Supervisor"}</Badge>;
       case "CITY_MANAGER":
-        return <Badge variant="danger">City Manager</Badge>;
+        return <Badge variant="danger">{isAcademic ? "City Manager (Tier 3)" : "Municipal Commissioner"}</Badge>;
       default:
         return <Badge variant="default">{role}</Badge>;
     }

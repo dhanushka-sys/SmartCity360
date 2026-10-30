@@ -171,9 +171,50 @@ export function PipelineVisualizer({ stream }: PipelineVisualizerProps) {
 
             {/* Tab: Final */}
             {activeTab === "final" && (
-              <div className="rounded-xl border border-slate-800 bg-slate-950 p-4 font-mono text-xs text-cyan-300 overflow-x-auto max-h-72 shadow-inner">
-                <pre>{result.finalPayloadString}</pre>
-              </div>
+              isAcademic ? (
+                <div className="rounded-xl border border-slate-800 bg-slate-950 p-4 font-mono text-xs text-cyan-300 overflow-x-auto max-h-72 shadow-inner">
+                  <pre>{result.finalPayloadString}</pre>
+                </div>
+              ) : (
+                <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/60 p-4 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <span className="flex h-2.5 w-2.5 rounded-full bg-emerald-500" />
+                      <span className="text-xs font-bold text-slate-900 dark:text-white">Secured Transmission Envelope</span>
+                    </div>
+                    <Badge variant={result.isEncrypted ? "success" : "warning"} className="text-[10px]">
+                      {result.isEncrypted ? "Protected & Encrypted" : "Standard Transmission"}
+                    </Badge>
+                  </div>
+
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 text-xs">
+                    <div className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-2.5">
+                      <p className="text-[10px] text-slate-500 dark:text-slate-400">Payload Security</p>
+                      <p className="font-semibold text-slate-900 dark:text-white mt-0.5">
+                        {result.isEncrypted ? "AES-256-GCM" : "None (Plaintext)"}
+                      </p>
+                    </div>
+                    <div className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-2.5">
+                      <p className="text-[10px] text-slate-500 dark:text-slate-400">Authenticity Verification</p>
+                      <p className="font-semibold text-slate-900 dark:text-white mt-0.5">
+                        {result.isAuthenticated ? "HMAC-SHA256 Signed" : "Unverified"}
+                      </p>
+                    </div>
+                    <div className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-2.5">
+                      <p className="text-[10px] text-slate-500 dark:text-slate-400">Bandwidth Optimization</p>
+                      <p className="font-semibold text-emerald-600 dark:text-emerald-400 mt-0.5">
+                        {result.overallCompressionRatio > 1
+                          ? `${result.overallCompressionRatio}x Compressed`
+                          : "Uncompressed"}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-900/80 p-2.5 font-mono text-[11px] text-slate-700 dark:text-slate-300 truncate">
+                    Envelope Token: {result.finalPayloadString.slice(0, 90)}...
+                  </div>
+                </div>
+              )
             )}
 
             {/* Tab: Steps */}
@@ -199,9 +240,11 @@ export function PipelineVisualizer({ stream }: PipelineVisualizerProps) {
                       </span>
                     </div>
                     <p className="text-[11px] text-slate-600 dark:text-slate-300">{st.description}</p>
-                    <div className="rounded-lg bg-slate-100 dark:bg-slate-900/90 p-2 font-mono text-[10px] text-slate-600 dark:text-slate-400 truncate max-w-full">
-                      {st.outputPayload.slice(0, 180)}...
-                    </div>
+                    {isAcademic && (
+                      <div className="rounded-lg bg-slate-100 dark:bg-slate-900/90 p-2 font-mono text-[10px] text-slate-600 dark:text-slate-400 truncate max-w-full">
+                        {st.outputPayload.slice(0, 180)}...
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
@@ -209,9 +252,49 @@ export function PipelineVisualizer({ stream }: PipelineVisualizerProps) {
 
             {/* Tab: Raw */}
             {activeTab === "raw" && (
-              <div className="rounded-xl border border-slate-800 bg-slate-950 p-4 font-mono text-xs text-slate-200 overflow-x-auto max-h-72 shadow-inner">
-                <pre>{result.rawPayloadString}</pre>
-              </div>
+              isAcademic ? (
+                <div className="rounded-xl border border-slate-800 bg-slate-950 p-4 font-mono text-xs text-slate-200 overflow-x-auto max-h-72 shadow-inner">
+                  <pre>{result.rawPayloadString}</pre>
+                </div>
+              ) : (
+                <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/60 p-4 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-slate-900 dark:text-white">
+                      Raw Energy Meter Telemetry ({result.rawPayload.meterId})
+                    </span>
+                    <span className="text-[11px] text-slate-500 dark:text-slate-400 font-mono">
+                      {new Date(result.rawPayload.timestamp).toLocaleTimeString()}
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 text-xs">
+                    <div className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-2.5">
+                      <p className="text-[10px] text-slate-500 dark:text-slate-400">Grid Voltage</p>
+                      <p className="font-semibold text-slate-900 dark:text-white mt-0.5">{result.rawPayload.voltage} V</p>
+                    </div>
+                    <div className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-2.5">
+                      <p className="text-[10px] text-slate-500 dark:text-slate-400">Active Current</p>
+                      <p className="font-semibold text-slate-900 dark:text-white mt-0.5">{result.rawPayload.currentAmps} A</p>
+                    </div>
+                    <div className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-2.5">
+                      <p className="text-[10px] text-slate-500 dark:text-slate-400">Real-time Power</p>
+                      <p className="font-semibold text-cyan-600 dark:text-cyan-400 mt-0.5">{result.rawPayload.powerKw} kW</p>
+                    </div>
+                    <div className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-2.5">
+                      <p className="text-[10px] text-slate-500 dark:text-slate-400">Frequency</p>
+                      <p className="font-semibold text-slate-900 dark:text-white mt-0.5">{result.rawPayload.frequencyHz} Hz</p>
+                    </div>
+                    <div className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-2.5">
+                      <p className="text-[10px] text-slate-500 dark:text-slate-400">Power Factor</p>
+                      <p className="font-semibold text-slate-900 dark:text-white mt-0.5">{result.rawPayload.powerFactor}</p>
+                    </div>
+                    <div className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-2.5">
+                      <p className="text-[10px] text-slate-500 dark:text-slate-400">Cumulative Energy</p>
+                      <p className="font-semibold text-slate-900 dark:text-white mt-0.5">{result.rawPayload.totalKwh.toLocaleString()} kWh</p>
+                    </div>
+                  </div>
+                </div>
+              )
             )}
           </div>
         )}

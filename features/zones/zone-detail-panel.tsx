@@ -21,6 +21,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ZoneNode, ZoneOperationLog, ZoneOperationType } from "@/types/zone";
 import { formatDate } from "@/lib/utils";
+import { useAppMode } from "@/components/mode-provider";
 
 interface ZoneDetailPanelProps {
   node: ZoneNode;
@@ -35,6 +36,7 @@ export function ZoneDetailPanel({
   onOpenCreateChild,
   operationLogs,
 }: ZoneDetailPanelProps) {
+  const { isAcademic } = useAppMode();
   const isLeaf = node.type === "BUILDING";
 
   return (
@@ -45,7 +47,7 @@ export function ZoneDetailPanel({
           <div>
             <div className="flex items-center gap-2">
               <Badge variant="blue" className="text-[10px]">
-                {node.type} Component
+                {node.type} {isAcademic ? "Component" : ""}
               </Badge>
               <span className="font-mono text-xs text-slate-500 dark:text-slate-400">ID: {node.id}</span>
               <Badge
@@ -67,8 +69,12 @@ export function ZoneDetailPanel({
             </h3>
             <p className="text-xs text-slate-500 dark:text-slate-400">
               {isLeaf
-                ? `Leaf Component • ${node.meta?.buildingFloors || 12} Floors`
-                : `Composite Component • ${node.children?.length || 0} Child Nodes`}
+                ? isAcademic
+                  ? `Leaf Component • ${node.meta?.buildingFloors || 12} Floors`
+                  : `Facility • ${node.meta?.buildingFloors || 12} Floors`
+                : isAcademic
+                  ? `Composite Component • ${node.children?.length || 0} Child Nodes`
+                  : `Zone • ${node.children?.length || 0} Connected Sub-Zones`}
               {node.meta?.manager && ` • In-charge: ${node.meta.manager}`}
             </p>
           </div>
@@ -91,10 +97,12 @@ export function ZoneDetailPanel({
           <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/60 p-3.5 space-y-2.5">
             <div className="flex items-center justify-between">
               <span className="text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300">
-                Composite Operations
+                {isAcademic ? "Composite Operations" : "Operations & Emergency Controls"}
               </span>
               <span className="text-[10px] text-cyan-700 dark:text-cyan-400 font-medium">
-                Applies uniformly to this node &amp; all descendants
+                {isAcademic
+                  ? "Applies uniformly to this node & all descendants"
+                  : "Applies command to this facility and all sub-zones"}
               </span>
             </div>
 

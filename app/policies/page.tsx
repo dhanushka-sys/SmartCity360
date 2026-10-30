@@ -24,6 +24,25 @@ import { CreatePolicyModal } from "@/features/policies/create-policy-modal";
 import { formatDate } from "@/lib/utils";
 import { useAppMode } from "@/components/mode-provider";
 
+function formatFriendlyRule(expr: string): string {
+  const map: Record<string, string> = {
+    "NOISE_LEVEL <= 60 AND CURRENT_HOUR >= 22": "Max 60 dB Noise (Night hours)",
+    "NOISE_LEVEL <= 60": "Max 60 dB Noise Limit",
+    "VEHICLE_SPEED <= 40": "Speed Limit: 40 km/h",
+    "VEHICLE_SPEED <= 60": "Speed Limit: 60 km/h",
+    "AIR_QUALITY_AQI <= 100": "Clean Air: Max 100 AQI",
+    "ENERGY_CONSUMPTION <= 5000": "Peak Grid: Max 5,000 kW",
+    "PARKING_HOUR BETWEEN 08:00 AND 18:00": "Parking: 08:00 to 18:00 only",
+  };
+  if (map[expr]) return map[expr];
+  return expr
+    .replace(/NOISE_LEVEL/g, "Noise")
+    .replace(/VEHICLE_SPEED/g, "Speed")
+    .replace(/AIR_QUALITY_AQI/g, "Air Quality")
+    .replace(/ENERGY_CONSUMPTION/g, "Power Draw")
+    .replace(/PARKING_HOUR/g, "Time");
+}
+
 export default function PoliciesPage() {
   const { isAcademic } = useAppMode();
   const [policies, setPolicies] = React.useState<PolicyRule[]>([]);
@@ -151,21 +170,19 @@ export default function PoliciesPage() {
               />
             </div>
 
-            <div className="flex items-center gap-1 text-[11px] overflow-x-auto w-full sm:w-auto">
-              <span className="text-slate-500 dark:text-slate-400 text-xs mr-1">Category:</span>
-              {["ALL", "ENVIRONMENT", "TRAFFIC", "SAFETY", "ENERGY"].map((cat) => (
-                <button
-                  key={cat}
-                  onClick={() => setCategoryFilter(cat)}
-                  className={`px-2 py-0.5 rounded-md font-medium transition-colors ${
-                    categoryFilter === cat
-                      ? "bg-slate-100 text-cyan-700 dark:bg-slate-800 dark:text-cyan-300 font-semibold"
-                      : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200"
-                  }`}
-                >
-                  {cat}
-                </button>
-              ))}
+            <div className="flex items-center gap-1.5 shrink-0">
+              <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">Category:</span>
+              <select
+                value={categoryFilter}
+                onChange={(e) => setCategoryFilter(e.target.value)}
+                className="h-8 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-2.5 text-xs text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-1 focus:ring-purple-500 shadow-xs cursor-pointer"
+              >
+                <option value="ALL">All Categories</option>
+                <option value="ENVIRONMENT">Environment</option>
+                <option value="TRAFFIC">Traffic</option>
+                <option value="SAFETY">Safety</option>
+                <option value="ENERGY">Energy</option>
+              </select>
             </div>
           </div>
         </CardHeader>
@@ -175,10 +192,10 @@ export default function PoliciesPage() {
             <table className="w-full text-left text-xs">
               <thead>
                 <tr className="border-b border-slate-200 dark:border-slate-800 text-[11px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-                  <th className="pb-3">Code / ID</th>
+                  <th className="pb-3">{isAcademic ? "Code / ID" : "Rule Code"}</th>
                   <th className="pb-3">Policy Name &amp; Category</th>
                   <th className="pb-3">
-                    {isAcademic ? "DSL Expression (AST Rule)" : "Policy Expression"}
+                    {isAcademic ? "DSL Expression (AST Rule)" : "Standard / Condition"}
                   </th>
                   <th className="pb-3">Applied Zones</th>
                   <th className="pb-3">Status</th>
@@ -202,9 +219,15 @@ export default function PoliciesPage() {
                         <p className="text-[11px] text-slate-500 dark:text-slate-400">{p.category}</p>
                       </td>
                       <td className="py-3">
-                        <span className="rounded-md border border-slate-200 dark:border-slate-700/80 bg-slate-100 dark:bg-slate-950/80 px-2 py-1 font-mono text-cyan-800 dark:text-cyan-300 font-medium">
-                          {p.expression}
-                        </span>
+                        {isAcademic ? (
+                          <span className="rounded-md border border-slate-200 dark:border-slate-700/80 bg-slate-100 dark:bg-slate-950/80 px-2 py-1 font-mono text-cyan-800 dark:text-cyan-300 font-medium text-xs">
+                            {p.expression}
+                          </span>
+                        ) : (
+                          <span className="rounded-md border border-slate-200 dark:border-slate-700/80 bg-slate-100 dark:bg-slate-800/70 px-2.5 py-1 text-xs text-slate-800 dark:text-slate-200 font-medium">
+                            {formatFriendlyRule(p.expression)}
+                          </span>
+                        )}
                       </td>
                       <td className="py-3 text-slate-700 dark:text-slate-300 font-mono">
                         {p.appliedZoneCount} zones

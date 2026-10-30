@@ -15,6 +15,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ProcessingLayerConfig } from "@/types/data-stream";
+import { useAppMode } from "@/components/mode-provider";
 
 interface LayerConfiguratorProps {
   layers: ProcessingLayerConfig[];
@@ -22,6 +23,8 @@ interface LayerConfiguratorProps {
 }
 
 export function LayerConfigurator({ layers, onChange }: LayerConfiguratorProps) {
+  const { isAcademic } = useAppMode();
+
   const toggleLayer = (id: string) => {
     const updated = layers.map((layer) =>
       layer.id === id ? { ...layer, enabled: !layer.enabled } : layer
@@ -67,10 +70,12 @@ export function LayerConfigurator({ layers, onChange }: LayerConfiguratorProps) 
       <div className="flex items-center justify-between pb-1">
         <div>
           <h4 className="text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300">
-            Active Processing Pipeline Layers (Decorator Stack)
+            {isAcademic ? "Active Processing Pipeline Layers (Decorator Stack)" : "Security & Compression Layers"}
           </h4>
           <p className="text-[11px] text-slate-500 dark:text-slate-400">
-            Outer wrappers wrap inner stream components. Reorder or toggle layers to observe changes.
+            {isAcademic
+              ? "Outer wrappers wrap inner stream components. Reorder or toggle layers to observe changes."
+              : "Enable, disable, or reorder layers to protect and optimize transmission."}
           </p>
         </div>
         <span className="text-xs font-semibold text-cyan-600 dark:text-cyan-400">

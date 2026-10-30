@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { ZoneNode, ZoneOperationLog, ZoneOperationType } from "@/types/zone";
 import { ZonesService } from "@/lib/api/zones-service";
 import { Power, RotateCcw, BarChart3, Search, AlertTriangle } from "lucide-react";
+import { useAppMode } from "@/components/mode-provider";
 
 interface ZoneOperationsModalProps {
   isOpen: boolean;
@@ -23,6 +24,7 @@ export function ZoneOperationsModal({
   operation,
   onExecuted,
 }: ZoneOperationsModalProps) {
+  const { isAcademic } = useAppMode();
   const [loading, setLoading] = React.useState(false);
   const [reason, setReason] = React.useState("");
 
@@ -64,7 +66,11 @@ export function ZoneOperationsModal({
       isOpen={isOpen}
       onClose={onClose}
       title={getOpTitle()}
-      description={`Executing uniform command on ${targetNode.type} component using Composite Pattern delegation.`}
+      description={
+        isAcademic
+          ? `Executing uniform command on ${targetNode.type} component using Composite Pattern delegation.`
+          : `Executing command on ${targetNode.name} and all connected facilities.`
+      }
       maxWidth="md"
       footer={
         <>

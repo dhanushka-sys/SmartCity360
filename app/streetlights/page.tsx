@@ -192,62 +192,65 @@ export default function StreetlightsPage() {
           </div>
 
           {/* Filters Bar */}
-          <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 pt-2">
-            <div className="relative">
+          <div className="mt-3 flex flex-col md:flex-row items-stretch md:items-center gap-2.5 pt-2">
+            <div className="relative flex-1 min-w-[200px]">
               <Search className="absolute left-2.5 top-2.5 h-3.5 w-3.5 text-slate-400" />
               <Input
                 placeholder="Search serial number, street, or zone..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-8 text-xs h-8"
+                className="pl-8 text-xs h-8 w-full"
               />
             </div>
 
-            {/* Status Filter */}
-            <div className="flex items-center gap-1 text-[11px] overflow-x-auto">
-              <span className="text-slate-500 dark:text-slate-400 text-xs mr-1">Status:</span>
-              {["ALL", "ONLINE", "OFFLINE", "MAINTENANCE"].map((st) => (
-                <button
-                  key={st}
-                  onClick={() => setStatusFilter(st)}
-                  className={`px-2 py-0.5 rounded-md font-medium transition-colors ${
-                    statusFilter === st
-                      ? "bg-slate-100 dark:bg-slate-800 text-cyan-700 dark:text-cyan-300 font-semibold"
-                      : "text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200"
-                  }`}
+            <div className="flex flex-wrap items-center gap-2.5">
+              {/* Status Filter Dropdown */}
+              <div className="flex items-center gap-1.5">
+                <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">Status:</span>
+                <select
+                  value={statusFilter}
+                  onChange={(e) => setStatusFilter(e.target.value)}
+                  className="h-8 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-2.5 text-xs text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-1 focus:ring-emerald-500 shadow-xs cursor-pointer"
                 >
-                  {st}
-                </button>
-              ))}
-            </div>
+                  <option value="ALL">All Statuses</option>
+                  <option value="ONLINE">Online</option>
+                  <option value="OFFLINE">Offline</option>
+                  <option value="MAINTENANCE">Maintenance</option>
+                </select>
+              </div>
 
-            {/* Profile Filter */}
-            <div className="flex items-center gap-1 text-[11px] overflow-x-auto">
-              <span className="text-slate-500 dark:text-slate-400 text-xs mr-1">Profile:</span>
-              <button
-                onClick={() => setProfileFilter("ALL")}
-                className={`px-2 py-0.5 rounded-md font-medium transition-colors ${
-                  profileFilter === "ALL"
-                    ? "bg-slate-100 dark:bg-slate-800 text-cyan-700 dark:text-cyan-300 font-semibold"
-                    : "text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200"
-                }`}
-              >
-                ALL
-              </button>
-              {profiles.map((p) => (
-                <button
-                  key={p.id}
-                  onClick={() => setProfileFilter(p.id)}
-                  className={`px-2 py-0.5 rounded-md font-medium transition-colors truncate max-w-[120px] ${
-                    profileFilter === p.id
-                      ? "bg-slate-100 dark:bg-slate-800 text-cyan-700 dark:text-cyan-300 font-semibold"
-                      : "text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200"
-                  }`}
-                  title={p.modelName}
+              {/* Profile Filter Dropdown */}
+              <div className="flex items-center gap-1.5">
+                <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">Profile:</span>
+                <select
+                  value={profileFilter}
+                  onChange={(e) => setProfileFilter(e.target.value)}
+                  className="h-8 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-2.5 text-xs text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-1 focus:ring-emerald-500 shadow-xs cursor-pointer max-w-[220px]"
                 >
-                  {p.modelName}
-                </button>
-              ))}
+                  <option value="ALL">All Hardware Models</option>
+                  {profiles.map((p) => (
+                    <option key={p.id} value={p.id}>
+                      {p.modelName} ({p.wattageRatingWatts}W)
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Reset button if any filter is active */}
+              {(statusFilter !== "ALL" || profileFilter !== "ALL" || searchQuery) && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => {
+                    setStatusFilter("ALL");
+                    setProfileFilter("ALL");
+                    setSearchQuery("");
+                  }}
+                  className="h-8 text-xs text-slate-500 hover:text-slate-900 dark:hover:text-white px-2"
+                >
+                  Reset
+                </Button>
+              )}
             </div>
           </div>
         </CardHeader>

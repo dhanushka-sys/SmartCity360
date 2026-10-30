@@ -23,6 +23,20 @@ import { CreateComplaintModal } from "@/features/complaints/create-complaint-mod
 import { formatDate } from "@/lib/utils";
 import { useAppMode } from "@/components/mode-provider";
 
+function formatHandlerRole(role: string, isAcademic: boolean): string {
+  if (isAcademic) return role.replace("_", " ");
+  switch (role) {
+    case "LOCAL_STAFF":
+      return "Local Service Desk";
+    case "SUPERVISOR":
+      return "District Supervisor";
+    case "CITY_MANAGER":
+      return "Municipal Commissioner";
+    default:
+      return role.replace("_", " ");
+  }
+}
+
 export default function ComplaintsPage() {
   const { isAcademic } = useAppMode();
   const [complaints, setComplaints] = React.useState<CitizenComplaint[]>([]);
@@ -119,69 +133,85 @@ export default function ComplaintsPage() {
           </div>
 
           {/* Filters Bar */}
-          <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 pt-2">
-            <div className="relative">
+          <div className="mt-3 flex flex-col md:flex-row items-stretch md:items-center gap-2.5 pt-2">
+            <div className="relative flex-1 min-w-[200px]">
               <Search className="absolute left-2.5 top-2.5 h-3.5 w-3.5 text-slate-400" />
               <Input
                 placeholder="Search ID, title, zone, citizen..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-8 text-xs h-8"
+                className="pl-8 text-xs h-8 w-full"
               />
             </div>
 
-            {/* Severity Filter */}
-            <div className="flex items-center gap-1 text-[11px] overflow-x-auto">
-              <span className="text-slate-500 dark:text-slate-400 text-xs mr-1">Severity:</span>
-              {["ALL", "LOW", "MEDIUM", "HIGH", "CRITICAL"].map((sev) => (
-                <button
-                  key={sev}
-                  onClick={() => setSeverityFilter(sev)}
-                  className={`px-2 py-0.5 rounded-md font-medium transition-colors ${
-                    severityFilter === sev
-                      ? "bg-slate-100 dark:bg-slate-800 text-cyan-700 dark:text-cyan-300 font-semibold"
-                      : "text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200"
-                  }`}
+            <div className="flex flex-wrap items-center gap-2.5">
+              {/* Severity Filter Dropdown */}
+              <div className="flex items-center gap-1.5">
+                <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">Severity:</span>
+                <select
+                  value={severityFilter}
+                  onChange={(e) => setSeverityFilter(e.target.value)}
+                  className="h-8 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-2.5 text-xs text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-1 focus:ring-amber-500 shadow-xs cursor-pointer"
                 >
-                  {sev}
-                </button>
-              ))}
-            </div>
+                  <option value="ALL">All Severities</option>
+                  <option value="LOW">Low</option>
+                  <option value="MEDIUM">Medium</option>
+                  <option value="HIGH">High</option>
+                  <option value="CRITICAL">Critical</option>
+                </select>
+              </div>
 
-            {/* Status Filter */}
-            <div className="flex items-center gap-1 text-[11px] overflow-x-auto">
-              <span className="text-slate-500 dark:text-slate-400 text-xs mr-1">Status:</span>
-              {["ALL", "SUBMITTED", "ASSIGNED", "ESCALATED", "RESOLVED"].map((st) => (
-                <button
-                  key={st}
-                  onClick={() => setStatusFilter(st)}
-                  className={`px-2 py-0.5 rounded-md font-medium transition-colors ${
-                    statusFilter === st
-                      ? "bg-slate-100 dark:bg-slate-800 text-cyan-700 dark:text-cyan-300 font-semibold"
-                      : "text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200"
-                  }`}
+              {/* Status Filter Dropdown */}
+              <div className="flex items-center gap-1.5">
+                <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">Status:</span>
+                <select
+                  value={statusFilter}
+                  onChange={(e) => setStatusFilter(e.target.value)}
+                  className="h-8 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-2.5 text-xs text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-1 focus:ring-amber-500 shadow-xs cursor-pointer"
                 >
-                  {st}
-                </button>
-              ))}
-            </div>
+                  <option value="ALL">All Statuses</option>
+                  <option value="SUBMITTED">Submitted</option>
+                  <option value="ASSIGNED">Assigned</option>
+                  <option value="ESCALATED">Escalated</option>
+                  <option value="UNDER_REVIEW">Under Review</option>
+                  <option value="RESOLVED">Resolved</option>
+                </select>
+              </div>
 
-            {/* Category Filter */}
-            <div className="flex items-center gap-1 text-[11px] overflow-x-auto">
-              <span className="text-slate-500 dark:text-slate-400 text-xs mr-1">Category:</span>
-              {["ALL", "INFRASTRUCTURE", "SAFETY", "ENVIRONMENT", "UTILITY"].map((cat) => (
-                <button
-                  key={cat}
-                  onClick={() => setCategoryFilter(cat)}
-                  className={`px-2 py-0.5 rounded-md font-medium transition-colors ${
-                    categoryFilter === cat
-                      ? "bg-slate-100 dark:bg-slate-800 text-cyan-700 dark:text-cyan-300 font-semibold"
-                      : "text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200"
-                  }`}
+              {/* Category Filter Dropdown */}
+              <div className="flex items-center gap-1.5">
+                <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">Category:</span>
+                <select
+                  value={categoryFilter}
+                  onChange={(e) => setCategoryFilter(e.target.value)}
+                  className="h-8 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-2.5 text-xs text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-1 focus:ring-amber-500 shadow-xs cursor-pointer"
                 >
-                  {cat}
-                </button>
-              ))}
+                  <option value="ALL">All Categories</option>
+                  <option value="INFRASTRUCTURE">Infrastructure</option>
+                  <option value="PUBLIC_SAFETY">Public Safety</option>
+                  <option value="TRAFFIC">Traffic</option>
+                  <option value="NOISE">Noise</option>
+                  <option value="WASTE">Waste Management</option>
+                  <option value="ENVIRONMENT">Environment</option>
+                </select>
+              </div>
+
+              {/* Reset button if any filter is active */}
+              {(severityFilter !== "ALL" || statusFilter !== "ALL" || categoryFilter !== "ALL" || searchQuery) && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => {
+                    setSeverityFilter("ALL");
+                    setStatusFilter("ALL");
+                    setCategoryFilter("ALL");
+                    setSearchQuery("");
+                  }}
+                  className="h-8 text-xs text-slate-500 hover:text-slate-900 dark:hover:text-white px-2"
+                >
+                  Reset
+                </Button>
+              )}
             </div>
           </div>
         </CardHeader>
@@ -234,8 +264,8 @@ export default function ComplaintsPage() {
                         </Badge>
                       </td>
                       <td className="py-3">
-                        <span className="rounded-md border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800/70 px-2 py-0.5 text-[11px] font-medium text-slate-800 dark:text-slate-200">
-                          {c.currentHandlerRole.replace("_", " ")}
+                        <span className="rounded-md border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800/70 px-2.5 py-1 text-[11px] font-medium text-slate-800 dark:text-slate-200">
+                          {formatHandlerRole(c.currentHandlerRole, isAcademic)}
                         </span>
                       </td>
                       <td className="py-3">
