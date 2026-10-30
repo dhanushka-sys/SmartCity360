@@ -1,19 +1,31 @@
 # Dependencies
-/node_modules
-/.pnp
+node_modules/
+frontend/node_modules/
+.pnp
 .pnp.js
 
 # Next.js build output
-/.next/
-/out/
+.next/
+frontend/.next/
+out/
+frontend/out/
 tsconfig.tsbuildinfo
+frontend/tsconfig.tsbuildinfo
+
+# Maven build output
+backend/target/
+*.class
+
+# IDE files
+.idea/
+*.iml
+.vscode/
 
 # Production
-/build
+build/
 
 # Environment variables
-.env*
-!.env.example
+.env*.local
 
 # Debug logs
 npm-debug.log*
@@ -23,4 +35,3 @@ yarn-error.log*
 # OS metadata
 .DS_Store
 Thumbs.db
-
