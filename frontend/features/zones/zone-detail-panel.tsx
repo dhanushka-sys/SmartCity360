@@ -151,25 +151,25 @@ export function ZoneDetailPanel({
             <div className="rounded-xl border border-slate-200 dark:border-slate-800/80 bg-slate-50/70 dark:bg-slate-950/40 p-3">
               <span className="text-[11px] text-slate-500 dark:text-slate-400">Current Power Draw</span>
               <p className="mt-1 text-base font-bold text-cyan-600 dark:text-cyan-400 font-mono">
-                {node.metrics.currentPowerUsageKw} kW
+                {node.metrics?.currentPowerUsageKw ?? 0} kW
               </p>
             </div>
             <div className="rounded-xl border border-slate-200 dark:border-slate-800/80 bg-slate-50/70 dark:bg-slate-950/40 p-3">
               <span className="text-[11px] text-slate-500 dark:text-slate-400">Daily Consumption</span>
               <p className="mt-1 text-base font-bold text-slate-900 dark:text-white font-mono">
-                {node.metrics.dailyConsumptionKwh.toLocaleString()} kWh
+                {(node.metrics?.dailyConsumptionKwh ?? 0).toLocaleString()} kWh
               </p>
             </div>
             <div className="rounded-xl border border-slate-200 dark:border-slate-800/80 bg-slate-50/70 dark:bg-slate-950/40 p-3">
               <span className="text-[11px] text-slate-500 dark:text-slate-400">Active Sensors</span>
               <p className="mt-1 text-base font-bold text-slate-900 dark:text-white font-mono">
-                {node.metrics.activeSensors} / {node.metrics.totalSensors}
+                {node.metrics?.activeSensors ?? 0} / {node.metrics?.totalSensors ?? 0}
               </p>
             </div>
             <div className="rounded-xl border border-slate-200 dark:border-slate-800/80 bg-slate-50/70 dark:bg-slate-950/40 p-3">
               <span className="text-[11px] text-slate-500 dark:text-slate-400">Smart Streetlights</span>
               <p className="mt-1 text-base font-bold text-emerald-600 dark:text-emerald-400 font-mono">
-                {node.metrics.activeStreetlights.toLocaleString()}
+                {(node.metrics?.activeStreetlights ?? 0).toLocaleString()}
               </p>
             </div>
           </div>
@@ -198,7 +198,7 @@ export function ZoneDetailPanel({
                       <span className="text-[10px] text-slate-500 dark:text-slate-400 font-mono">({child.code})</span>
                     </div>
                     <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5">
-                      {child.type} • {child.metrics.currentPowerUsageKw} kW
+                      {child.type} • {child.metrics?.currentPowerUsageKw ?? 0} kW
                     </p>
                   </div>
                   <Badge

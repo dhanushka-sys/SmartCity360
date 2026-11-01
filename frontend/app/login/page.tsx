@@ -10,24 +10,57 @@ import {
   EyeOff,
   ArrowRight,
   ShieldAlert,
-  CheckCircle2,
-  Building2,
   UserCheck,
   Sun,
   Moon,
+  AlertCircle,
 } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/components/auth-provider";
-import { DEMO_USERS } from "@/lib/api/auth-service";
-import { checkBackendConnection } from "@/lib/api/backend-client";
+import { checkBackendConnection, BACKEND_BASE_URL } from "@/lib/api/backend-client";
 import { useTheme } from "@/components/theme-provider";
+
+const QUICK_LOGIN_PRESETS = [
+  {
+    name: "Director Elena Rostova",
+    username: "director",
+    password: "admin123",
+    role: "City Manager",
+    department: "Executive Directorate",
+    initials: "ER",
+  },
+  {
+    name: "Supervisor Marcus Vance",
+    username: "supervisor",
+    password: "super123",
+    role: "Supervisor",
+    department: "Urban Grid Oversight",
+    initials: "MV",
+  },
+  {
+    name: "Officer Sarah Jenkins",
+    username: "staff",
+    password: "staff123",
+    role: "Local Staff",
+    department: "Central Response Team",
+    initials: "SJ",
+  },
+  {
+    name: "Dr. Evelyn Reed",
+    username: "citizen",
+    password: "citizen123",
+    role: "Citizen",
+    department: "Civil Engineering Union",
+    initials: "ER",
+  },
+];
 
 export default function LoginPage() {
   const router = useRouter();
-  const { login, isAuthenticated } = useAuth();
+  const { login } = useAuth();
   const { theme, toggleTheme, mounted } = useTheme();
 
   const [identifier, setIdentifier] = React.useState("director");
@@ -64,13 +97,13 @@ export default function LoginPage() {
     }
   };
 
-  const handleQuickLogin = async (demoUser: (typeof DEMO_USERS)[number]) => {
-    setIdentifier(demoUser.username);
-    setPassword(demoUser.passwordHint);
+  const handleQuickLogin = async (preset: (typeof QUICK_LOGIN_PRESETS)[number]) => {
+    setIdentifier(preset.username);
+    setPassword(preset.password);
     setLoading(true);
     setError(null);
     try {
-      await login(demoUser.username, demoUser.passwordHint);
+      await login(preset.username, preset.password);
       router.push("/");
     } catch (err: unknown) {
       if (err instanceof Error) {
@@ -110,24 +143,37 @@ export default function LoginPage() {
             SmartCity<span className="text-cyan-600 dark:text-cyan-400">360</span>
           </h1>
           <p className="text-xs text-slate-500 dark:text-slate-400">
-            Municipal Operations &amp; Telemetry Management Platform
+            Municipal Operations &amp; Real Telemetry Management
           </p>
 
-          <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full text-[11px] font-medium border border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/70">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[11px] font-medium border border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/70">
             <span
               className={`h-2 w-2 rounded-full ${
-                backendOnline ? "bg-emerald-500 animate-pulse" : "bg-cyan-500"
+                backendOnline ? "bg-emerald-500" : "bg-rose-500 animate-pulse"
               }`}
             />
-            <span className="text-slate-600 dark:text-slate-300">
+            <span className="text-slate-600 dark:text-slate-300 font-mono text-[10px]">
               {backendOnline === null
                 ? "Checking Tomcat backend..."
                 : backendOnline
-                ? "Backend Connected (Tomcat:8080)"
-                : "Standalone Mode Active"}
+                ? "MySQL Backend: CONNECTED (Tomcat 9)"
+                : "MySQL Backend: OFFLINE (Requires Tomcat 9)"}
             </span>
           </div>
         </div>
+
+        {/* Backend Offline Warning Banner if Tomcat not running */}
+        {backendOnline === false && (
+          <div className="rounded-xl border border-rose-300 dark:border-rose-900/50 bg-rose-50 dark:bg-rose-950/40 p-3 text-xs text-rose-800 dark:text-rose-200 space-y-1 shadow-xs">
+            <div className="flex items-center gap-1.5 font-bold">
+              <AlertCircle className="h-4 w-4 text-rose-600 shrink-0" />
+              <span>Backend Required for Real Authentication</span>
+            </div>
+            <p className="text-[11px] text-rose-700/90 dark:text-rose-300/80 leading-relaxed">
+              Real login queries the MySQL database directly. Please start Apache Tomcat 9 in IntelliJ IDEA to connect to <code className="bg-rose-100 dark:bg-rose-900/60 px-1 py-0.5 rounded text-[10px]">{BACKEND_BASE_URL}</code>.
+            </p>
+          </div>
+        )}
 
         {/* Main Login Card */}
         <Card className="border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/80 shadow-md backdrop-blur-sm">
@@ -136,7 +182,7 @@ export default function LoginPage() {
               Municipal Portal Sign In
             </CardTitle>
             <CardDescription className="text-xs">
-              Enter your officer credentials or select a VIVA demo account
+              Authenticates directly against MySQL <code className="text-slate-600 dark:text-slate-300">smartcity360_db.users</code>
             </CardDescription>
           </CardHeader>
 
@@ -195,7 +241,7 @@ export default function LoginPage() {
                 disabled={loading}
                 className="w-full gap-2 text-xs font-semibold h-9 shadow-sm"
               >
-                <span>{loading ? "Authenticating..." : "Sign In to Operations"}</span>
+                <span>{loading ? "Authenticating via Tomcat..." : "Sign In to Operations"}</span>
                 <ArrowRight className="h-4 w-4" />
               </Button>
             </form>
@@ -205,31 +251,31 @@ export default function LoginPage() {
               <div className="flex items-center justify-between">
                 <span className="text-[11px] font-semibold text-amber-800 dark:text-amber-400 flex items-center gap-1.5">
                   <UserCheck className="h-3.5 w-3.5" />
-                  Quick Login for VIVA Demo
+                  Real Database Seed Accounts (VIVA Demo)
                 </span>
                 <Badge variant="warning" className="text-[9px] py-0">
-                  1-Click Roles
+                  MySQL Users
                 </Badge>
               </div>
 
               <div className="grid grid-cols-2 gap-2 pt-1">
-                {DEMO_USERS.map((u) => (
+                {QUICK_LOGIN_PRESETS.map((preset) => (
                   <button
-                    key={u.id}
+                    key={preset.username}
                     type="button"
-                    onClick={() => handleQuickLogin(u)}
+                    onClick={() => handleQuickLogin(preset)}
                     className="flex flex-col text-left p-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-800/40 hover:border-amber-400 dark:hover:border-amber-500/60 hover:bg-amber-50/50 dark:hover:bg-amber-950/20 transition-all text-xs group"
                   >
                     <div className="flex items-center justify-between">
                       <span className="font-semibold text-slate-900 dark:text-white group-hover:text-amber-800 dark:group-hover:text-amber-300 truncate">
-                        {u.fullName.split(" ")[0]} {u.fullName.split(" ")[1]}
+                        {preset.name}
                       </span>
                       <span className="text-[9px] font-mono text-slate-400 group-hover:text-amber-600">
-                        {u.avatarInitials}
+                        {preset.initials}
                       </span>
                     </div>
                     <span className="text-[10px] text-slate-500 dark:text-slate-400 capitalize">
-                      {u.role.replace("_", " ").toLowerCase()}
+                      {preset.role}
                     </span>
                   </button>
                 ))}
@@ -246,4 +292,3 @@ export default function LoginPage() {
     </div>
   );
 }
-

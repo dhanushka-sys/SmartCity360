@@ -29,9 +29,9 @@ public class StreamServlet extends HttpServlet {
                 JsonUtil.sendJson(resp, HttpServletResponse.SC_OK, streamDAO.getAllStreams());
             } else {
                 String id = pathInfo.substring(1);
-                DataStream s = streamDAO.getStreamById(id);
-                if (s != null) {
-                    JsonUtil.sendJson(resp, HttpServletResponse.SC_OK, s);
+                DataStream stream = streamDAO.getStreamById(id);
+                if (stream != null) {
+                    JsonUtil.sendJson(resp, HttpServletResponse.SC_OK, stream);
                 } else {
                     JsonUtil.sendJson(resp, HttpServletResponse.SC_NOT_FOUND, Map.of("error", "Stream not found"));
                 }
@@ -88,4 +88,3 @@ public class StreamServlet extends HttpServlet {
         }
     }
 }
-

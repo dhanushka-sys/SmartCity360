@@ -11,17 +11,46 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Zap } from "lucide-react";
-import { initialEnergyTrends } from "@/lib/mock-data/dashboard-data";
+import { Zap, AlertTriangle } from "lucide-react";
 import { useTheme } from "@/components/theme-provider";
+import { DashboardService, EnergyTrendPoint } from "@/lib/api/dashboard-service";
 
 export function EnergyChart() {
   const [filter, setFilter] = React.useState<"24h" | "7d">("24h");
+  const [data, setData] = React.useState<EnergyTrendPoint[]>([]);
+  const [loading, setLoading] = React.useState(true);
+  const [error, setError] = React.useState<string | null>(null);
   const [mounted, setMounted] = React.useState(false);
   const { theme } = useTheme();
 
   React.useEffect(() => {
     setMounted(true);
+    let isMounted = true;
+    setLoading(true);
+    DashboardService.getStats()
+      .then((stats) => {
+        if (isMounted) {
+          if (stats.energyTrends && stats.energyTrends.length > 0) {
+            setData(stats.energyTrends);
+          } else {
+            setData([]);
+          }
+          setError(null);
+        }
+      })
+      .catch((err: unknown) => {
+        if (isMounted) {
+          setData([]);
+          setError(err instanceof Error ? err.message : "Real MySQL backend offline");
+        }
+      })
+      .finally(() => {
+        if (isMounted) setLoading(false);
+      });
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   const isDark = theme === "dark";
@@ -35,7 +64,7 @@ export function EnergyChart() {
             <span>Smart Grid Energy Consumption</span>
           </CardTitle>
           <CardDescription>
-            Actual vs projected megawatt telemetry across Metropolis Neo-Prime
+            Live database telemetry across Metropolis Neo-Prime
           </CardDescription>
         </div>
         <div className="flex items-center gap-1 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-950/60 p-1">
@@ -62,11 +91,25 @@ export function EnergyChart() {
         </div>
       </CardHeader>
       <CardContent>
-        <div className="h-[260px] w-full">
-          {mounted ? (
+        <div className="h-[260px] w-full flex items-center justify-center">
+          {loading ? (
+            <div className="h-full w-full animate-pulse bg-slate-100 dark:bg-slate-800/40 rounded-xl flex items-center justify-center text-xs text-slate-400">
+              Loading live energy telemetry from database...
+            </div>
+          ) : error || data.length === 0 ? (
+            <div className="rounded-xl border border-rose-200 dark:border-rose-900/40 bg-rose-50/50 dark:bg-rose-950/20 p-6 text-center max-w-md w-full">
+              <AlertTriangle className="h-6 w-6 text-rose-500 mx-auto mb-2" />
+              <p className="text-xs font-semibold text-rose-800 dark:text-rose-200">
+                Real Database Telemetry Required
+              </p>
+              <p className="mt-1 text-[11px] text-rose-600 dark:text-rose-400 leading-relaxed">
+                {error || "No energy telemetry loaded. Ensure Tomcat 9 is running with correct MySQL credentials."}
+              </p>
+            </div>
+          ) : mounted ? (
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart
-                data={initialEnergyTrends}
+                data={data}
                 margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
               >
                 <defs>
@@ -92,7 +135,7 @@ export function EnergyChart() {
                   fontSize={11}
                   tickLine={false}
                   axisLine={false}
-                  tickFormatter={(val) => `${val / 1000}k`}
+                  tickFormatter={(val) => `${val >= 1000 ? `${(val / 1000).toFixed(1)}k` : val}`}
                 />
                 <Tooltip
                   content={({ active, payload, label }) => {
@@ -104,13 +147,13 @@ export function EnergyChart() {
                             <p className="text-cyan-600 dark:text-cyan-400 font-medium">
                               Actual:{" "}
                               <span className="font-semibold text-slate-900 dark:text-white">
-                                {payload[0]?.value} kWh
+                                {payload[0]?.value} kW
                               </span>
                             </p>
                             <p className="text-blue-600 dark:text-blue-400 font-medium">
                               Projected:{" "}
                               <span className="font-semibold text-slate-900 dark:text-white">
-                                {payload[1]?.value} kWh
+                                {payload[1]?.value} kW
                               </span>
                             </p>
                           </div>
@@ -122,17 +165,17 @@ export function EnergyChart() {
                 />
                 <Area
                   type="monotone"
-                  dataKey="actualKwh"
-                  stroke="#0891b2"
+                  dataKey="actual"
+                  stroke="#06b6d4"
                   strokeWidth={2}
                   fillOpacity={1}
                   fill="url(#energyActual)"
                 />
                 <Area
                   type="monotone"
-                  dataKey="projectedKwh"
-                  stroke="#2563eb"
-                  strokeWidth={1.5}
+                  dataKey="projected"
+                  stroke="#3b82f6"
+                  strokeWidth={2}
                   strokeDasharray="4 4"
                   fillOpacity={1}
                   fill="url(#energyProjected)"
@@ -142,19 +185,6 @@ export function EnergyChart() {
           ) : (
             <div className="h-full w-full animate-pulse bg-slate-100 dark:bg-slate-800/30 rounded-xl" />
           )}
-        </div>
-        <div className="mt-3 flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 border-t border-slate-200 dark:border-slate-800/80 pt-3">
-          <div className="flex items-center gap-4">
-            <span className="flex items-center gap-1.5">
-              <span className="h-2 w-2 rounded-full bg-cyan-500" />
-              <span>Real-time Composite Rollup</span>
-            </span>
-            <span className="flex items-center gap-1.5">
-              <span className="h-2 w-2 rounded-full bg-blue-500" />
-              <span>Predicted Baseline</span>
-            </span>
-          </div>
-          <span className="text-slate-700 dark:text-slate-300 font-medium">Peak Capacity: 5,000 kW</span>
         </div>
       </CardContent>
     </Card>

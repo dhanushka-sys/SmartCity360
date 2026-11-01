@@ -11,16 +11,45 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { AlertCircle } from "lucide-react";
-import { initialComplaintTrends } from "@/lib/mock-data/dashboard-data";
+import { AlertCircle, AlertTriangle } from "lucide-react";
 import { useTheme } from "@/components/theme-provider";
+import { DashboardService, ComplaintTrendPoint } from "@/lib/api/dashboard-service";
 
 export function ComplaintTrendChart() {
+  const [data, setData] = React.useState<ComplaintTrendPoint[]>([]);
+  const [loading, setLoading] = React.useState(true);
+  const [error, setError] = React.useState<string | null>(null);
   const [mounted, setMounted] = React.useState(false);
   const { theme } = useTheme();
 
   React.useEffect(() => {
     setMounted(true);
+    let isMounted = true;
+    setLoading(true);
+    DashboardService.getStats()
+      .then((stats) => {
+        if (isMounted) {
+          if (stats.complaintTrends && stats.complaintTrends.length > 0) {
+            setData(stats.complaintTrends);
+          } else {
+            setData([]);
+          }
+          setError(null);
+        }
+      })
+      .catch((err: unknown) => {
+        if (isMounted) {
+          setData([]);
+          setError(err instanceof Error ? err.message : "Real MySQL backend offline");
+        }
+      })
+      .finally(() => {
+        if (isMounted) setLoading(false);
+      });
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   const isDark = theme === "dark";
@@ -33,15 +62,29 @@ export function ComplaintTrendChart() {
           <span>7-Day Citizen Complaint Trends</span>
         </CardTitle>
         <CardDescription>
-          Intake vs resolution velocity across the Chain of Responsibility
+          Live intake vs resolution velocity from MySQL complaints registry
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="h-[260px] w-full">
-          {mounted ? (
+        <div className="h-[260px] w-full flex items-center justify-center">
+          {loading ? (
+            <div className="h-full w-full animate-pulse bg-slate-100 dark:bg-slate-800/40 rounded-xl flex items-center justify-center text-xs text-slate-400">
+              Loading incident trends from database...
+            </div>
+          ) : error || data.length === 0 ? (
+            <div className="rounded-xl border border-rose-200 dark:border-rose-900/40 bg-rose-50/50 dark:bg-rose-950/20 p-6 text-center max-w-md w-full">
+              <AlertTriangle className="h-6 w-6 text-rose-500 mx-auto mb-2" />
+              <p className="text-xs font-semibold text-rose-800 dark:text-rose-200">
+                Real Incident Data Required
+              </p>
+              <p className="mt-1 text-[11px] text-rose-600 dark:text-rose-400 leading-relaxed">
+                {error || "No complaint data loaded. Ensure Tomcat 9 is running with correct MySQL credentials."}
+              </p>
+            </div>
+          ) : mounted ? (
             <ResponsiveContainer width="100%" height="100%">
               <BarChart
-                data={initialComplaintTrends}
+                data={data}
                 margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
               >
                 <CartesianGrid strokeDasharray="3 3" stroke={isDark ? "#1e293b" : "#e2e8f0"} vertical={false} />
@@ -98,20 +141,6 @@ export function ComplaintTrendChart() {
           ) : (
             <div className="h-full w-full animate-pulse bg-slate-100 dark:bg-slate-800/30 rounded-xl" />
           )}
-        </div>
-        <div className="mt-3 flex items-center justify-center gap-6 text-[11px] text-slate-500 dark:text-slate-400 border-t border-slate-200 dark:border-slate-800/80 pt-3">
-          <span className="flex items-center gap-1.5">
-            <span className="h-2.5 w-2.5 rounded-sm bg-cyan-500" />
-            <span>Submitted (Intake)</span>
-          </span>
-          <span className="flex items-center gap-1.5">
-            <span className="h-2.5 w-2.5 rounded-sm bg-emerald-500" />
-            <span>Resolved</span>
-          </span>
-          <span className="flex items-center gap-1.5">
-            <span className="h-2.5 w-2.5 rounded-sm bg-rose-500" />
-            <span>Escalated to Manager</span>
-          </span>
         </div>
       </CardContent>
     </Card>

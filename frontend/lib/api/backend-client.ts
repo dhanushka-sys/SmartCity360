@@ -1,20 +1,50 @@
+let cachedBaseUrl: string | null = null;
+
+const DEFAULT_BASE_URLS = [
+  "http://localhost:8080/api",
+  "http://localhost:8080/smartcity360-backend/api",
+];
+
 export const BACKEND_BASE_URL =
-  process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8080/smartcity360-backend/api";
+  process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8080/api";
+
+export async function resolveBackendBaseUrl(): Promise<string> {
+  if (process.env.NEXT_PUBLIC_BACKEND_URL) {
+    return process.env.NEXT_PUBLIC_BACKEND_URL;
+  }
+  if (cachedBaseUrl) {
+    return cachedBaseUrl;
+  }
+
+  for (const candidate of DEFAULT_BASE_URLS) {
+    try {
+      const res = await fetch(`${candidate}/dashboard`, {
+        method: "GET",
+        signal: AbortSignal.timeout(1200),
+      });
+      if (res.status !== 404) {
+        cachedBaseUrl = candidate;
+        return candidate;
+      }
+    } catch {
+      // Continue checking next candidate
+    }
+  }
+
+  return DEFAULT_BASE_URLS[0];
+}
 
 export async function fetchFromBackend<T>(
   endpoint: string,
   options?: RequestInit
-): Promise<T | null> {
-  if (typeof window === "undefined") {
-    return null;
-  }
+): Promise<T> {
+  const cleanEndpoint = endpoint.startsWith("/") ? endpoint : `/${endpoint}`;
+  const baseUrl = await resolveBackendBaseUrl();
+  const url = `${baseUrl}${cleanEndpoint}`;
 
   try {
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 2500);
-
-    const cleanEndpoint = endpoint.startsWith("/") ? endpoint : `/${endpoint}`;
-    const url = `${BACKEND_BASE_URL}${cleanEndpoint}`;
+    const timeoutId = setTimeout(() => controller.abort(), 5000);
 
     const res = await fetch(url, {
       ...options,
@@ -27,25 +57,46 @@ export async function fetchFromBackend<T>(
 
     clearTimeout(timeoutId);
 
-    if (res.ok) {
-      return (await res.json()) as T;
+    if (!res.ok) {
+      let errMsg = `Request failed with status ${res.status}`;
+      try {
+        const errJson = await res.json();
+        if (errJson && errJson.error) {
+          errMsg = errJson.error;
+        }
+      } catch {
+        // Ignored
+      }
+      throw new Error(errMsg);
     }
-  } catch {
-    // Graceful fallback to simulated memory data when Tomcat is offline
-  }
 
-  return null;
+    return (await res.json()) as T;
+  } catch (err: unknown) {
+    if (err instanceof Error) {
+      if (
+        err.name === "AbortError" ||
+        err.message.includes("Failed to fetch") ||
+        err.message.includes("NetworkError")
+      ) {
+        throw new Error(
+          `Unable to connect to Tomcat 9 backend at ${baseUrl}. Ensure your Apache Tomcat 9 server is running in IntelliJ.`
+        );
+      }
+      throw err;
+    }
+    throw new Error(`Connection error connecting to ${url}`);
+  }
 }
 
 export async function checkBackendConnection(): Promise<boolean> {
   try {
-    const res = await fetch(`${BACKEND_BASE_URL}/zones`, {
+    const baseUrl = await resolveBackendBaseUrl();
+    const res = await fetch(`${baseUrl}/dashboard`, {
       method: "GET",
-      signal: AbortSignal.timeout(1500),
+      signal: AbortSignal.timeout(1800),
     });
-    return res.ok;
+    return res.status === 200;
   } catch {
     return false;
   }
 }
-

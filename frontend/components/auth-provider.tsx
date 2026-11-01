@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { User } from "@/types/user";
-import { AuthService, DEMO_USERS } from "@/lib/api/auth-service";
+import { AuthService } from "@/lib/api/auth-service";
 
 interface AuthContextType {
   user: User | null;
@@ -27,14 +27,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (saved) {
         setUser(JSON.parse(saved));
       } else {
-        // Default to Director Elena Rostova for initial view if none saved
-        const defaultUser = DEMO_USERS[0];
-        setUser(defaultUser);
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(defaultUser));
+        setUser(null);
       }
     } catch {
-      // Fallback
-      setUser(DEMO_USERS[0]);
+      setUser(null);
     } finally {
       setIsLoading(false);
     }
@@ -90,4 +86,3 @@ export function useAuth() {
   }
   return context;
 }
-

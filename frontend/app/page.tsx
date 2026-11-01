@@ -21,13 +21,39 @@ import {
   Activity,
   Layers,
 } from "lucide-react";
+import { checkBackendConnection, BACKEND_BASE_URL } from "@/lib/api/backend-client";
 import { useAppMode } from "@/components/mode-provider";
 
 export default function DashboardPage() {
   const { isAcademic } = useAppMode();
+  const [backendOnline, setBackendOnline] = React.useState<boolean | null>(null);
+
+  React.useEffect(() => {
+    checkBackendConnection().then((online) => setBackendOnline(online));
+  }, []);
 
   return (
     <div className="space-y-6">
+      {/* Backend Offline Warning if Tomcat is down */}
+      {backendOnline === false && (
+        <div className="rounded-2xl border border-rose-300 dark:border-rose-900/60 bg-rose-50 dark:bg-rose-950/40 p-4 text-xs text-rose-800 dark:text-rose-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
+          <div className="space-y-1">
+            <div className="flex items-center gap-2">
+              <span className="flex h-2.5 w-2.5 rounded-full bg-rose-500 animate-pulse" />
+              <span className="font-bold text-rose-900 dark:text-rose-100 text-sm">
+                MySQL Backend Offline (Tomcat 9 Required)
+              </span>
+            </div>
+            <p className="text-[11px] text-rose-700 dark:text-rose-300">
+              The dashboard and modules now require live MySQL database connectivity. Start your Apache Tomcat 9 server in IntelliJ IDEA at <code className="bg-rose-100 dark:bg-rose-900/70 px-1 py-0.5 rounded font-mono">{BACKEND_BASE_URL}</code> to load real telemetry.
+            </p>
+          </div>
+          <Badge variant="danger" className="text-[10px] shrink-0 self-start sm:self-center">
+            Database Disconnected
+          </Badge>
+        </div>
+      )}
+
       {/* Top Banner Notice: Architecture & Simulation Context */}
       <div className="relative overflow-hidden rounded-2xl border border-cyan-200 dark:border-cyan-500/30 bg-gradient-to-r from-cyan-50 via-white to-blue-50 dark:from-slate-900 dark:via-cyan-950/20 dark:to-blue-950/30 p-5 backdrop-blur-md shadow-xs">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">

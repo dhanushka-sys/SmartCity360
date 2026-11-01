@@ -88,6 +88,11 @@ public class AuthServlet extends HttpServlet {
             }
 
             if ("/logout".equalsIgnoreCase(pathInfo)) {
+                String authHeader = req.getHeader("Authorization");
+                if (authHeader != null && authHeader.startsWith("Bearer ")) {
+                    String token = authHeader.substring(7).trim();
+                    UserDAO.invalidateToken(token);
+                }
                 JsonUtil.sendJson(resp, HttpServletResponse.SC_OK, Map.of("success", true, "message", "Logged out successfully"));
                 return;
             }
@@ -98,4 +103,3 @@ public class AuthServlet extends HttpServlet {
         }
     }
 }
-

@@ -200,17 +200,12 @@ function evaluateAST(
 
 export const PoliciesService = {
   async getPolicies(): Promise<PolicyRule[]> {
-    try {
-      const data = await fetchFromBackend<PolicyRule[]>("/policies");
-      if (data && data.length > 0) {
-        policiesState = data;
-        return data;
-      }
-    } catch {
-      // Fallback
+    const data = await fetchFromBackend<PolicyRule[]>("/policies");
+    if (data && Array.isArray(data)) {
+      policiesState = data;
+      return data;
     }
-    await delay();
-    return [...policiesState];
+    throw new Error("Unable to load city policies from MySQL database.");
   },
 
   async getEvaluationLogs(): Promise<PolicyEvaluationResult[]> {

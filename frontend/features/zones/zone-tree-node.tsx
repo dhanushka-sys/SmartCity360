@@ -94,7 +94,7 @@ export function ZoneTreeNode({ node, selectedId, onSelect, level = 0 }: ZoneTree
         <div className="flex items-center gap-2 shrink-0">
           <span className="hidden sm:inline-flex items-center gap-1 text-[11px] text-slate-500 dark:text-slate-400 font-mono">
             <Zap className="h-3 w-3 text-cyan-600 dark:text-cyan-400" />
-            <span>{node.metrics.currentPowerUsageKw} kW</span>
+            <span>{node.metrics?.currentPowerUsageKw ?? 0} kW</span>
           </span>
 
           <Badge

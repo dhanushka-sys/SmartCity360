@@ -275,38 +275,38 @@ export function Sidebar({ collapsed, onToggleCollapse, mobileOpen, onMobileClose
             <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/60 p-3">
               <div
                 className={cn(
-                  "flex items-center gap-2 text-xs font-medium",
+                  "flex items-center gap-2 text-xs font-semibold",
                   backendOnline
                     ? "text-emerald-600 dark:text-emerald-400"
-                    : "text-cyan-600 dark:text-cyan-400"
+                    : "text-rose-600 dark:text-rose-400"
                 )}
               >
                 <span className="relative flex h-2 w-2">
                   <span
                     className={cn(
                       "animate-ping absolute inline-flex h-full w-full rounded-full opacity-75",
-                      backendOnline ? "bg-emerald-400" : "bg-cyan-400"
+                      backendOnline ? "bg-emerald-400" : "bg-rose-400"
                     )}
                   ></span>
                   <span
                     className={cn(
                       "relative inline-flex rounded-full h-2 w-2",
-                      backendOnline ? "bg-emerald-500" : "bg-cyan-500"
+                      backendOnline ? "bg-emerald-500" : "bg-rose-500"
                     )}
                   ></span>
                 </span>
                 <span>
                   {backendOnline === null
-                    ? "Checking Backend..."
+                    ? "Checking MySQL..."
                     : backendOnline
-                    ? "Backend Connected"
-                    : "Standalone Mode"}
+                    ? "MySQL: Connected"
+                    : "MySQL: Offline"}
                 </span>
               </div>
               <p className="mt-1 text-[11px] text-slate-500 dark:text-slate-400">
                 {backendOnline
-                  ? "Connected to MySQL via Tomcat 9 (localhost:8080)"
-                  : "Client demo data active. Ready for Tomcat 9"}
+                  ? "Live sync via Tomcat 9 (localhost:8080)"
+                  : "Start Tomcat 9 to query database"}
               </p>
             </div>
           </div>
@@ -315,7 +315,7 @@ export function Sidebar({ collapsed, onToggleCollapse, mobileOpen, onMobileClose
             <Radio
               className={cn(
                 "h-4 w-4 animate-pulse",
-                backendOnline ? "text-emerald-500" : "text-cyan-500"
+                backendOnline ? "text-emerald-500" : "text-rose-500"
               )}
             />
           </div>

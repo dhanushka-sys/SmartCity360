@@ -15,21 +15,33 @@ public class DatabaseConfig {
     static {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
-            Properties props = new Properties();
-            try (InputStream in = DatabaseConfig.class.getClassLoader().getResourceAsStream("application.properties")) {
-                if (in != null) {
-                    props.load(in);
-                }
-            }
-            url = props.getProperty("db.url", "jdbc:mysql://localhost:3306/smartcity360_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC");
-            user = props.getProperty("db.user", "root");
-            password = props.getProperty("db.password", "dbworld");
+            reloadProperties();
         } catch (Exception e) {
             throw new RuntimeException("Failed to initialize database configuration", e);
         }
     }
 
+    public static synchronized void reloadProperties() {
+        Properties props = new Properties();
+        try (InputStream in = DatabaseConfig.class.getClassLoader().getResourceAsStream("application.properties")) {
+            if (in != null) {
+                props.load(in);
+            }
+        } catch (Exception ignored) {}
+
+        url = props.getProperty("db.url", "jdbc:mysql://localhost:3306/smartcity360_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC");
+        user = props.getProperty("db.user", "root");
+        String pass = props.getProperty("db.password", "dbworld");
+        if (pass == null || pass.trim().isEmpty()) {
+            pass = "dbworld";
+        }
+        password = pass;
+    }
+
     public static Connection getConnection() throws SQLException {
+        if (password == null || password.trim().isEmpty()) {
+            reloadProperties();
+        }
         return DriverManager.getConnection(url, user, password);
     }
 }

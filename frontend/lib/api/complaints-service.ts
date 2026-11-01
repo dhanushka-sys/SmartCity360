@@ -95,12 +95,11 @@ function resolveInitialHandler(severity: ComplaintSeverity): {
 export const ComplaintsService = {
   async getComplaints(): Promise<CitizenComplaint[]> {
     const backendData = await fetchFromBackend<CitizenComplaint[]>("/complaints");
-    if (backendData && Array.isArray(backendData) && backendData.length > 0) {
+    if (backendData && Array.isArray(backendData)) {
       complaintsState = backendData;
       return backendData;
     }
-    await delay();
-    return [...complaintsState];
+    throw new Error("Unable to load citizen complaints from MySQL database.");
   },
 
   async getComplaintById(id: string): Promise<CitizenComplaint | undefined> {

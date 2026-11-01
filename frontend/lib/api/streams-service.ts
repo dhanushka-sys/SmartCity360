@@ -14,17 +14,12 @@ const delay = (ms = 180) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export const StreamsService = {
   async getStreams(): Promise<DataStream[]> {
-    try {
-      const data = await fetchFromBackend<DataStream[]>("/streams");
-      if (data && data.length > 0) {
-        streamsState = data;
-        return data;
-      }
-    } catch {
-      // Fallback
+    const data = await fetchFromBackend<DataStream[]>("/streams");
+    if (data && Array.isArray(data)) {
+      streamsState = data;
+      return data;
     }
-    await delay();
-    return [...streamsState];
+    throw new Error("Unable to load data streams from MySQL database.");
   },
 
   async getStreamById(id: string): Promise<DataStream | undefined> {
@@ -97,6 +92,20 @@ export const StreamsService = {
     streamId: string,
     customReading?: Partial<EnergyReading>
   ): Promise<PipelineExecutionResult> {
+    try {
+      const backendResult = await fetchFromBackend<PipelineExecutionResult>(
+        `/streams/${streamId}/pipeline`,
+        {
+          method: "POST",
+          body: JSON.stringify(customReading || {}),
+        }
+      );
+      if (backendResult && backendResult.steps) {
+        return backendResult;
+      }
+    } catch {
+    }
+
     await delay(220);
     const stream = streamsState.find((s) => s.id === streamId);
     if (!stream) throw new Error("Stream not found");

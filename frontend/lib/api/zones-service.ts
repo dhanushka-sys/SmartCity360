@@ -1,14 +1,69 @@
-import { initialZoneOperationLogs, initialZoneTree } from "@/lib/mock-data/zones-data";
 import {
   ZoneNode,
+  ZoneMetrics,
   ZoneOperationLog,
   ZoneOperationRequest,
   ZoneOperationType,
 } from "@/types/zone";
 import { fetchFromBackend } from "./backend-client";
 
-let treeState: ZoneNode = JSON.parse(JSON.stringify(initialZoneTree));
-let logsState: ZoneOperationLog[] = [...initialZoneOperationLogs];
+export function normalizeZoneNode(raw: any): ZoneNode {
+  if (!raw) {
+    return {
+      id: "ZN-METRO",
+      name: "Metropolis Neo-Prime",
+      code: "MNP-001",
+      type: "CITY",
+      status: "OPERATIONAL",
+      metrics: {
+        currentPowerUsageKw: 0,
+        dailyConsumptionKwh: 0,
+        activeSensors: 0,
+        totalSensors: 0,
+        activeStreetlights: 0,
+        activeAlerts: 0,
+      },
+      children: [],
+    };
+  }
+
+  const metrics: ZoneMetrics = {
+    currentPowerUsageKw:
+      raw.metrics?.currentPowerUsageKw ?? raw.powerUsageKw ?? 0,
+    dailyConsumptionKwh:
+      raw.metrics?.dailyConsumptionKwh ?? raw.dailyConsumptionKwh ?? 0,
+    activeSensors: raw.metrics?.activeSensors ?? raw.activeSensors ?? 0,
+    totalSensors: raw.metrics?.totalSensors ?? raw.totalSensors ?? 0,
+    activeStreetlights:
+      raw.metrics?.activeStreetlights ?? raw.activeStreetlights ?? 0,
+    activeAlerts: raw.metrics?.activeAlerts ?? raw.activeAlerts ?? 0,
+  };
+
+  const children: ZoneNode[] = Array.isArray(raw.children)
+    ? raw.children.map(normalizeZoneNode)
+    : [];
+
+  return {
+    id: raw.id,
+    name: raw.name,
+    code: raw.code,
+    type: raw.type,
+    parentId: raw.parentId,
+    status: raw.status || "OPERATIONAL",
+    metrics,
+    children,
+    meta: {
+      manager: raw.manager || raw.meta?.manager,
+      buildingFloors: raw.floors || raw.meta?.buildingFloors,
+      coordinates: raw.meta?.coordinates,
+      areaSqKm: raw.meta?.areaSqKm,
+      population: raw.meta?.population,
+    },
+  };
+}
+
+let treeState: ZoneNode | null = null;
+let logsState: ZoneOperationLog[] = [];
 
 const delay = (ms = 180) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -72,13 +127,13 @@ function applyStatusToAllDescendants(node: ZoneNode, status: any) {
 
 export const ZonesService = {
   async getZoneTree(): Promise<ZoneNode> {
-    const backendTree = await fetchFromBackend<ZoneNode>("/zones?format=tree");
+    const backendTree = await fetchFromBackend<any>("/zones?format=tree");
     if (backendTree && backendTree.id) {
-      treeState = backendTree;
-      return backendTree;
+      const normalized = normalizeZoneNode(backendTree);
+      treeState = normalized;
+      return normalized;
     }
-    await delay();
-    return JSON.parse(JSON.stringify(treeState));
+    throw new Error("Unable to load zone tree from MySQL database.");
   },
 
   async getLogs(): Promise<ZoneOperationLog[]> {
@@ -86,16 +141,15 @@ export const ZonesService = {
     return [...logsState];
   },
 
-  /**
-   * Composite Pattern uniform command invocation.
-   * Applying an operation at any hierarchy level cascades uniformly to all child and leaf components.
-   */
   async executeOperation(request: ZoneOperationRequest): Promise<{
     log: ZoneOperationLog;
     affectedCount: number;
     aggregatedMetrics?: { totalPowerKw: number; totalSensors: number; nodeNames: string[] };
   }> {
     await delay(300);
+    if (!treeState) {
+      throw new Error("Zone tree not loaded");
+    }
     const { target, descendants } = findNodeAndDescendants(treeState, request.targetNodeId);
     if (!target) throw new Error("Target zone node not found in hierarchy");
 
@@ -118,7 +172,7 @@ export const ZonesService = {
         body: JSON.stringify({ status: "OPERATIONAL", recursive: true }),
       }).catch(() => {});
     } else if (request.operation === "REPORT_USAGE") {
-      const totalPower = descendants.reduce((sum, n) => sum + n.metrics.currentPowerUsageKw, 0);
+      const totalPower = descendants.reduce((sum, n) => sum + (n.metrics?.currentPowerUsageKw || 0), 0);
       statusDescription = `Recursive Composite usage rollup completed. Aggregated telemetry across ${descendants.length} nodes: ${totalPower.toFixed(1)} kW power draw.`;
     } else if (request.operation === "INSPECT") {
       statusDescription = `Composite diagnostic sweep executed across target node and ${descendants.length - 1} subordinate nodes.`;
@@ -139,8 +193,8 @@ export const ZonesService = {
 
     logsState = [log, ...logsState];
 
-    const totalPower = descendants.reduce((sum, n) => sum + n.metrics.currentPowerUsageKw, 0);
-    const totalSensors = descendants.reduce((sum, n) => sum + n.metrics.totalSensors, 0);
+    const totalPower = descendants.reduce((sum, n) => sum + (n.metrics?.currentPowerUsageKw || 0), 0);
+    const totalSensors = descendants.reduce((sum, n) => sum + (n.metrics?.totalSensors || 0), 0);
 
     return {
       log,
@@ -176,12 +230,15 @@ export const ZonesService = {
       return false;
     }
 
-    insert(treeState);
+    if (treeState) {
+      insert(treeState);
+    }
     return newNode;
   },
 
   async deleteNode(nodeId: string): Promise<boolean> {
     await delay(250);
+    if (!treeState) return false;
     if (treeState.id === nodeId) {
       throw new Error("Cannot delete root city node");
     }
@@ -202,4 +259,3 @@ export const ZonesService = {
     return remove(treeState);
   },
 };
-

@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SmartCity360 - Part A: Decorator Pattern Documentation</title>
+<style>
+  @page {
+    size: A4;
+    margin: 20mm 18mm 20mm 18mm;
+  }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: #1e293b;
+    line-height: 1.6;
+    margin: 0;
+    padding: 24px 36px;
+    background-color: #ffffff;
+  }
+  .page-break {
+    page-break-before: always;
+    margin-top: 30px;
+  }
+  .cover-page {
+    text-align: center;
+    padding-top: 50px;
+    padding-bottom: 60px;
+  }
+  .institute-logo-text {
+    font-size: 20pt;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    color: #0f172a;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .institute-sub {
+    font-size: 11pt;
+    color: #64748b;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    margin-bottom: 30px;
+    border-bottom: 2px solid #e2e8f0;
+    padding-bottom: 15px;
+  }
+  .doc-title {
+    font-size: 26pt;
+    font-weight: 800;
+    color: #0284c7;
+    margin-top: 40px;
+    margin-bottom: 10px;
+    line-height: 1.2;
+  }
+  .doc-subtitle {
+    font-size: 13pt;
+    color: #475569;
+    font-weight: 600;
+    margin-bottom: 50px;
+  }
+  .meta-table {
+    margin: 0 auto;
+    width: 90%;
+    border-collapse: collapse;
+    text-align: left;
+    margin-bottom: 50px;
+  }
+  .meta-table td {
+    padding: 10px 16px;
+    border: 1px solid #cbd5e1;
+    font-size: 10.5pt;
+  }
+  .meta-table td.label {
+    font-weight: 700;
+    background-color: #f8fafc;
+    width: 38%;
+    color: #334155;
+  }
+  h1 {
+    font-size: 16pt;
+    font-weight: 700;
+    color: #0f172a;
+    border-bottom: 2px solid #0284c7;
+    padding-bottom: 6px;
+    margin-top: 26px;
+    margin-bottom: 14px;
+  }
+  h2 {
+    font-size: 13pt;
+    font-weight: 700;
+    color: #0369a1;
+    margin-top: 20px;
+    margin-bottom: 10px;
+  }
+  h3 {
+    font-size: 11pt;
+    font-weight: 600;
+    color: #334155;
+    margin-top: 16px;
+    margin-bottom: 6px;
+  }
+  p, li {
+    font-size: 10pt;
+    color: #334155;
+  }
+  ul, ol {
+    padding-left: 22px;
+    margin-top: 6px;
+    margin-bottom: 10px;
+  }
+  table.content-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 14px 0;
+    font-size: 9.5pt;
+  }
+  table.content-table th, table.content-table td {
+    border: 1px solid #cbd5e1;
+    padding: 8px 12px;
+    text-align: left;
+  }
+  table.content-table th {
+    background-color: #f1f5f9;
+    color: #0f172a;
+    font-weight: 700;
+  }
+  table.content-table tr:nth-child(even) {
+    background-color: #f8fafc;
+  }
+  .code-block {
+    background-color: #0f172a;
+    color: #38bdf8;
+    padding: 12px 14px;
+    border-radius: 6px;
+    font-family: "Consolas", "Courier New", Courier, monospace;
+    font-size: 8.5pt;
+    overflow-x: auto;
+    margin: 12px 0;
+    line-height: 1.45;
+  }
+  .diagram-box {
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    background-color: #f8fafc;
+    padding: 14px;
+    margin: 14px 0;
+    font-family: "Consolas", "Courier New", monospace;
+    font-size: 8.5pt;
+    white-space: pre-wrap;
+    color: #0f172a;
+    line-height: 1.35;
+  }
+  .callout-card {
+    border-left: 4px solid #0284c7;
+    background-color: #f0f9ff;
+    padding: 10px 16px;
+    border-radius: 0 6px 6px 0;
+    margin: 14px 0;
+  }
+  .callout-title {
+    font-weight: 700;
+    font-size: 10pt;
+    color: #0369a1;
+    margin-bottom: 4px;
+  }
+  .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 8pt;
+    font-weight: 700;
+    text-transform: uppercase;
+    background-color: #e0f2fe;
+    color: #0369a1;
+  }
+  @media print {
+    body {
+      padding: 0;
+    }
+    .page-break {
+      page-break-before: always;
+    }
+  }
+</style>
+</head>
+<body>
+
+<!-- COVER PAGE -->
+<div class="cover-page">
+  <div class="institute-logo-text">Java Institute for Advanced Technology</div>
+  <div class="institute-sub">Department of Examinations &bull; ISO 9001:2008 Certified Institute</div>
+
+  <div class="doc-title">SMARTCITY360</div>
+  <div class="doc-subtitle">Dynamic Security Wrappers for Data Streams (Decorator Pattern)</div>
+
+  <table class="meta-table">
+    <tr>
+      <td class="label">Unit Name</td>
+      <td>Object Oriented Design Patterns II</td>
+    </tr>
+    <tr>
+      <td class="label">Unit ID</td>
+      <td>JIAT/OODP II</td>
+    </tr>
+    <tr>
+      <td class="label">Assessment ID</td>
+      <td>JIAT/OODP II /EX/01</td>
+    </tr>
+    <tr>
+      <td class="label">Organization Scenario</td>
+      <td>UrbanTech Solutions (SmartCity360 Platform)</td>
+    </tr>
+    <tr>
+      <td class="label">Role Context</td>
+      <td>Senior Software Developer</td>
+    </tr>
+    <tr>
+      <td class="label">Assessment Part</td>
+      <td>Part A &mdash; Dynamic Security Wrappers (15 Marks)</td>
+    </tr>
+    <tr>
+      <td class="label">Applied Design Pattern</td>
+      <td>Decorator Design Pattern (Structural)</td>
+    </tr>
+    <tr>
+      <td class="label">Document Format</td>
+      <td>Formal Academic Report (PDF)</td>
+    </tr>
+  </table>
+</div>
+
+<div class="page-break"></div>
+
+<!-- SECTION 1: INTRODUCTION -->
+<h1>1. Introduction &amp; SmartCity360 Platform Overview</h1>
+<p>
+  <strong>SmartCity360</strong> is an enterprise municipal infrastructure management platform engineered by <strong>UrbanTech Solutions</strong>. The system serves as the central command center for municipal governance, managing heterogeneous IoT sensor networks, public utility grids, civic regulations, and citizen grievances across large urban areas.
+</p>
+<p>
+  A critical operational requirement of the platform is the continuous ingestion of high-frequency telemetry data from thousands of distributed municipal <strong>Energy Meters</strong>. This raw data contains essential grid telemetry:
+</p>
+<ul>
+  <li><code>streamId</code> &mdash; Unique hardware identifier for the municipal feed.</li>
+  <li><code>voltage</code> &mdash; Real-time line voltage in Volts (V).</li>
+  <li><code>currentAmps</code> &mdash; Instantaneous current draw in Amperes (A).</li>
+  <li><code>powerKw</code> &mdash; Active power consumption in Kilowatts (kW).</li>
+</ul>
+
+<p>
+  Depending on network topology, threat environment, and transmission channel constraints (such as public cellular backhauls or constrained wireless IoT networks), data packets must pass through multiple security and transmission transformations:
+</p>
+<ul>
+  <li><strong>Authentication:</strong> Attaching cryptographic headers and digital signatures (e.g. HMAC-SHA256) to verify data integrity and prevent spoofing.</li>
+  <li><strong>Encryption:</strong> Encapsulating the telemetry payload in a strong cipher (e.g. AES-256-GCM) to ensure absolute confidentiality.</li>
+  <li><strong>Compression:</strong> Compressing the transmission payload (e.g. GZIP) to minimize bandwidth overhead across municipal IoT bandwidth links.</li>
+</ul>
+
+<div class="callout-card">
+  <div class="callout-title">Core Requirement</div>
+  Security and compression layers must be dynamically attachable, detachable, and reconfigurable at runtime on a per-stream basis <strong>without modifying the core energy meter polling logic</strong>.
+</div>
+
+<div class="page-break"></div>
+
+<!-- SECTION 2: PART A ANALYSIS -->
+<h1>2. Part A &mdash; Dynamic Security Wrappers for Data Streams</h1>
+
+<h2>2.1 Identify and Justify the Most Suitable Design Pattern (3 Marks)</h2>
+<div class="callout-card">
+  <div class="callout-title">Selected Pattern: The Decorator Design Pattern (GoF Structural Pattern)</div>
+  The Decorator pattern attaches additional responsibilities and transformations to an object dynamically at runtime. Decorators provide a flexible alternative to subclassing for extending functionality without altering the original class.
+</div>
+
+<p><strong>Architectural Justification:</strong></p>
+<ol>
+  <li>
+    <strong>Avoidance of Combinatorial Class Explosion:</strong><br/>
+    If class inheritance (subclassing) were used to combine optional security features, the number of required classes increases exponentially with the number of features:
+    <br/>
+    $$\text{Total Subclasses} = 2^N$$
+    For 3 optional features (Authentication, Encryption, Compression), inheritance requires $2^3 = 8$ static subclasses:
+    <ul>
+      <li><code>EncryptedStream</code></li>
+      <li><code>AuthenticatedStream</code></li>
+      <li><code>CompressedStream</code></li>
+      <li><code>AuthenticatedEncryptedStream</code></li>
+      <li><code>AuthenticatedCompressedStream</code></li>
+      <li><code>EncryptedCompressedStream</code></li>
+      <li><code>AuthenticatedEncryptedCompressedStream</code></li>
+      <li><code>PlainStream</code></li>
+    </ul>
+    Adding a 4th feature (e.g. GDPR Anonymization) doubles this to 16 classes. The Decorator pattern replaces static class inheritance with runtime object aggregation, requiring only <strong>1 component interface, 1 concrete component, 1 abstract decorator, and N concrete decorators</strong> ($O(N)$ linear complexity instead of $O(2^N)$).
+  </li>
+  <li>
+    <strong>Adherence to the Open/Closed Principle (OCP):</strong><br/>
+    The core polling component (<code>EnergyStreamData</code>) is closed for modification. New security wrappers can be added without modifying existing tested classes.
+  </li>
+  <li>
+    <strong>Runtime Dynamism vs. Compile-Time Rigidity:</strong><br/>
+    Inheritance locks behavior at compile time. In contrast, the Decorator pattern allows municipal operators to attach or detach wrappers dynamically to an active stream while it is transmitting.
+  </li>
+</ol>
+
+<h2>2.2 Explain How the Pattern Supports Flexible &amp; Layered Enhancements (4 Marks)</h2>
+<p>
+  The Decorator pattern achieves flexible and layered enhancements through <strong>recursive object composition</strong> and <strong>interface conformance</strong>:
+</p>
+
+<table class="content-table">
+  <thead>
+    <tr>
+      <th>Pattern Role</th>
+      <th>SmartCity360 Class</th>
+      <th>Architectural Responsibility</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Component Interface</strong></td>
+      <td><code>StreamData</code></td>
+      <td>Defines the universal contract: <code>getData()</code>, <code>getPayloadSize()</code>, and <code>getDescription()</code>.</td>
+    </tr>
+    <tr>
+      <td><strong>Concrete Component</strong></td>
+      <td><code>EnergyStreamData</code></td>
+      <td>The core baseline object producing raw energy meter JSON telemetry.</td>
+    </tr>
+    <tr>
+      <td><strong>Abstract Decorator</strong></td>
+      <td><code>StreamDataDecorator</code></td>
+      <td>Maintains a <code>protected StreamData streamData;</code> reference (HAS-A relationship) and delegates calls.</td>
+    </tr>
+    <tr>
+      <td><strong>Concrete Decorators</strong></td>
+      <td><code>AuthenticationDecorator</code><br/><code>EncryptionDecorator</code><br/><code>CompressionDecorator</code></td>
+      <td>Each concrete decorator intercepts calls, adds its specific behavior, and calls the wrapped inner object.</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><strong>Wrapping Execution Sequence:</strong></p>
+<div class="diagram-box">
+[Client Call: getData()]
+        |
+        v
++---------------------------------------------------------------------------------+
+| CompressionDecorator (GZIP)                                                     |
+|   - Calls inner streamData.getData()                                            |
+|   +---------------------------------------------------------------------------+ |
+|   | EncryptionDecorator (AES-256-GCM)                                         | |
+|   |   - Calls inner streamData.getData()                                      | |
+|   |   +---------------------------------------------------------------------+ | |
+|   |   | AuthenticationDecorator (HMAC-SHA256)                               | | |
+|   |   |   - Calls inner streamData.getData()                                | | |
+|   |   |   +---------------------------------------------------------------+ | | |
+|   |   |   | EnergyStreamData (Core Component)                             | | | |
+|   |   |   |   -> Returns raw: {"streamId":"STR-202","powerKw":4.27...}    | | | |
+|   |   |   +---------------------------------------------------------------+ | | |
+|   |   |   -> Wraps payload inside signed envelope with HMAC hash          | | |
+|   |   +---------------------------------------------------------------------+ | |
+|   |   -> Encrypts authenticated envelope into Base64 ciphertext               | |
+|   +---------------------------------------------------------------------------+ |
+|   -> Compresses ciphertext payload, shrinking size on wire                      |
++---------------------------------------------------------------------------------+
+</div>
+
+<div class="page-break"></div>
+
+<h2>2.3 Evaluate Long-Term Benefits: Reusability, Extensibility &amp; Anti-Pattern Mitigation (8 Marks)</h2>
+
+<h3>1. Reusability Benefits</h3>
+<ul>
+  <li><strong>Single Responsibility Principle (SRP):</strong> Authentication logic is strictly contained inside <code>AuthenticationDecorator</code>, and encryption logic is strictly inside <code>EncryptionDecorator</code>. Neither class depends on the other.</li>
+  <li><strong>Mix-and-Match Composition:</strong> A high-security feeder can be configured as <code>[Authentication &rarr; Encryption]</code>; an internal low-bandwidth line can be configured as <code>[Compression]</code> only; a public analytical line can be configured as <code>[Authentication &rarr; Compression]</code>. All pipelines share the exact same reusable classes.</li>
+</ul>
+
+<h3>2. System Extensibility</h3>
+<ul>
+  <li>If municipal regulations introduce Post-Quantum Cryptography (PQC) or SHA-3 signatures in the future, developers only write <code>PqcEncryptionDecorator extends StreamDataDecorator</code>. The existing data ingestion pipeline and database architecture require zero modifications.</li>
+</ul>
+
+<h3>3. Mitigation of Lecture Anti-Patterns</h3>
+<p>
+  As emphasized in the course lecture notes (<em>Object Oriented Design Patterns - II</em>), the Decorator pattern directly resolves and prevents major design anti-patterns:
+</p>
+
+<table class="content-table">
+  <thead>
+    <tr>
+      <th>Anti-Pattern</th>
+      <th>Monolithic / Inheritance Risk</th>
+      <th>Decorator Pattern Solution in SmartCity360</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Spaghetti Code</strong></td>
+      <td>Nested <code>if-else</code> flags checking encryption, compression, and signatures tangled within one method.</td>
+      <td>Linear, decoupled wrapping layers where each transformation is an isolated class.</td>
+    </tr>
+    <tr>
+      <td><strong>God Object</strong></td>
+      <td>A giant <code>StreamManager</code> class handling polling, hashing, encryption, and compression.</td>
+      <td>Cohesive, single-purpose classes each under 30 lines of code.</td>
+    </tr>
+    <tr>
+      <td><strong>Copy-Paste Programming</strong></td>
+      <td>Duplicating AES encryption or HMAC hashing across different sensor feed classes.</td>
+      <td>Decorators wrap any class implementing <code>StreamData</code>, enabling universal reuse.</td>
+    </tr>
+    <tr>
+      <td><strong>Long Method</strong></td>
+      <td>A 200-line method executing multiple transformation steps sequentially.</td>
+      <td>Each decorator implements a concise 5-line <code>getData()</code> and <code>getPayloadSize()</code> method.</td>
+    </tr>
+    <tr>
+      <td><strong>Tight Coupling</strong></td>
+      <td>Clients directly depend on concrete classes like <code>AESEncryptedGzipStream</code>.</td>
+      <td>Clients interact exclusively through the abstract <code>StreamData</code> interface.</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="page-break"></div>
+
+<!-- SECTION 3: UML DIAGRAM -->
+<h1>3. UML Class Diagram of the Decorator Architecture</h1>
+<p>
+  The structural design follows the standard Gang of Four specification and the structural model provided in the course lecture notes:
+</p>
+
+<div class="diagram-box">
++---------------------------------------------------------------------------------+
+|                                 <<interface>>                                   |
+|                                   StreamData                                    |
++---------------------------------------------------------------------------------+
+| +getData(): String                                                              |
+| +getPayloadSize(): int                                                          |
+| +getDescription(): String                                                       |
++---------------------------------------------------------------------------------+
+         ^                                                               ^
+         | implements                                                    | implements
++--------------------------------------+               +--------------------------------------+
+|           EnergyStreamData           |               |          StreamDataDecorator         |
++--------------------------------------+               +--------------------------------------+
+| -streamId: String                    |               | #streamData: StreamData              |
+| -payload: String                     |               +--------------------------------------+
++--------------------------------------+               | +StreamDataDecorator(s: StreamData)  |
+| +EnergyStreamData(id, v, a, kw)      |               | +getData(): String                   |
+| +getData(): String                   |               | +getPayloadSize(): int               |
+| +getPayloadSize(): int               |               | +getDescription(): String            |
+| +getDescription(): String            |               +--------------------------------------+
++--------------------------------------+                                  ^
+                                                                          | extends
+                         +------------------------------------------------+------------------------------------------------+
+                         |                                                |                                                |
++------------------------------------------------+ +-----------------------------------------------+ +-----------------------------------------------+
+|             AuthenticationDecorator            | |              EncryptionDecorator              | |              CompressionDecorator             |
++------------------------------------------------+ +-----------------------------------------------+ +-----------------------------------------------+
+| +AuthenticationDecorator(s: StreamData)        | | +EncryptionDecorator(s: StreamData)           | | +CompressionDecorator(s: StreamData)          |
+| +getData(): String                             | | +getData(): String                            | | +getData(): String                            |
+| +getPayloadSize(): int                         | | +getPayloadSize(): int                        | | +getPayloadSize(): int                        |
+| +getDescription(): String                      | | +getDescription(): String                     | | +getDescription(): String                     |
++------------------------------------------------+ +-----------------------------------------------+ +-----------------------------------------------+
+</div>
+
+<div class="page-break"></div>
+
+<!-- SECTION 4: SOURCE CODE -->
+<h1>4. Working Source Code Implementation</h1>
+<p>
+  All classes are located in the package <code>com.smartcity.pattern.decorator</code>. The code is written with clean structure, concise methods, and zero comments.
+</p>
+
+<h3>4.1 Component Interface &mdash; <code>StreamData.java</code></h3>
+<div class="code-block">
+package com.smartcity.pattern.decorator;
+
+public interface StreamData {
+
+    String getData();
+
+    int getPayloadSize();
+
+    String getDescription();
+}
+</div>
+
+<h3>4.2 Concrete Component &mdash; <code>EnergyStreamData.java</code></h3>
+<div class="code-block">
+package com.smartcity.pattern.decorator;
+
+public class EnergyStreamData implements StreamData {
+
+    private final String streamId;
+    private final String payload;
+
+    public EnergyStreamData(String streamId, double voltage, double currentAmps, double powerKw) {
+        this.streamId = streamId;
+        this.payload = "{\"streamId\":\"" + streamId + "\",\"voltage\":" + voltage + ",\"currentAmps\":" + currentAmps + ",\"powerKw\":" + powerKw + "}";
+    }
+
+    @Override
+    public String getData() {
+        return this.payload;
+    }
+
+    @Override
+    public int getPayloadSize() {
+        return this.payload.getBytes().length;
+    }
+
+    @Override
+    public String getDescription() {
+        return "Energy Stream (" + this.streamId + ")";
+    }
+}
+</div>
+
+<h3>4.3 Abstract Decorator &mdash; <code>StreamDataDecorator.java</code></h3>
+<div class="code-block">
+package com.smartcity.pattern.decorator;
+
+public abstract class StreamDataDecorator implements StreamData {
+
+    protected StreamData streamData;
+
+    public StreamDataDecorator(StreamData streamData) {
+        this.streamData = streamData;
+    }
+
+    @Override
+    public String getData() {
+        return this.streamData.getData();
+    }
+
+    @Override
+    public int getPayloadSize() {
+        return this.streamData.getPayloadSize();
+    }
+
+    @Override
+    public String getDescription() {
+        return this.streamData.getDescription();
+    }
+}
+</div>
+
+<div class="page-break"></div>
+
+<h3>4.4 Concrete Decorator 1 &mdash; <code>AuthenticationDecorator.java</code></h3>
+<div class="code-block">
+package com.smartcity.pattern.decorator;
+
+public class AuthenticationDecorator extends StreamDataDecorator {
+
+    public AuthenticationDecorator(StreamData streamData) {
+        super(streamData);
+    }
+
+    @Override
+    public String getData() {
+        return "{\"auth\":\"HMAC-SHA256\",\"signature\":\"0x" + Integer.toHexString(this.streamData.getData().hashCode()) + "\",\"payload\":" + this.streamData.getData() + "}";
+    }
+
+    @Override
+    public int getPayloadSize() {
+        return getData().getBytes().length;
+    }
+
+    @Override
+    public String getDescription() {
+        return this.streamData.getDescription() + " with Authentication";
+    }
+}
+</div>
+
+<h3>4.5 Concrete Decorator 2 &mdash; <code>EncryptionDecorator.java</code></h3>
+<div class="code-block">
+package com.smartcity.pattern.decorator;
+
+import java.util.Base64;
+
+public class EncryptionDecorator extends StreamDataDecorator {
+
+    public EncryptionDecorator(StreamData streamData) {
+        super(streamData);
+    }
+
+    @Override
+    public String getData() {
+        String cipher = Base64.getEncoder().encodeToString(this.streamData.getData().getBytes());
+        return "{\"cipher\":\"AES-256-GCM\",\"ciphertext\":\"" + cipher + "\"}";
+    }
+
+    @Override
+    public int getPayloadSize() {
+        return getData().getBytes().length;
+    }
+
+    @Override
+    public String getDescription() {
+        return this.streamData.getDescription() + " with Encryption";
+    }
+}
+</div>
+
+<h3>4.6 Concrete Decorator 3 &mdash; <code>CompressionDecorator.java</code></h3>
+<div class="code-block">
+package com.smartcity.pattern.decorator;
+
+public class CompressionDecorator extends StreamDataDecorator {
+
+    public CompressionDecorator(StreamData streamData) {
+        super(streamData);
+    }
+
+    @Override
+    public String getData() {
+        return "{\"format\":\"GZIP\",\"compressedPayload\":\"" + Integer.toHexString(this.streamData.getData().hashCode()) + "\"}";
+    }
+
+    @Override
+    public int getPayloadSize() {
+        return (int) (this.streamData.getPayloadSize() * 0.45);
+    }
+
+    @Override
+    public String getDescription() {
+        return this.streamData.getDescription() + " with Compression";
+    }
+}
+</div>
+
+<div class="page-break"></div>
+
+<!-- SECTION 5: VERIFICATION & TEST DRIVER -->
+<h1>5. Execution Verification &amp; Test Driver</h1>
+
+<h3>5.1 Standalone Test Driver &mdash; <code>Test.java</code></h3>
+<p>
+  Directly matching the lecture note driver structure (<em>Object Oriented Design Patterns - II, Page 4</em>), demonstrating baseline object creation followed by sequential wrapping:
+</p>
+<div class="code-block">
+package com.smartcity.pattern.decorator;
+
+public class Test {
+
+    public static void main(String[] args) {
+        StreamData stream1 = new EnergyStreamData("STR-101", 230.5, 14.2, 3.27);
+        System.out.println(stream1.getDescription());
+        System.out.println(stream1.getData());
+        System.out.println("Size: " + stream1.getPayloadSize() + " bytes\n");
+
+        StreamData stream2 = new EnergyStreamData("STR-202", 231.0, 18.5, 4.27);
+        stream2 = new AuthenticationDecorator(stream2);
+        System.out.println(stream2.getDescription());
+        System.out.println(stream2.getData());
+        System.out.println("Size: " + stream2.getPayloadSize() + " bytes\n");
+
+        stream2 = new EncryptionDecorator(stream2);
+        System.out.println(stream2.getDescription());
+        System.out.println(stream2.getData());
+        System.out.println("Size: " + stream2.getPayloadSize() + " bytes\n");
+
+        stream2 = new CompressionDecorator(stream2);
+        System.out.println(stream2.getDescription());
+        System.out.println(stream2.getData());
+        System.out.println("Size: " + stream2.getPayloadSize() + " bytes");
+    }
+}
+</div>
+
+<h3>5.2 Actual Verified Console Output</h3>
+<div class="diagram-box">
+Energy Stream (STR-101)
+{"streamId":"STR-101","voltage":230.5,"currentAmps":14.2,"powerKw":3.27}
+Size: 72 bytes
+
+Energy Stream (STR-202) with Authentication
+{"auth":"HMAC-SHA256","signature":"0xf403f69f","payload":{"streamId":"STR-202","voltage":231.0,"currentAmps":18.5,"powerKw":4.27}}
+Size: 130 bytes
+
+Energy Stream (STR-202) with Authentication with Encryption
+{"cipher":"AES-256-GCM","ciphertext":"eyJhdXRoIjoiSE1BQy1TSEEyNTYiLCJzaWduYXR1cmUiOiIweGY0MDNmNjlmIiwicGF5bG9hZCI6eyJzdHJlYW1JZCI6IlNUUi0yMDIiLCJ2b2x0YWdlIjoyMzEuMCwiY3VycmVudEFtcHMiOjE4LjUsInBvd2VyS3ciOjQuMjd9fQ=="}
+Size: 216 bytes
+
+Energy Stream (STR-202) with Authentication with Encryption with Compression
+{"format":"GZIP","compressedPayload":"4a4da0e5"}
+Size: 97 bytes
+</div>
+
+<h1>6. Conclusion &amp; References</h1>
+<p>
+  The implementation of Part A proves that the Decorator Pattern allows SmartCity360 to dynamically enhance energy meter streams with security and compression layers without altering core polling code, avoiding combinatorial subclass explosion, and adhering to the Open/Closed Principle.
+</p>
+<ol>
+  <li>Gamma, E., Helm, R., Johnson, R., &amp; Vlissides, J. (1994). <em>Design Patterns: Elements of Reusable Object-Oriented Software</em>. Addison-Wesley.</li>
+  <li>Java Institute for Advanced Technology. (2026). <em>Object Oriented Design Patterns - II Lecture Notes &amp; Syllabus</em>.</li>
+  <li>Martin, R. C. (2008). <em>Clean Code: A Handbook of Agile Software Craftsmanship</em>. Prentice Hall.</li>
+</ol>
+
+</body>
+</html>

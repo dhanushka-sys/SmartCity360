@@ -17,31 +17,21 @@ const delay = (ms = 180) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export const StreetlightsService = {
   async getStreetlights(): Promise<Streetlight[]> {
-    try {
-      const data = await fetchFromBackend<Streetlight[]>("/streetlights");
-      if (data && data.length > 0) {
-        streetlightsState = data;
-        return data;
-      }
-    } catch {
-      // Fallback to local state if backend is offline
+    const data = await fetchFromBackend<Streetlight[]>("/streetlights");
+    if (data && Array.isArray(data)) {
+      streetlightsState = data;
+      return data;
     }
-    await delay();
-    return [...streetlightsState];
+    throw new Error("Unable to load streetlights from MySQL database.");
   },
 
   async getProfiles(): Promise<StreetlightProfile[]> {
-    try {
-      const data = await fetchFromBackend<StreetlightProfile[]>("/streetlights/profiles");
-      if (data && data.length > 0) {
-        profilesState = data;
-        return data;
-      }
-    } catch {
-      // Fallback to local state if backend is offline
+    const data = await fetchFromBackend<StreetlightProfile[]>("/streetlights/profiles");
+    if (data && Array.isArray(data)) {
+      profilesState = data;
+      return data;
     }
-    await delay();
-    return [...profilesState];
+    throw new Error("Unable to load streetlight profiles from MySQL database.");
   },
 
   /**

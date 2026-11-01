@@ -6,17 +6,50 @@ import {
   Lightbulb,
   AlertTriangle,
   Layers,
-  FileCode2,
-  TrendingUp,
-  ShieldCheck,
-  Zap,
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useAppMode } from "@/components/mode-provider";
+import { DashboardService, DashboardStats } from "@/lib/api/dashboard-service";
 
 export function BentoKpi() {
   const { isAcademic } = useAppMode();
+  const [stats, setStats] = React.useState<DashboardStats | null>(null);
+  const [loading, setLoading] = React.useState(true);
+  const [error, setError] = React.useState<string | null>(null);
+
+  React.useEffect(() => {
+    let mounted = true;
+    DashboardService.getStats()
+      .then((data) => {
+        if (mounted) {
+          setStats(data);
+          setError(null);
+        }
+      })
+      .catch((err: unknown) => {
+        if (mounted) {
+          setError(err instanceof Error ? err.message : "Backend offline");
+        }
+      })
+      .finally(() => {
+        if (mounted) setLoading(false);
+      });
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  if (error) {
+    return (
+      <div className="rounded-xl border border-rose-300 dark:border-rose-900/60 bg-rose-50 dark:bg-rose-950/30 p-4 text-xs text-rose-800 dark:text-rose-200 flex items-center justify-between">
+        <div>
+          <span className="font-bold">Real Database Connection Required:</span> {error}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -32,13 +65,19 @@ export function BentoKpi() {
             </div>
           </div>
           <div className="mt-3 flex items-baseline gap-2">
-            <span className="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">19</span>
+            <span className="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+              {loading ? "..." : stats?.totalZones || 0}
+            </span>
             <span className="text-xs text-slate-500 dark:text-slate-400">
               {isAcademic ? "composite nodes" : "facilities active"}
             </span>
           </div>
           <div className="mt-3 flex items-center justify-between border-t border-slate-200 dark:border-slate-800/80 pt-2.5 text-[11px] text-slate-600 dark:text-slate-400">
-            <span>3 Districts • 6 Streets • 10 Bldgs</span>
+            <span>
+              {loading
+                ? "Loading..."
+                : `${stats?.districtCount || 0} Districts • ${stats?.streetCount || 0} Streets • ${stats?.buildingCount || 0} Bldgs`}
+            </span>
             <Badge variant="blue" className="text-[10px]">
               {isAcademic ? "Composite" : "Hierarchy"}
             </Badge>
@@ -58,11 +97,15 @@ export function BentoKpi() {
             </div>
           </div>
           <div className="mt-3 flex items-baseline gap-2">
-            <span className="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">24,500</span>
-            <span className="text-xs text-emerald-600 dark:text-emerald-400 font-medium">88.8% RAM Saved</span>
+            <span className="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+              {loading ? "..." : stats?.totalStreetlights || 0}
+            </span>
+            <span className="text-xs text-emerald-600 dark:text-emerald-400 font-medium">
+              {stats?.onlineStreetlights || 0} Online
+            </span>
           </div>
           <div className="mt-3 flex items-center justify-between border-t border-slate-200 dark:border-slate-800/80 pt-2.5 text-[11px] text-slate-600 dark:text-slate-400">
-            <span>{isAcademic ? "4 Flyweight Profiles Shared" : "4 Shared LED Profiles"}</span>
+            <span>{loading ? "Loading..." : `${stats?.totalLightKw?.toFixed(1) || 0} kW Grid Load`}</span>
             <Badge variant="success" className="text-[10px]">
               {isAcademic ? "Flyweight" : "Optimized"}
             </Badge>
@@ -82,11 +125,15 @@ export function BentoKpi() {
             </div>
           </div>
           <div className="mt-3 flex items-baseline gap-2">
-            <span className="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">4</span>
-            <span className="text-xs text-rose-600 dark:text-rose-400 font-medium">2 High/Critical</span>
+            <span className="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+              {loading ? "..." : stats?.openComplaints || 0}
+            </span>
+            <span className="text-xs text-rose-600 dark:text-rose-400 font-medium">
+              {stats?.criticalComplaints || 0} Critical
+            </span>
           </div>
           <div className="mt-3 flex items-center justify-between border-t border-slate-200 dark:border-slate-800/80 pt-2.5 text-[11px] text-slate-600 dark:text-slate-400">
-            <span>Local → Supervisor → Manager</span>
+            <span>{loading ? "Loading..." : `${stats?.totalComplaints || 0} Total Logged`}</span>
             <Badge variant="warning" className="text-[10px]">
               {isAcademic ? "Chain of Resp." : "Escalation Queue"}
             </Badge>
@@ -99,18 +146,22 @@ export function BentoKpi() {
         <CardContent className="p-5">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-              Data Stream Events
+              Data Streams
             </span>
             <div className="rounded-xl bg-cyan-100 dark:bg-cyan-500/10 p-2 text-cyan-600 dark:text-cyan-400 border border-cyan-200 dark:border-cyan-500/20">
               <Layers className="h-4 w-4" />
             </div>
           </div>
           <div className="mt-3 flex items-baseline gap-2">
-            <span className="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">1.42M</span>
-            <span className="text-xs text-cyan-600 dark:text-cyan-400 font-medium">3 Active Layers</span>
+            <span className="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+              {loading ? "..." : stats?.totalStreams || 0}
+            </span>
+            <span className="text-xs text-cyan-600 dark:text-cyan-400 font-medium">
+              {stats?.activePolicies || 0} Policies
+            </span>
           </div>
           <div className="mt-3 flex items-center justify-between border-t border-slate-200 dark:border-slate-800/80 pt-2.5 text-[11px] text-slate-600 dark:text-slate-400">
-            <span>Auth + Cipher + Comp</span>
+            <span>{loading ? "Loading..." : `${stats?.totalPowerKw?.toFixed(0) || 0} kW Grid Load`}</span>
             <Badge variant="info" className="text-[10px]">
               {isAcademic ? "Decorator" : "Secured"}
             </Badge>

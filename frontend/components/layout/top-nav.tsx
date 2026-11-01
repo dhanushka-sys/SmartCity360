@@ -8,7 +8,7 @@ import {
   Menu,
   CheckCircle,
   AlertTriangle,
-  User,
+  User as UserIcon,
   SlidersHorizontal,
   ExternalLink,
   ChevronRight,
@@ -29,7 +29,8 @@ import { useRouter } from "next/navigation";
 import { useTheme } from "@/components/theme-provider";
 import { useAppMode } from "@/components/mode-provider";
 import { useAuth } from "@/components/auth-provider";
-import { DEMO_USERS } from "@/lib/api/auth-service";
+import { AuthService } from "@/lib/api/auth-service";
+import { User } from "@/types/user";
 
 interface TopNavProps {
   onMobileMenuOpen: () => void;
@@ -103,6 +104,13 @@ export function TopNav({ onMobileMenuOpen }: TopNavProps) {
   const [notificationsOpen, setNotificationsOpen] = React.useState(false);
   const [searchQuery, setSearchQuery] = React.useState("");
   const [profileOpen, setProfileOpen] = React.useState(false);
+  const [availableUsers, setAvailableUsers] = React.useState<User[]>([]);
+
+  React.useEffect(() => {
+    AuthService.getDemoUsers()
+      .then((users) => setAvailableUsers(users))
+      .catch(() => {});
+  }, []);
 
   const currentMeta = pageTitles[pathname] || {
     title: "SmartCity360",
@@ -454,8 +462,8 @@ export function TopNav({ onMobileMenuOpen }: TopNavProps) {
               </p>
               <span className="text-[10px] text-amber-600 dark:text-amber-400 font-medium">1-Click Switch</span>
             </div>
-            <div className="grid grid-cols-2 gap-2">
-              {DEMO_USERS.map((demo) => {
+            <div className="grid grid-cols-2 gap-2 max-h-56 overflow-y-auto pr-1">
+              {availableUsers.slice(0, 10).map((demo) => {
                 const isCurrent = user?.id === demo.id;
                 return (
                   <button
