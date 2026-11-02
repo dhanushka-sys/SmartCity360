@@ -21,3 +21,4 @@ public enum ComplaintSeverity {
         return parse(raw) != null;
     }
 }
+

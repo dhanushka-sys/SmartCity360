@@ -34,3 +34,4 @@ public class TerminalFallbackHandler extends ComplaintHandler {
         return fallback;
     }
 }
+

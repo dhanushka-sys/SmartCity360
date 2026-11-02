@@ -28,3 +28,4 @@ public enum ZoneCommand {
         throw new IllegalArgumentException("Invalid or unsupported zone command: '" + text + "'. Supported: shutdownPower, restorePower, emergencyIsolate");
     }
 }
+

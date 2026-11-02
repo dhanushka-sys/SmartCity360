@@ -10,3 +10,4 @@ public class DslSyntaxException extends RuntimeException {
         super(message, cause);
     }
 }
+

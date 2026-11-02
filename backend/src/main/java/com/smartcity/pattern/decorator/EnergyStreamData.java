@@ -10,7 +10,8 @@ public class EnergyStreamData implements StreamData {
 
     public EnergyStreamData(String streamId, double voltage, double currentAmps, double powerKw) {
         this.streamId = streamId;
-        this.payload = "{\"streamId\":\"" + streamId + "\",\"voltage\":" + voltage + ",\"currentAmps\":" + currentAmps + ",\"powerKw\":" + powerKw + "}";
+        this.payload = "{\"streamId\":\"" + streamId + "\",\"voltage\":" + voltage + ",\"currentAmps\":" + currentAmps
+                + ",\"powerKw\":" + powerKw + "}";
         this.payloadBytes = this.payload.getBytes(StandardCharsets.UTF_8);
     }
 

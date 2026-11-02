@@ -243,29 +243,6 @@ def generate_formal_html():
     padding-top: 6px;
   }
 
-  /* VIVA QA */
-  .viva-card {
-    background: #f8fafc;
-    border: 1px solid #e2e8f0;
-    border-left: 3px solid #1e3a8a;
-    padding: 10px 14px;
-    margin-bottom: 14px;
-    page-break-inside: avoid;
-    border-radius: 0 4px 4px 0;
-  }
-  .viva-q {
-    font-weight: bold;
-    font-size: 10.5pt;
-    color: #0f294a;
-    margin-bottom: 4px;
-  }
-  .viva-a {
-    font-size: 10pt;
-    color: #334155;
-    margin: 0;
-    text-align: justify;
-  }
-
   /* Compact TOC Table */
   table.toc-table {
     width: 100%;
@@ -348,14 +325,13 @@ def generate_formal_html():
   <tr><td style="padding-left: 20px;">6.2 UML Class Diagram & Mechanism of the DSL Interpreter Pattern (4 Marks)</td><td style="text-align: right;">17</td></tr>
   <tr><td style="padding-left: 20px;">6.3 Critical Assessment: Rule Updates, Extensibility & Security (8 Marks)</td><td style="text-align: right;">18</td></tr>
   <tr><td style="padding-left: 20px;">6.4 UML Class Diagram & Technical Source Code Highlights</td><td style="text-align: right;">18</td></tr>
-  <tr><td><b>7. Part F — Final Project Demonstration, VIVA Defense & Video Outline [25 Marks]</b></td><td style="text-align: right;">20</td></tr>
+  <tr><td><b>7. Part F — System Architecture & Multi-Tier Platform Implementation [25 Marks]</b></td><td style="text-align: right;">20</td></tr>
   <tr><td style="padding-left: 20px;">7.1 Overall System Architecture & Multi-Tier Enterprise Design</td><td style="text-align: right;">20</td></tr>
-  <tr><td style="padding-left: 20px;">7.2 Key Architectural Choices & Anti-Pattern Defense Matrix</td><td style="text-align: right;">20</td></tr>
-  <tr><td style="padding-left: 20px;">7.3 VIVA Oral Examination Questions & Comprehensive Model Answers (15 Marks)</td><td style="text-align: right;">21</td></tr>
-  <tr><td style="padding-left: 20px;">7.4 10–15 Minute Demonstration Video Walkthrough Script (10 Marks)</td><td style="text-align: right;">22</td></tr>
-  <tr><td style="padding-left: 20px;">7.5 Empirical Automated Test Execution Results (31/31 PASS - 100% Rate)</td><td style="text-align: right;">23</td></tr>
-  <tr><td style="padding-left: 20px;">7.6 Final Submission Deliverables Verification</td><td style="text-align: right;">24</td></tr>
-  <tr><td><b>8. Conclusion & Academic References</b></td><td style="text-align: right;">25</td></tr>
+  <tr><td style="padding-left: 20px;">7.2 End-to-End Enterprise Architecture Diagram</td><td style="text-align: right;">20</td></tr>
+  <tr><td style="padding-left: 20px;">7.3 Key Architectural Choices & Anti-Pattern Defense Matrix</td><td style="text-align: right;">21</td></tr>
+  <tr><td style="padding-left: 20px;">7.4 Empirical Automated Test Execution Results (31/31 PASS - 100% Rate)</td><td style="text-align: right;">22</td></tr>
+  <tr><td style="padding-left: 20px;">7.5 Final Submission Deliverables Verification</td><td style="text-align: right;">23</td></tr>
+  <tr><td><b>8. Conclusion & Academic References</b></td><td style="text-align: right;">24</td></tr>
 </table>
 """)
 
@@ -427,11 +403,11 @@ def generate_formal_html():
     render_formal_part(content.PART_D, "5", load_svg("04_flyweight_memory.svg"), "Figure 5.1 — JVM Heap Memory Allocation & Flyweight Profile Cache Pool Diagram")
     render_formal_part(content.PART_E, "6", load_svg("05_interpreter_ast.svg"), "Figure 6.1 — UML Class Diagram: Interpreter Pattern Class Hierarchy & Context Association")
 
-    # PART F
+    # PART F - Pure Technical Report (No VIVA Q&A cards or Video Scripts)
     html_parts.append(f"""
 <div class="page-break"></div>
 <h1>
-  <span>7. PART F — FINAL PROJECT DEMONSTRATION, VIVA DEFENSE & DOCUMENTATION</span>
+  <span>7. PART F — SYSTEM ARCHITECTURE & MULTI-TIER PLATFORM IMPLEMENTATION</span>
   <span class="marks-badge">25 MARKS</span>
 </h1>
 
@@ -467,39 +443,9 @@ def generate_formal_html():
 """)
     html_parts.append("""</table>""")
 
+    # 7.3 Automated Verification
     html_parts.append("""
-<h2>7.3 VIVA Oral Examination Questions & Comprehensive Model Answers (15 Marks)</h2>
-""")
-    for idx, v_item in enumerate(content.PART_F["f3_viva"]):
-        html_parts.append(f"""
-<div class="viva-card">
-  <div class="viva-q">Question {idx + 1}: "{html.escape(v_item['q'])}"</div>
-  <div class="viva-a"><b>Model Answer:</b> {html.escape(v_item['a'])}</div>
-</div>
-""")
-
-    html_parts.append("""
-<h2>7.4 10–15 Minute Demonstration Video Walkthrough Script (10 Marks)</h2>
-<table class="formal-table">
-  <tr>
-    <th style="width: 18%;">Timeframe</th>
-    <th style="width: 30%;">Demonstration Phase</th>
-    <th style="width: 52%;">Screen Action & Technical Narration</th>
-  </tr>
-""")
-    for v_time, v_phase, v_desc in content.PART_F["f4_video_script"]:
-        html_parts.append(f"""
-  <tr>
-    <td><b>{html.escape(v_time)}</b></td>
-    <td><b>{html.escape(v_phase)}</b></td>
-    <td>{html.escape(v_desc)}</td>
-  </tr>
-""")
-    html_parts.append("""</table>""")
-
-    # 7.5 Automated Verification
-    html_parts.append("""
-<h2>7.5 Empirical Automated Test Execution Results (100% Pass Rate)</h2>
+<h2>7.3 Empirical Automated Test Execution Results (100% Pass Rate)</h2>
 <p>To substantiate the architectural integrity, mathematical soundness, and runtime stability of the SmartCity360 platform, a comprehensive automated regression suite (<code>com.smartcity.test.ComprehensiveTestSuite</code>) was executed against the production build. All 31 test cases across the five core design patterns and multi-tier APIs passed with zero regressions:</p>
 
 <table class="formal-table">
@@ -562,9 +508,9 @@ def generate_formal_html():
 </table>
 """)
 
-    # 7.6 Final Submission Deliverables
+    # 7.4 Final Submission Deliverables
     html_parts.append("""
-<h2>7.6 Final Submission Deliverables Verification</h2>
+<h2>7.4 Final Submission Deliverables Verification</h2>
 <p>In accordance with Section 5 of the assessment specification (Part F), the mandatory deliverables have been prepared, audited, and verified for direct academic submission:</p>
 <table class="formal-table">
   <tr>

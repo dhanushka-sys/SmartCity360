@@ -39,3 +39,4 @@ public class NaiveHeavyStreetlight {
                 poleId, model, wattage, colorTemperatureK, lampType, latitude, longitude, brightnessLevel, operationalStatus);
     }
 }
+

@@ -41,3 +41,4 @@ public class ComplaintAuditRecord {
         return "[" + timestamp + "] " + fromRole + " -> " + toRole + " (" + action + "): " + reason;
     }
 }
+

@@ -307,3 +307,4 @@ If any technical issue arises during recording, use these fast recovery steps:
 | **MySQL Connection Refused** | `CommunicationsException: Connection refused` | Verify MySQL Windows Service: Run `net start MySQL80` or `net start MySQL`. |
 | **Next.js Dev Server Freeze** | Browser hangs on localhost:3000 | In frontend terminal: press `Ctrl + C`, clear `.next` cache with `rm -r .next`, then re-run `npm run dev`. |
 | **Test Compilation Failure** | `ClassNotFoundException` | Recompile all backend classes cleanly using `python compile_backend.py`. |
+
