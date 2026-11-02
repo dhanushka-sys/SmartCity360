@@ -2,33 +2,43 @@ package com.smartcity.pattern.chain;
 
 import com.smartcity.model.Complaint;
 
+import java.time.Instant;
+
 public class SupervisorHandler extends ComplaintHandler {
 
     @Override
     public ComplaintRoutingResult handle(Complaint complaint) {
-        String severity = complaint.getSeverity() != null ? complaint.getSeverity().toUpperCase() : "MEDIUM";
+        ComplaintSeverity severity = ComplaintSeverity.parse(complaint.getSeverity());
 
-        if ("HIGH".equals(severity)) {
+        if (severity == ComplaintSeverity.MEDIUM) {
             complaint.setCurrentHandlerRole("SUPERVISOR");
             complaint.setStatus("ESCALATED");
             ComplaintRoutingResult result = new ComplaintRoutingResult(
                     complaint.getId(),
-                    severity,
+                    "MEDIUM",
                     "SUPERVISOR",
-                    "Escalated to District Supervisor for departmental coordination",
+                    "ESCALATED_SUPERVISOR",
+                    "Escalated to District Supervisor for departmental resource coordination",
                     true
             );
-            result.getRouteHistory().add("LOCAL_STAFF -> SUPERVISOR");
+            result.addAuditRecord(new ComplaintAuditRecord(
+                    Instant.now().toString(),
+                    "LOCAL_STAFF",
+                    "SUPERVISOR",
+                    "ROUTED_MEDIUM",
+                    "Resolved at Tier 2 supervisor management level"
+            ));
             return result;
         }
 
-        if (this.nextHandler != null) {
-            ComplaintRoutingResult result = this.nextHandler.handle(complaint);
-            result.getRouteHistory().add(0, "LOCAL_STAFF -> SUPERVISOR");
-            return result;
-        }
-
-        return new ComplaintRoutingResult(complaint.getId(), severity, "UNASSIGNED", "No handler could process request", false);
+        ComplaintRoutingResult nextResult = passToNext(complaint);
+        nextResult.addAuditRecord(new ComplaintAuditRecord(
+                Instant.now().toString(),
+                "SUPERVISOR",
+                "CITY_MANAGER",
+                "ESCALATE_TIER3",
+                "Severity exceeds Tier 2 threshold; escalating to executive leadership"
+        ));
+        return nextResult;
     }
 }
-

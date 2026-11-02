@@ -1,21 +1,26 @@
 package com.smartcity.pattern.flyweight;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 public class StreetlightProfileFactory {
-    private static final Map<String, SharedStreetlightProfile> profiles = new HashMap<>();
 
-    public static synchronized SharedStreetlightProfile getProfile(String model, String lampType, int wattage, int maxLumens, String firmware) {
-        String key = model + "|" + lampType + "|" + wattage;
-        if (!profiles.containsKey(key)) {
-            profiles.put(key, new SharedStreetlightProfile(model, lampType, wattage, maxLumens, firmware));
-        }
-        return profiles.get(key);
+    private static final ConcurrentMap<String, SharedStreetlightProfile> profiles = new ConcurrentHashMap<>();
+
+    public static SharedStreetlightProfile getProfile(String model, String lampType, int wattage, int maxLumens, int colorTemperatureK, String firmware) {
+        String key = (model != null ? model : "") + "|" + (lampType != null ? lampType : "") + "|" + wattage + "|" + colorTemperatureK;
+        return profiles.computeIfAbsent(key, k -> new SharedStreetlightProfile(model, lampType, wattage, maxLumens, colorTemperatureK, firmware));
+    }
+
+    public static SharedStreetlightProfile getProfile(String model, String lampType, int wattage, int maxLumens, String firmware) {
+        return getProfile(model, lampType, wattage, maxLumens, 4000, firmware);
     }
 
     public static int getFlyweightCount() {
         return profiles.size();
     }
-}
 
+    public static void clear() {
+        profiles.clear();
+    }
+}

@@ -2,33 +2,43 @@ package com.smartcity.pattern.chain;
 
 import com.smartcity.model.Complaint;
 
+import java.time.Instant;
+
 public class LocalStaffHandler extends ComplaintHandler {
 
     @Override
     public ComplaintRoutingResult handle(Complaint complaint) {
-        String severity = complaint.getSeverity() != null ? complaint.getSeverity().toUpperCase() : "LOW";
+        ComplaintSeverity severity = ComplaintSeverity.parse(complaint.getSeverity());
 
-        if ("LOW".equals(severity) || "MEDIUM".equals(severity)) {
+        if (severity == ComplaintSeverity.LOW) {
             complaint.setCurrentHandlerRole("LOCAL_STAFF");
             complaint.setStatus("ASSIGNED");
             ComplaintRoutingResult result = new ComplaintRoutingResult(
                     complaint.getId(),
-                    severity,
+                    "LOW",
                     "LOCAL_STAFF",
-                    "Assigned to Local Staff for field resolution",
+                    "ASSIGNED",
+                    "Assigned to Local Staff for routine field inspection and resolution",
                     true
             );
-            result.getRouteHistory().add("CITIZEN -> LOCAL_STAFF");
+            result.addAuditRecord(new ComplaintAuditRecord(
+                    Instant.now().toString(),
+                    "ENTRY_GATEWAY",
+                    "LOCAL_STAFF",
+                    "ROUTED_LOW",
+                    "Resolved at Tier 1 local operations level"
+            ));
             return result;
         }
 
-        if (this.nextHandler != null) {
-            ComplaintRoutingResult result = this.nextHandler.handle(complaint);
-            result.getRouteHistory().add(0, "CITIZEN -> LOCAL_STAFF");
-            return result;
-        }
-
-        return new ComplaintRoutingResult(complaint.getId(), severity, "UNASSIGNED", "No handler could process request", false);
+        ComplaintRoutingResult nextResult = passToNext(complaint);
+        nextResult.addAuditRecord(new ComplaintAuditRecord(
+                Instant.now().toString(),
+                "LOCAL_STAFF",
+                "SUPERVISOR",
+                "ESCALATE_TIER2",
+                "Severity exceeds Tier 1 threshold; escalating upward"
+        ));
+        return nextResult;
     }
 }
-

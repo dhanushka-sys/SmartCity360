@@ -1,11 +1,13 @@
 import os
 import zipfile
+import shutil
 
 def create_project_zip():
     root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-    out_zip = os.path.join(os.path.dirname(__file__), "SmartCity360_Project_Source_Code.zip")
+    out_zip_root = os.path.join(root_dir, "SmartCity360_Source_Code.zip")
+    out_zip_doc = os.path.join(os.path.dirname(__file__), "SmartCity360_Source_Code.zip")
+    out_zip_compat = os.path.join(os.path.dirname(__file__), "SmartCity360_Project_Source_Code.zip")
     
-    # Exclude bloated, temporary, or unneeded directories and files
     exclude_dirs = {
         "node_modules",
         ".next",
@@ -14,28 +16,30 @@ def create_project_zip():
         "target",
         ".idea",
         ".vscode",
-        ".settings"
+        ".settings",
+        ".gradle",
+        "bin"
     }
     
     exclude_files = {
+        "SmartCity360_Source_Code.zip",
         "SmartCity360_Project_Source_Code.zip",
-        ".DS_Store"
+        ".DS_Store",
+        "thumbs.db"
     }
 
     count = 0
-    with zipfile.ZipFile(out_zip, "w", zipfile.ZIP_DEFLATED) as zipf:
+    with zipfile.ZipFile(out_zip_root, "w", zipfile.ZIP_DEFLATED) as zipf:
         for foldername, subfolders, filenames in os.walk(root_dir):
-            # Prune excluded directories
             subfolders[:] = [d for d in subfolders if d not in exclude_dirs]
             
             for filename in filenames:
-                if filename in exclude_files or filename.endswith(".class"):
+                if filename in exclude_files or filename.endswith(".class") or filename.endswith(".pyc"):
                     continue
                 
                 filepath = os.path.join(foldername, filename)
                 relpath = os.path.relpath(filepath, root_dir)
                 
-                # Double-check relative path does not start with excluded dir
                 parts = relpath.split(os.sep)
                 if any(p in exclude_dirs for p in parts):
                     continue
@@ -43,9 +47,12 @@ def create_project_zip():
                 zipf.write(filepath, relpath)
                 count += 1
 
-    zip_size_mb = os.path.getsize(out_zip) / (1024 * 1024)
-    print(f"Successfully packaged {count} files into {out_zip} ({zip_size_mb:.2f} MB)")
+    shutil.copyfile(out_zip_root, out_zip_doc)
+    shutil.copyfile(out_zip_root, out_zip_compat)
+
+    zip_size_mb = os.path.getsize(out_zip_root) / (1024 * 1024)
+    print(f"Successfully packaged {count} clean source files into {out_zip_root} ({zip_size_mb:.2f} MB)")
+    print(f"Copied to {out_zip_doc} and {out_zip_compat}")
 
 if __name__ == "__main__":
     create_project_zip()
-

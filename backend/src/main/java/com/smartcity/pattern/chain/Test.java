@@ -7,41 +7,68 @@ public class Test {
     public static void main(String[] args) {
         ComplaintHandler chain = ComplaintChainFactory.createChain();
 
-        Complaint c1 = new Complaint();
-        c1.setId("CMP-101");
-        c1.setTitle("Pothole on Main Street");
-        c1.setSeverity("LOW");
+        Complaint cLow = new Complaint();
+        cLow.setId("CMP-101");
+        cLow.setTitle("Pothole on Main Street");
+        cLow.setSeverity("LOW");
+        ComplaintRoutingResult rLow = chain.handle(cLow);
+        System.out.println("1. LOW Complaint: " + cLow.getTitle());
+        System.out.println("Handled Role: " + rLow.getHandledByRole() + ", Status: " + rLow.getStatus());
+        System.out.println("Audit trail entries: " + rLow.getAuditTrail().size() + "\n");
 
-        Complaint c2 = new Complaint();
-        c2.setId("CMP-202");
-        c2.setTitle("Water Main Pipe Burst on 4th Ave");
-        c2.setSeverity("HIGH");
+        Complaint cMed = new Complaint();
+        cMed.setId("CMP-102");
+        cMed.setTitle("Traffic Signal Timing Fault");
+        cMed.setSeverity("MEDIUM");
+        ComplaintRoutingResult rMed = chain.handle(cMed);
+        System.out.println("2. MEDIUM Complaint: " + cMed.getTitle());
+        System.out.println("Handled Role: " + rMed.getHandledByRole() + ", Status: " + rMed.getStatus());
+        System.out.println("Audit trail entries: " + rMed.getAuditTrail().size() + "\n");
 
-        Complaint c3 = new Complaint();
-        c3.setId("CMP-303");
-        c3.setTitle("City Center Substation Transformer Fire");
-        c3.setSeverity("CRITICAL");
+        Complaint cHigh = new Complaint();
+        cHigh.setId("CMP-202");
+        cHigh.setTitle("Water Main Pipe Burst on 4th Ave");
+        cHigh.setSeverity("HIGH");
+        ComplaintRoutingResult rHigh = chain.handle(cHigh);
+        System.out.println("3. HIGH Complaint: " + cHigh.getTitle());
+        System.out.println("Handled Role: " + rHigh.getHandledByRole() + ", Status: " + rHigh.getStatus());
+        System.out.println("Audit trail entries: " + rHigh.getAuditTrail().size() + "\n");
 
-        ComplaintRoutingResult r1 = chain.handle(c1);
-        System.out.println("Complaint: " + c1.getTitle());
-        System.out.println("Severity: " + c1.getSeverity());
-        System.out.println("Assigned Handler: " + r1.getHandledByRole());
-        System.out.println("Message: " + r1.getMessage());
-        System.out.println("Route: " + String.join(" -> ", r1.getRouteHistory()) + "\n");
+        Complaint cCrit = new Complaint();
+        cCrit.setId("CMP-303");
+        cCrit.setTitle("City Center Substation Transformer Fire");
+        cCrit.setSeverity("CRITICAL");
+        ComplaintRoutingResult rCrit = chain.handle(cCrit);
+        System.out.println("4. CRITICAL Complaint: " + cCrit.getTitle());
+        System.out.println("Handled Role: " + rCrit.getHandledByRole() + ", Status: " + rCrit.getStatus());
+        System.out.println("Audit trail entries: " + rCrit.getAuditTrail().size() + "\n");
 
-        ComplaintRoutingResult r2 = chain.handle(c2);
-        System.out.println("Complaint: " + c2.getTitle());
-        System.out.println("Severity: " + c2.getSeverity());
-        System.out.println("Assigned Handler: " + r2.getHandledByRole());
-        System.out.println("Message: " + r2.getMessage());
-        System.out.println("Route: " + String.join(" -> ", r2.getRouteHistory()) + "\n");
+        Complaint cMissing = new Complaint();
+        cMissing.setId("CMP-404");
+        cMissing.setTitle("Mysterious Hum in Downtown Alley");
+        cMissing.setSeverity(null);
+        ComplaintRoutingResult rMissing = chain.handle(cMissing);
+        System.out.println("5. MISSING Severity Complaint: " + cMissing.getTitle());
+        System.out.println("Handled: " + rMissing.isHandled() + ", Role: " + rMissing.getHandledByRole());
+        System.out.println("Safety Guardrail Message: " + rMissing.getMessage());
+        System.out.println("Audit trail entries: " + rMissing.getAuditTrail().size() + "\n");
 
-        ComplaintRoutingResult r3 = chain.handle(c3);
-        System.out.println("Complaint: " + c3.getTitle());
-        System.out.println("Severity: " + c3.getSeverity());
-        System.out.println("Assigned Handler: " + r3.getHandledByRole());
-        System.out.println("Message: " + r3.getMessage());
-        System.out.println("Route: " + String.join(" -> ", r3.getRouteHistory()));
+        Complaint cInvalid = new Complaint();
+        cInvalid.setId("CMP-505");
+        cInvalid.setTitle("Erratic Drone Hovering");
+        cInvalid.setSeverity("APOCALYPTIC_UNSPECIFIED");
+        ComplaintRoutingResult rInvalid = chain.handle(cInvalid);
+        System.out.println("6. INVALID Severity Complaint: " + cInvalid.getTitle());
+        System.out.println("Handled: " + rInvalid.isHandled() + ", Role: " + rInvalid.getHandledByRole());
+        System.out.println("Safety Guardrail Message: " + rInvalid.getMessage() + "\n");
+
+        ComplaintHandler brokenChain = new LocalStaffHandler();
+        Complaint cOrphan = new Complaint();
+        cOrphan.setId("CMP-999");
+        cOrphan.setTitle("High-Voltage Arc Flash");
+        cOrphan.setSeverity("HIGH");
+        ComplaintRoutingResult rOrphan = brokenChain.handle(cOrphan);
+        System.out.println("7. Broken Chain (No next handler attached):");
+        System.out.println("Handled: " + rOrphan.isHandled() + ", Status: " + rOrphan.getStatus() + ", Message: " + rOrphan.getMessage());
     }
 }
-

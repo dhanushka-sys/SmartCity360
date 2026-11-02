@@ -1,18 +1,24 @@
 package com.smartcity.pattern.flyweight;
 
-public class SharedStreetlightProfile {
+public final class SharedStreetlightProfile {
+
     private final String model;
     private final String lampType;
     private final int wattage;
     private final int maxLumens;
+    private final int colorTemperatureK;
     private final String firmwareVersion;
 
-    public SharedStreetlightProfile(String model, String lampType, int wattage, int maxLumens, String firmwareVersion) {
+    public SharedStreetlightProfile(String model, String lampType, int wattage, int maxLumens, int colorTemperatureK, String firmwareVersion) {
+        if (model == null || model.trim().isEmpty()) {
+            throw new IllegalArgumentException("Model cannot be null or empty");
+        }
         this.model = model;
-        this.lampType = lampType;
+        this.lampType = lampType != null ? lampType : "LED";
         this.wattage = wattage;
         this.maxLumens = maxLumens;
-        this.firmwareVersion = firmwareVersion;
+        this.colorTemperatureK = colorTemperatureK;
+        this.firmwareVersion = firmwareVersion != null ? firmwareVersion : "v1.0";
     }
 
     public String getModel() {
@@ -31,13 +37,16 @@ public class SharedStreetlightProfile {
         return maxLumens;
     }
 
+    public int getColorTemperatureK() {
+        return colorTemperatureK;
+    }
+
     public String getFirmwareVersion() {
         return firmwareVersion;
     }
 
-    public String render(String poleId, double lat, double lng, int brightness) {
-        return String.format("[%s] Model: %s (%dW) at (%.4f, %.4f) -> Brightness: %d%%",
-                poleId, model, wattage, lat, lng, brightness);
+    public String render(String poleId, double lat, double lng, int brightness, String status) {
+        return String.format("[%s] %s (%dW, %dK, %s) at (%.4f, %.4f) -> Brightness: %d%% [%s]",
+                poleId, model, wattage, colorTemperatureK, lampType, lat, lng, brightness, status);
     }
 }
-

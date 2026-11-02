@@ -4,7 +4,8 @@ import subprocess
 
 pattern_files = glob.glob('backend/src/main/java/com/smartcity/pattern/**/*.java', recursive=True)
 model_files = glob.glob('backend/src/main/java/com/smartcity/model/**/*.java', recursive=True)
-all_files = pattern_files + model_files
+test_files = glob.glob('backend/src/main/java/com/smartcity/test/**/*.java', recursive=True)
+all_files = pattern_files + model_files + test_files
 
 os.makedirs('backend/target/classes', exist_ok=True)
 with open('backend/pattern_sources.txt', 'w', encoding='utf-8') as f:
