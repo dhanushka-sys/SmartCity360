@@ -697,10 +697,10 @@ PART_F = {
         ("Swallowed Exceptions", "Empty catch blocks hiding system failures", "Structured error logging with proper HTTP error status codes and transactional rollback.")
     ],
     "f5_deliverables": [
-        ("Item 5.a: Project Documentation", "Project Document", "PDF Format", "SmartCity360_Final_Report.pdf", "Formal university academic submission report adhering to APA styling, Times New Roman 11pt typography, Oxford Navy palette, Candidate Declaration, 6 distinct architectural diagrams, and empirical test evidence."),
-        ("Item 5.b: Project Source Code", "Project File", "ZIP Archive", "SmartCity360_Source_Code.zip", "Complete compilable codebase archive containing backend Java servlets, pure GoF pattern packages, Next.js 14 frontend, database DDL schema, and standalone test runners (zero comments, zero bloat)."),
-        ("Item 5.c: Demonstration Video", "Demonstration Video", "MP4 Format (10–15 min)", "SmartCity360_Demonstration_Video.mp4", "Recorded walkthrough showcasing live system functionality, interactive UI panels, test executions, and technical pattern defenses per the demonstration script."),
-        ("Companion: VIVA & Video Guide", "Student Reference", "PDF & Markdown", "SmartCity360_Viva_and_Presentation_Guide.pdf", "Dedicated oral examination defense preparation guide, model answers, and word-for-word 10–15 minute video recording script for student study.")
+        ("Item 5.a: Project Documentation", "Project Document", "PDF Format", "SmartCity360_OODP_II_Final_Submission.pdf", "This report contains the five required pattern analyses, six vector architecture diagrams, implementation highlights, test evidence, and academic references. A candidate declaration is not included because no candidate details were supplied."),
+        ("Item 5.b: Project Source Code", "Project File", "ZIP Archive", "SmartCity360_Project_Source_Code.zip", "Complete source archive containing the backend Java pattern implementations, frontend, database resources, and test runners. Upload the ZIP separately from this report."),
+        ("Item 5.c: Demonstration Video", "Demonstration Video", "MP4 Format (10–15 min)", "To be supplied by student", "The assessment requires a separate recorded demonstration. The report includes the technical scope and should not be treated as the video upload."),
+        ("Companion: VIVA & Video Guide", "Student Reference", "PDF & Markdown", "SmartCity360_Viva_and_Presentation_Guide.pdf", "Optional preparation material containing model viva questions and a 10–15-minute recording script; it is not a substitute for the required MP4.")
     ]
 }
 

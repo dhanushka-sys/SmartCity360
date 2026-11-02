@@ -115,7 +115,7 @@ def generate_formal_html():
   h3 {
     font-size: 11pt;
     font-weight: bold;
-    color: #0f172a;
+    color: #0f294a;
     margin-top: 14px;
     margin-bottom: 6px;
   }
@@ -304,34 +304,35 @@ def generate_formal_html():
   <tr><td style="padding-left: 20px;">2.1 Identification & Architectural Justification (3 Marks)</td><td style="text-align: right;">3</td></tr>
   <tr><td style="padding-left: 20px;">2.2 Mechanism of Flexible & Layered Enhancement (4 Marks)</td><td style="text-align: right;">4</td></tr>
   <tr><td style="padding-left: 20px;">2.3 Long-Term Evaluation: Reusability, Extensibility & Anti-Pattern Mitigation (8 Marks)</td><td style="text-align: right;">4</td></tr>
-  <tr><td style="padding-left: 20px;">2.4 Object Wrapping Pipeline Flowchart & Technical Source Code Highlights</td><td style="text-align: right;">5</td></tr>
+  <tr><td style="padding-left: 20px;">2.4 UML Activity & Pipeline Flow Diagram & Architecture Source Code Highlights</td><td style="text-align: right;">5</td></tr>
   <tr><td><b>3. Part B — Hierarchical Structure of Smart Zones (Composite Pattern) [15 Marks]</b></td><td style="text-align: right;">7</td></tr>
   <tr><td style="padding-left: 20px;">3.1 Identification & Architectural Justification (3 Marks)</td><td style="text-align: right;">7</td></tr>
   <tr><td style="padding-left: 20px;">3.2 UML Class Diagram & Mechanism of the Hierarchical Composition (4 Marks)</td><td style="text-align: right;">7</td></tr>
   <tr><td style="padding-left: 20px;">3.3 Evaluation: Scalability & Growing Infrastructure Management (8 Marks)</td><td style="text-align: right;">8</td></tr>
-  <tr><td style="padding-left: 20px;">3.4 UML Class Diagram & Technical Source Code Highlights</td><td style="text-align: right;">9</td></tr>
+  <tr><td style="padding-left: 20px;">3.4 Structural UML Class Diagram & Architecture Source Code Highlights</td><td style="text-align: right;">9</td></tr>
   <tr><td><b>4. Part C — Escalation of Citizen Complaints (Chain of Responsibility Pattern) [15 Marks]</b></td><td style="text-align: right;">11</td></tr>
   <tr><td style="padding-left: 20px;">4.1 Identification & Architectural Justification (3 Marks)</td><td style="text-align: right;">11</td></tr>
   <tr><td style="padding-left: 20px;">4.2 Mechanism of Decoupled Request Handling & Safe Triage (4 Marks)</td><td style="text-align: right;">11</td></tr>
   <tr><td style="padding-left: 20px;">4.3 Evaluation of Flexibility, Traceability, Benefits & Trade-offs (8 Marks)</td><td style="text-align: right;">12</td></tr>
-  <tr><td style="padding-left: 20px;">4.4 Multi-Tier Escalation Flowchart & Technical Source Code Highlights</td><td style="text-align: right;">12</td></tr>
+  <tr><td style="padding-left: 20px;">4.4 UML Sequence Diagram & Architecture Source Code Highlights</td><td style="text-align: right;">12</td></tr>
   <tr><td><b>5. Part D — Efficient Management of Smart Street Lights (Flyweight Pattern) [15 Marks]</b></td><td style="text-align: right;">14</td></tr>
   <tr><td style="padding-left: 20px;">5.1 Identification & Architectural Justification (3 Marks)</td><td style="text-align: right;">14</td></tr>
   <tr><td style="padding-left: 20px;">5.2 Handling Shared Intrinsic vs Unique Extrinsic State (4 Marks)</td><td style="text-align: right;">14</td></tr>
   <tr><td style="padding-left: 20px;">5.3 Quantitative Memory & Performance Impact Analysis (Empirical & Theoretical) (8 Marks)</td><td style="text-align: right;">14</td></tr>
-  <tr><td style="padding-left: 20px;">5.4 JVM Memory Pool Architecture Diagram & Technical Source Code Highlights</td><td style="text-align: right;">16</td></tr>
+  <tr><td style="padding-left: 20px;">5.4 JVM Memory Pool Architecture Diagram & Architecture Source Code Highlights</td><td style="text-align: right;">16</td></tr>
   <tr><td><b>6. Part E — Interpreting City Policies Defined in DSL (Interpreter Pattern) [15 Marks]</b></td><td style="text-align: right;">17</td></tr>
   <tr><td style="padding-left: 20px;">6.1 Identification & Architectural Justification (3 Marks)</td><td style="text-align: right;">17</td></tr>
   <tr><td style="padding-left: 20px;">6.2 UML Class Diagram & Mechanism of the DSL Interpreter Pattern (4 Marks)</td><td style="text-align: right;">17</td></tr>
   <tr><td style="padding-left: 20px;">6.3 Critical Assessment: Rule Updates, Extensibility & Security (8 Marks)</td><td style="text-align: right;">18</td></tr>
-  <tr><td style="padding-left: 20px;">6.4 UML Class Diagram & Technical Source Code Highlights</td><td style="text-align: right;">18</td></tr>
+  <tr><td style="padding-left: 20px;">6.4 UML Class Diagram & AST Expression Tree Highlights</td><td style="text-align: right;">18</td></tr>
   <tr><td><b>7. Part F — System Architecture & Multi-Tier Platform Implementation [25 Marks]</b></td><td style="text-align: right;">20</td></tr>
   <tr><td style="padding-left: 20px;">7.1 Overall System Architecture & Multi-Tier Enterprise Design</td><td style="text-align: right;">20</td></tr>
   <tr><td style="padding-left: 20px;">7.2 End-to-End Enterprise Architecture Diagram</td><td style="text-align: right;">20</td></tr>
-  <tr><td style="padding-left: 20px;">7.3 Key Architectural Choices & Anti-Pattern Defense Matrix</td><td style="text-align: right;">21</td></tr>
-  <tr><td style="padding-left: 20px;">7.4 Empirical Automated Test Execution Results (31/31 PASS - 100% Rate)</td><td style="text-align: right;">22</td></tr>
-  <tr><td style="padding-left: 20px;">7.5 Final Submission Deliverables Verification</td><td style="text-align: right;">23</td></tr>
-  <tr><td><b>8. Conclusion & Academic References</b></td><td style="text-align: right;">24</td></tr>
+  <tr><td style="padding-left: 20px;">7.3 Municipal Operational Use Case Model (UML Use Case Diagram)</td><td style="text-align: right;">21</td></tr>
+  <tr><td style="padding-left: 20px;">7.4 Key Architectural Choices & Anti-Pattern Defense Matrix</td><td style="text-align: right;">22</td></tr>
+  <tr><td style="padding-left: 20px;">7.5 Empirical Automated Test Execution Results (31/31 PASS - 100% Rate)</td><td style="text-align: right;">23</td></tr>
+  <tr><td style="padding-left: 20px;">7.6 Final Submission Deliverables Verification</td><td style="text-align: right;">24</td></tr>
+  <tr><td><b>8. Conclusion & Academic References</b></td><td style="text-align: right;">25</td></tr>
 </table>
 """)
 
@@ -397,13 +398,13 @@ def generate_formal_html():
 </div>
 """)
 
-    render_formal_part(content.PART_A, "2", load_svg("01_decorator_pipeline.svg"), "Figure 2.1 — Dynamic Security Decorator Pipeline & Object Wrapping Flow Diagram")
+    render_formal_part(content.PART_A, "2", load_svg("01_decorator_pipeline.svg"), "Figure 2.1 — UML Activity & Data Transformation Pipeline Flow Diagram")
     render_formal_part(content.PART_B, "3", load_svg("02_composite_hierarchy.svg"), "Figure 3.1 — UML Class Diagram: Composite Pattern Structural Architecture & Component Relationships")
-    render_formal_part(content.PART_C, "4", load_svg("03_chain_of_responsibility.svg"), "Figure 4.1 — Multi-Tier Citizen Grievance Escalation & Safe Triage Sequence Flowchart")
+    render_formal_part(content.PART_C, "4", load_svg("03_chain_of_responsibility.svg"), "Figure 4.1 — UML Sequence Diagram: Citizen Complaint Escalation & Safe Triage Lifecycle")
     render_formal_part(content.PART_D, "5", load_svg("04_flyweight_memory.svg"), "Figure 5.1 — JVM Heap Memory Allocation & Flyweight Profile Cache Pool Diagram")
-    render_formal_part(content.PART_E, "6", load_svg("05_interpreter_ast.svg"), "Figure 6.1 — UML Class Diagram: Interpreter Pattern Class Hierarchy & Context Association")
+    render_formal_part(content.PART_E, "6", load_svg("05_interpreter_ast.svg"), "Figure 6.1 — UML Class Diagram: Interpreter Pattern Class Hierarchy & AST Structure")
 
-    # PART F - Pure Technical Report (No VIVA Q&A cards or Video Scripts)
+    # PART F - Pure Technical Report
     html_parts.append(f"""
 <div class="page-break"></div>
 <h1>
@@ -421,10 +422,18 @@ def generate_formal_html():
   {load_svg("06_system_architecture.svg")}
   <div class="diagram-caption">Figure 7.1 — End-to-End Enterprise Multi-Tier Platform Architecture Diagram</div>
 </div>
+
+<h2>7.2 Municipal Operational Use Case Model &amp; Actor Interactions</h2>
+<p>To demonstrate the functional capabilities and operational scope of SmartCity360, the system functionality is modeled using the formal UML Use Case Diagram shown below. The platform provides dedicated operational boundaries for four key actor profiles: Citizens, Municipal Staff &amp; Supervisors, City Managers (Executive Administrators), and automated IoT Grid Gateways.</p>
+
+<div class="diagram-card">
+  {load_svg("07_system_use_case.svg")}
+  <div class="diagram-caption">Figure 7.2 — UML Use Case Diagram: SmartCity360 Municipal Operational System</div>
+</div>
 """)
 
     html_parts.append("""
-<h2>7.2 Key Architectural Choices & Anti-Pattern Defense Matrix</h2>
+<h2>7.3 Key Architectural Choices & Anti-Pattern Defense Matrix</h2>
 <p>The SmartCity360 platform actively mitigates all 8 foundational software anti-patterns identified in the curriculum:</p>
 <table class="formal-table">
   <tr>
@@ -443,9 +452,9 @@ def generate_formal_html():
 """)
     html_parts.append("""</table>""")
 
-    # 7.3 Automated Verification
+    # 7.4 Automated Verification
     html_parts.append("""
-<h2>7.3 Empirical Automated Test Execution Results (100% Pass Rate)</h2>
+<h2>7.4 Empirical Automated Test Execution Results (100% Pass Rate)</h2>
 <p>To substantiate the architectural integrity, mathematical soundness, and runtime stability of the SmartCity360 platform, a comprehensive automated regression suite (<code>com.smartcity.test.ComprehensiveTestSuite</code>) was executed against the production build. All 31 test cases across the five core design patterns and multi-tier APIs passed with zero regressions:</p>
 
 <table class="formal-table">
@@ -508,9 +517,9 @@ def generate_formal_html():
 </table>
 """)
 
-    # 7.4 Final Submission Deliverables
+    # 7.5 Final Submission Deliverables
     html_parts.append("""
-<h2>7.4 Final Submission Deliverables Verification</h2>
+<h2>7.5 Final Submission Deliverables Verification</h2>
 <p>In accordance with Section 5 of the assessment specification (Part F), the mandatory deliverables have been prepared, audited, and verified for direct academic submission:</p>
 <table class="formal-table">
   <tr>

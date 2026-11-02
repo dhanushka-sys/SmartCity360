@@ -4,73 +4,81 @@ def create_svgs():
     svg_dir = "SmartCity360_UML"
     os.makedirs(svg_dir, exist_ok=True)
 
-    # 1. Decorator Pipeline SVG
-    svg1 = """<svg width="680" height="240" viewBox="0 0 680 240" xmlns="http://www.w3.org/2000/svg" style="background:#ffffff; font-family:'Segoe UI', Arial, sans-serif;">
-  <rect x="10" y="10" width="660" height="220" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
-  <text x="340" y="28" text-anchor="middle" font-size="11" font-weight="bold" fill="#0f294a">SMARTCITY360 TELEMETRY STREAM TRANSFORMATION PIPELINE (DECORATOR PATTERN)</text>
-  
-  <!-- Step 1: Core Component -->
-  <rect x="25" y="55" width="135" height="150" rx="5" fill="#ffffff" stroke="#0f294a" stroke-width="1.8"/>
-  <rect x="25" y="55" width="135" height="24" rx="5" fill="#0f294a"/>
-  <text x="92" y="71" text-anchor="middle" font-size="9" font-weight="bold" fill="#ffffff">EnergyStreamData</text>
-  <text x="92" y="95" text-anchor="middle" font-size="8.5" font-weight="bold" fill="#1e3a8a">Core Component</text>
-  <text x="92" y="112" text-anchor="middle" font-size="8" fill="#334155">Stream ID: STR-101</text>
-  <text x="92" y="126" text-anchor="middle" font-size="8" fill="#334155">Voltage: 230.5 V</text>
-  <text x="92" y="140" text-anchor="middle" font-size="8" fill="#334155">Current: 14.2 A</text>
-  <text x="92" y="156" text-anchor="middle" font-size="8" font-weight="bold" fill="#059669">Raw JSON: 72 B</text>
-  <rect x="35" y="170" width="115" height="24" rx="3" fill="#f1f5f9"/>
-  <text x="92" y="185" text-anchor="middle" font-size="7.5" fill="#475569">Base Telemetry Source</text>
+    # 1. UML Activity / Pipeline Diagram for Decorator Pattern
+    svg1 = """<svg width="680" height="250" viewBox="0 0 680 250" xmlns="http://www.w3.org/2000/svg" style="background:#ffffff; font-family:'Segoe UI', Arial, sans-serif;">
+  <defs>
+    <marker id="arr1" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <polygon points="0 0, 7 4, 0 8" fill="#1e3a8a"/>
+    </marker>
+  </defs>
 
-  <!-- Arrow 1 -->
-  <line x1="160" y1="130" x2="190" y2="130" stroke="#1e3a8a" stroke-width="2"/>
-  <polygon points="190,130 182,125 182,135" fill="#1e3a8a"/>
+  <rect x="8" y="8" width="664" height="234" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+  <text x="340" y="26" text-anchor="middle" font-size="11" font-weight="bold" fill="#0f294a">UML ACTIVITY &amp; PIPELINE FLOW DIAGRAM: DATA STREAM SECURITY TRANSFORMATION</text>
 
-  <!-- Step 2: Compression Decorator -->
-  <rect x="190" y="55" width="140" height="150" rx="5" fill="#ffffff" stroke="#1e3a8a" stroke-width="1.8"/>
-  <rect x="190" y="55" width="140" height="24" rx="5" fill="#1e3a8a"/>
-  <text x="260" y="71" text-anchor="middle" font-size="9" font-weight="bold" fill="#ffffff">CompressionDecorator</text>
-  <text x="260" y="95" text-anchor="middle" font-size="8.5" font-weight="bold" fill="#0f294a">Step 1: Compression</text>
-  <text x="260" y="112" text-anchor="middle" font-size="8" fill="#334155">GZIP Stream Engine</text>
-  <text x="260" y="128" text-anchor="middle" font-size="7.5" fill="#475569">Must precede encryption</text>
-  <text x="260" y="142" text-anchor="middle" font-size="7.5" fill="#475569">(entropy remains low)</text>
-  <text x="260" y="158" text-anchor="middle" font-size="8" font-weight="bold" fill="#059669">Batch Savings: 65–75%</text>
-  <rect x="200" y="170" width="120" height="24" rx="3" fill="#f1f5f9"/>
-  <text x="260" y="185" text-anchor="middle" font-size="7.5" fill="#1e3a8a">Wraps Core Stream</text>
+  <!-- Initial State Node -->
+  <circle cx="45" cy="115" r="14" fill="#0f294a"/>
+  <text x="45" y="145" text-anchor="middle" font-size="7.5" font-weight="bold" fill="#0f294a">Start Poll</text>
 
-  <!-- Arrow 2 -->
-  <line x1="330" y1="130" x2="360" y2="130" stroke="#1e3a8a" stroke-width="2"/>
-  <polygon points="360,130 352,125 352,135" fill="#1e3a8a"/>
+  <line x1="59" y1="115" x2="85" y2="115" stroke="#1e3a8a" stroke-width="2" marker-end="url(#arr1)"/>
 
-  <!-- Step 3: Encryption Decorator -->
-  <rect x="360" y="55" width="140" height="150" rx="5" fill="#ffffff" stroke="#1e3a8a" stroke-width="1.8"/>
-  <rect x="360" y="55" width="140" height="24" rx="5" fill="#1e3a8a"/>
-  <text x="430" y="71" text-anchor="middle" font-size="9" font-weight="bold" fill="#ffffff">EncryptionDecorator</text>
-  <text x="430" y="95" text-anchor="middle" font-size="8.5" font-weight="bold" fill="#0f294a">Step 2: Encryption</text>
-  <text x="430" y="112" text-anchor="middle" font-size="8" fill="#334155">AES-256-GCM (AEAD)</text>
-  <text x="430" y="126" text-anchor="middle" font-size="7.5" fill="#475569">12-Byte Random IV</text>
-  <text x="430" y="140" text-anchor="middle" font-size="7.5" fill="#475569">128-Bit GCM Auth Tag</text>
-  <text x="430" y="156" text-anchor="middle" font-size="8" font-weight="bold" fill="#059669">Confidentiality + Tag</text>
-  <rect x="370" y="170" width="120" height="24" rx="3" fill="#f1f5f9"/>
-  <text x="430" y="185" text-anchor="middle" font-size="7.5" fill="#1e3a8a">Wraps Compressed Stream</text>
+  <!-- Action 1: Ingest EnergyStreamData -->
+  <rect x="90" y="70" width="120" height="90" rx="8" fill="#ffffff" stroke="#0f294a" stroke-width="1.8"/>
+  <rect x="90" y="70" width="120" height="22" rx="8" fill="#0f294a"/>
+  <text x="150" y="85" text-anchor="middle" font-size="8.5" font-weight="bold" fill="#ffffff">EnergyStreamData</text>
+  <text x="150" y="106" text-anchor="middle" font-size="7.8" fill="#334155">Poll Meter STR-101</text>
+  <text x="150" y="120" text-anchor="middle" font-size="7.8" fill="#334155">Serialize JSON Payload</text>
+  <text x="150" y="136" text-anchor="middle" font-size="8" font-weight="bold" fill="#059669">Raw Size: 72 Bytes</text>
+  <text x="150" y="152" text-anchor="middle" font-size="7" fill="#64748b">&lt;&lt;core component&gt;&gt;</text>
 
-  <!-- Arrow 3 -->
-  <line x1="500" y1="130" x2="530" y2="130" stroke="#1e3a8a" stroke-width="2"/>
-  <polygon points="530,130 522,125 522,135" fill="#1e3a8a"/>
+  <line x1="210" y1="115" x2="235" y2="115" stroke="#1e3a8a" stroke-width="2" marker-end="url(#arr1)"/>
 
-  <!-- Step 4: Authentication Decorator -->
-  <rect x="530" y="55" width="130" height="150" rx="5" fill="#ffffff" stroke="#0f294a" stroke-width="1.8"/>
-  <rect x="530" y="55" width="130" height="24" rx="5" fill="#0f294a"/>
-  <text x="595" y="71" text-anchor="middle" font-size="9" font-weight="bold" fill="#ffffff">AuthenticationDecorator</text>
-  <text x="595" y="95" text-anchor="middle" font-size="8.5" font-weight="bold" fill="#0f294a">Step 3: Perimeter Auth</text>
-  <text x="595" y="112" text-anchor="middle" font-size="8" fill="#334155">HMAC-SHA256 Sig</text>
-  <text x="595" y="126" text-anchor="middle" font-size="7.5" fill="#475569">Edge Gateway Origin Check</text>
-  <text x="595" y="140" text-anchor="middle" font-size="7.5" fill="#475569">Fast-Reject Tampering</text>
-  <text x="595" y="156" text-anchor="middle" font-size="8" font-weight="bold" fill="#059669">Secured Packet Out</text>
-  <rect x="540" y="170" width="110" height="24" rx="3" fill="#f1f5f9"/>
-  <text x="595" y="185" text-anchor="middle" font-size="7.5" fill="#1e3a8a">Cellular IoT Backhaul</text>
+  <!-- Action 2: CompressionDecorator -->
+  <rect x="240" y="65" width="125" height="100" rx="8" fill="#ffffff" stroke="#1e3a8a" stroke-width="1.8"/>
+  <rect x="240" y="65" width="125" height="22" rx="8" fill="#1e3a8a"/>
+  <text x="302" y="80" text-anchor="middle" font-size="8.5" font-weight="bold" fill="#ffffff">CompressionDecorator</text>
+  <text x="302" y="102" text-anchor="middle" font-size="7.8" font-weight="bold" fill="#0f294a">Step 1: DEFLATE</text>
+  <text x="302" y="116" text-anchor="middle" font-size="7.5" fill="#334155">GZIP Stream Process</text>
+  <text x="302" y="130" text-anchor="middle" font-size="7.5" fill="#475569">Preserves low entropy</text>
+  <text x="302" y="144" text-anchor="middle" font-size="7.8" font-weight="bold" fill="#059669">Batch: 65-75% Savings</text>
+  <text x="302" y="158" text-anchor="middle" font-size="7" fill="#1e3a8a">&lt;&lt;precedes cipher&gt;&gt;</text>
+
+  <line x1="365" y1="115" x2="390" y2="115" stroke="#1e3a8a" stroke-width="2" marker-end="url(#arr1)"/>
+
+  <!-- Action 3: EncryptionDecorator -->
+  <rect x="395" y="60" width="125" height="110" rx="8" fill="#ffffff" stroke="#1e3a8a" stroke-width="1.8"/>
+  <rect x="395" y="60" width="125" height="22" rx="8" fill="#1e3a8a"/>
+  <text x="457" y="75" text-anchor="middle" font-size="8.5" font-weight="bold" fill="#ffffff">EncryptionDecorator</text>
+  <text x="457" y="98" text-anchor="middle" font-size="7.8" font-weight="bold" fill="#0f294a">Step 2: AES-256-GCM</text>
+  <text x="457" y="112" text-anchor="middle" font-size="7.5" fill="#334155">12-Byte Random IV</text>
+  <text x="457" y="126" text-anchor="middle" font-size="7.5" fill="#334155">128-Bit GCM Tag</text>
+  <text x="457" y="140" text-anchor="middle" font-size="7.5" fill="#475569">Provides AEAD security</text>
+  <text x="457" y="156" text-anchor="middle" font-size="8" font-weight="bold" fill="#059669">Confidentiality OK</text>
+
+  <line x1="520" y1="115" x2="545" y2="115" stroke="#1e3a8a" stroke-width="2" marker-end="url(#arr1)"/>
+
+  <!-- Action 4: AuthenticationDecorator -->
+  <rect x="550" y="65" width="115" height="100" rx="8" fill="#ffffff" stroke="#0f294a" stroke-width="1.8"/>
+  <rect x="550" y="65" width="115" height="22" rx="8" fill="#0f294a"/>
+  <text x="607" y="80" text-anchor="middle" font-size="8.5" font-weight="bold" fill="#ffffff">AuthenticationDec</text>
+  <text x="607" y="102" text-anchor="middle" font-size="7.8" font-weight="bold" fill="#0f294a">Step 3: HMAC-SHA256</text>
+  <text x="607" y="116" text-anchor="middle" font-size="7.5" fill="#334155">Outer Perimeter Sig</text>
+  <text x="607" y="130" text-anchor="middle" font-size="7.5" fill="#475569">Fast Edge Validation</text>
+  <text x="607" y="144" text-anchor="middle" font-size="7.8" font-weight="bold" fill="#059669">Tamper Defense</text>
+  <text x="607" y="158" text-anchor="middle" font-size="7" fill="#1e3a8a">&lt;&lt;outer layer&gt;&gt;</text>
+
+  <!-- Final Node -->
+  <line x1="607" y1="165" x2="607" y2="195" stroke="#1e3a8a" stroke-width="2" marker-end="url(#arr1)"/>
+  <circle cx="607" cy="210" r="12" fill="#ffffff" stroke="#0f294a" stroke-width="2"/>
+  <circle cx="607" cy="210" r="7" fill="#0f294a"/>
+  <text x="545" y="214" font-size="7.8" font-weight="bold" fill="#0f294a">Cellular IoT Backhaul Out</text>
+
+  <!-- Unwrap note -->
+  <rect x="90" y="195" width="370" height="30" rx="4" fill="#ffffff" stroke="#cbd5e1"/>
+  <text x="275" y="208" text-anchor="middle" font-size="7.5" font-weight="bold" fill="#0f294a">Dynamic Symmetrical Inversion (Unwrapping Process):</text>
+  <text x="275" y="219" text-anchor="middle" font-size="7.2" fill="#334155">Verify HMAC Sig  &rarr;  Decrypt AES-256-GCM (verify AEAD tag)  &rarr;  Decompress GZIP  &rarr;  Restore JSON</text>
 </svg>"""
 
-    # 2. Composite Hierarchy SVG
+    # 2. UML Class Diagram for Composite Pattern
     svg2 = """<svg width="680" height="270" viewBox="0 0 680 270" xmlns="http://www.w3.org/2000/svg" style="background:#ffffff; font-family:'Segoe UI', Arial, sans-serif;">
   <defs>
     <marker id="tri-comp" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
@@ -134,100 +142,106 @@ def create_svgs():
   <text x="245" y="240" font-size="7.5" fill="#334155">• EMERGENCY_ISOLATE (Grid safety)</text>
 </svg>"""
 
-    # 3. Chain of Responsibility SVG
-    svg3 = """<svg width="680" height="230" viewBox="0 0 680 230" xmlns="http://www.w3.org/2000/svg" style="background:#ffffff; font-family:'Segoe UI', Arial, sans-serif;">
-  <rect x="10" y="8" width="660" height="214" rx="5" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
-  <text x="340" y="25" text-anchor="middle" font-size="10.5" font-weight="bold" fill="#0f294a">CITIZEN COMPLAINT ESCALATION CHAIN & SAFE TRIAGE PIPELINE</text>
+    # 3. Formal UML Sequence Diagram for Chain of Responsibility
+    svg3 = """<svg width="680" height="310" viewBox="0 0 680 310" xmlns="http://www.w3.org/2000/svg" style="background:#ffffff; font-family:'Segoe UI', Arial, sans-serif;">
+  <defs>
+    <marker id="seq-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <polygon points="0 0, 7 4, 0 8" fill="#1e3a8a"/>
+    </marker>
+    <marker id="seq-ret" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <polygon points="0 2, 7 4, 0 6" fill="#059669"/>
+    </marker>
+  </defs>
 
-  <!-- Step 0: Citizen -->
-  <rect x="20" y="45" width="90" height="110" rx="4" fill="#ffffff" stroke="#0f294a" stroke-width="1.5"/>
-  <rect x="20" y="45" width="90" height="20" rx="4" fill="#0f294a"/>
-  <text x="65" y="59" text-anchor="middle" font-size="8" font-weight="bold" fill="#ffffff">Citizen</text>
-  <text x="65" y="85" text-anchor="middle" font-size="7.5" fill="#334155">Submits Ticket</text>
-  <text x="65" y="105" text-anchor="middle" font-size="7.5" fill="#475569">Decoupled</text>
-  <text x="65" y="120" text-anchor="middle" font-size="7.5" fill="#475569">from internal</text>
-  <text x="65" y="135" text-anchor="middle" font-size="7.5" fill="#475569">hierarchy</text>
+  <rect x="8" y="6" width="664" height="298" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+  <text x="340" y="22" text-anchor="middle" font-size="11" font-weight="bold" fill="#0f294a">UML SEQUENCE DIAGRAM: CITIZEN COMPLAINT ESCALATION &amp; SAFE TRIAGE LIFECYCLE</text>
 
-  <!-- Arrow -->
-  <line x1="110" y1="100" x2="125" y2="100" stroke="#1e3a8a" stroke-width="1.8"/>
-  <polygon points="125,100 118,96 118,104" fill="#1e3a8a"/>
+  <!-- Lifeline Headers -->
+  <!-- 1. Citizen -->
+  <rect x="20" y="36" width="70" height="24" rx="3" fill="#0f294a"/>
+  <text x="55" y="52" text-anchor="middle" font-size="8" font-weight="bold" fill="#ffffff">:Citizen</text>
+  <line x1="55" y1="60" x2="55" y2="280" stroke="#94a3b8" stroke-dasharray="3,3" stroke-width="1.2"/>
 
-  <!-- Step 1: ValidationTriageHandler -->
-  <rect x="125" y="45" width="115" height="110" rx="4" fill="#ffffff" stroke="#dc2626" stroke-width="1.8"/>
-  <rect x="125" y="45" width="115" height="20" rx="4" fill="#dc2626"/>
-  <text x="182" y="59" text-anchor="middle" font-size="8" font-weight="bold" fill="#ffffff">ValidationTriage</text>
-  <text x="182" y="82" text-anchor="middle" font-size="7.5" font-weight="bold" fill="#0f294a">Checks Severity</text>
-  <text x="182" y="98" text-anchor="middle" font-size="7" fill="#b91c1c">Missing/Invalid?</text>
-  <text x="182" y="112" text-anchor="middle" font-size="7" font-weight="bold" fill="#b91c1c">Manual Triage</text>
-  <text x="182" y="126" text-anchor="middle" font-size="7" font-style="italic" fill="#334155">Never defaults</text>
-  <text x="182" y="140" text-anchor="middle" font-size="7" font-weight="bold" fill="#1e3a8a">to LOW</text>
+  <!-- 2. ValidationTriageHandler -->
+  <rect x="110" y="36" width="115" height="24" rx="3" fill="#dc2626"/>
+  <text x="167" y="52" text-anchor="middle" font-size="8" font-weight="bold" fill="#ffffff">:ValidationTriage</text>
+  <line x1="167" y1="60" x2="167" y2="280" stroke="#94a3b8" stroke-dasharray="3,3" stroke-width="1.2"/>
 
-  <!-- Arrow -->
-  <line x1="240" y1="100" x2="255" y2="100" stroke="#1e3a8a" stroke-width="1.8"/>
-  <polygon points="255,100 248,96 248,104" fill="#1e3a8a"/>
+  <!-- 3. LocalStaffHandler -->
+  <rect x="250" y="36" width="95" height="24" rx="3" fill="#1e3a8a"/>
+  <text x="297" y="52" text-anchor="middle" font-size="8" font-weight="bold" fill="#ffffff">:LocalStaff</text>
+  <line x1="297" y1="60" x2="297" y2="280" stroke="#94a3b8" stroke-dasharray="3,3" stroke-width="1.2"/>
 
-  <!-- Step 2: LocalStaffHandler -->
-  <rect x="255" y="45" width="100" height="110" rx="4" fill="#ffffff" stroke="#1e3a8a" stroke-width="1.5"/>
-  <rect x="255" y="45" width="100" height="20" rx="4" fill="#1e3a8a"/>
-  <text x="305" y="59" text-anchor="middle" font-size="8" font-weight="bold" fill="#ffffff">LocalStaffHandler</text>
-  <text x="305" y="82" text-anchor="middle" font-size="7.5" font-weight="bold" fill="#0f294a">LOW Severity</text>
-  <text x="305" y="100" text-anchor="middle" font-size="7" fill="#334155">Potholes, trash,</text>
-  <text x="305" y="114" text-anchor="middle" font-size="7" fill="#334155">street sweeping</text>
-  <text x="305" y="132" text-anchor="middle" font-size="7" font-weight="bold" fill="#059669">Resolves: Field</text>
-  <text x="305" y="144" text-anchor="middle" font-size="7" fill="#1e3a8a">Crew Dispatched</text>
+  <!-- 4. SupervisorHandler -->
+  <rect x="370" y="36" width="95" height="24" rx="3" fill="#1e3a8a"/>
+  <text x="417" y="52" text-anchor="middle" font-size="8" font-weight="bold" fill="#ffffff">:Supervisor</text>
+  <line x1="417" y1="60" x2="417" y2="280" stroke="#94a3b8" stroke-dasharray="3,3" stroke-width="1.2"/>
 
-  <!-- Arrow -->
-  <line x1="355" y1="100" x2="370" y2="100" stroke="#1e3a8a" stroke-width="1.8"/>
-  <polygon points="370,100 363,96 363,104" fill="#1e3a8a"/>
+  <!-- 5. CityManagerHandler -->
+  <rect x="490" y="36" width="95" height="24" rx="3" fill="#0f294a"/>
+  <text x="537" y="52" text-anchor="middle" font-size="8" font-weight="bold" fill="#ffffff">:CityManager</text>
+  <line x1="537" y1="60" x2="537" y2="280" stroke="#94a3b8" stroke-dasharray="3,3" stroke-width="1.2"/>
 
-  <!-- Step 3: SupervisorHandler -->
-  <rect x="370" y="45" width="105" height="110" rx="4" fill="#ffffff" stroke="#1e3a8a" stroke-width="1.5"/>
-  <rect x="370" y="45" width="105" height="20" rx="4" fill="#1e3a8a"/>
-  <text x="422" y="59" text-anchor="middle" font-size="8" font-weight="bold" fill="#ffffff">SupervisorHandler</text>
-  <text x="422" y="82" text-anchor="middle" font-size="7.5" font-weight="bold" fill="#0f294a">MEDIUM Severity</text>
-  <text x="422" y="100" text-anchor="middle" font-size="7" fill="#334155">Water main burst,</text>
-  <text x="422" y="114" text-anchor="middle" font-size="7" fill="#334155">traffic light fail</text>
-  <text x="422" y="132" text-anchor="middle" font-size="7" font-weight="bold" fill="#059669">Resolves: Utility</text>
-  <text x="422" y="144" text-anchor="middle" font-size="7" fill="#1e3a8a">Contractors</text>
+  <!-- 6. TerminalFallbackHandler -->
+  <rect x="605" y="36" width="60" height="24" rx="3" fill="#64748b"/>
+  <text x="635" y="52" text-anchor="middle" font-size="7.5" font-weight="bold" fill="#ffffff">:Fallback</text>
+  <line x1="635" y1="60" x2="635" y2="280" stroke="#94a3b8" stroke-dasharray="3,3" stroke-width="1.2"/>
 
-  <!-- Arrow -->
-  <line x1="475" y1="100" x2="490" y2="100" stroke="#1e3a8a" stroke-width="1.8"/>
-  <polygon points="490,100 483,96 483,104" fill="#1e3a8a"/>
+  <!-- Activation Bars -->
+  <rect x="51" y="70" width="8" height="195" fill="#cbd5e1" stroke="#0f294a"/>
+  <rect x="163" y="75" width="8" height="185" fill="#fee2e2" stroke="#dc2626"/>
 
-  <!-- Step 4: CityManagerHandler -->
-  <rect x="490" y="45" width="105" height="110" rx="4" fill="#ffffff" stroke="#0f294a" stroke-width="1.5"/>
-  <rect x="490" y="45" width="105" height="20" rx="4" fill="#0f294a"/>
-  <text x="542" y="59" text-anchor="middle" font-size="8" font-weight="bold" fill="#ffffff">CityManagerHandler</text>
-  <text x="542" y="82" text-anchor="middle" font-size="7.5" font-weight="bold" fill="#0f294a">HIGH / CRITICAL</text>
-  <text x="542" y="100" text-anchor="middle" font-size="7" fill="#334155">Substation fire,</text>
-  <text x="542" y="114" text-anchor="middle" font-size="7" fill="#334155">chemical spill</text>
-  <text x="542" y="132" text-anchor="middle" font-size="7" font-weight="bold" fill="#059669">Resolves: Exec</text>
-  <text x="542" y="144" text-anchor="middle" font-size="7" fill="#0f294a">Emergency Team</text>
+  <!-- Message 1: submitComplaint -->
+  <line x1="59" y1="80" x2="163" y2="80" stroke="#1e3a8a" stroke-width="1.5" marker-end="url(#seq-arrow)"/>
+  <text x="105" y="75" text-anchor="middle" font-size="7.5" font-weight="bold" fill="#1e3a8a">handle(complaint)</text>
 
-  <!-- Arrow -->
-  <line x1="595" y1="100" x2="605" y2="100" stroke="#1e3a8a" stroke-width="1.8"/>
-  <polygon points="605,100 598,96 598,104" fill="#1e3a8a"/>
+  <!-- Alt Frame: Missing or Invalid Severity -->
+  <rect x="15" y="92" width="650" height="42" rx="2" fill="#fff1f2" stroke="#f43f5e" stroke-width="1" stroke-dasharray="4,2"/>
+  <text x="25" y="104" font-size="7.5" font-weight="bold" fill="#be123c">[alt: severity is null / invalid]</text>
+  <path d="M 171 108 L 220 108 L 220 122 L 171 122" fill="none" stroke="#be123c" stroke-width="1.2" marker-end="url(#seq-arrow)"/>
+  <text x="225" y="117" font-size="7.2" font-weight="bold" fill="#be123c">intercept &amp; route to Manual Triage Officer (NEVER default to LOW)</text>
+  <line x1="163" y1="128" x2="59" y2="128" stroke="#059669" stroke-width="1.2" stroke-dasharray="3,3" marker-end="url(#seq-ret)"/>
+  <text x="110" y="125" text-anchor="middle" font-size="7" fill="#059669">return TRIAGE_REQUIRED</text>
 
-  <!-- Step 5: TerminalFallbackHandler -->
-  <rect x="605" y="45" width="55" height="110" rx="4" fill="#ffffff" stroke="#64748b" stroke-width="1.5"/>
-  <rect x="605" y="45" width="55" height="20" rx="4" fill="#64748b"/>
-  <text x="632" y="59" text-anchor="middle" font-size="7" font-weight="bold" fill="#ffffff">Fallback</text>
-  <text x="632" y="85" text-anchor="middle" font-size="6.8" fill="#334155">Catches</text>
-  <text x="632" y="100" text-anchor="middle" font-size="6.8" fill="#334155">unhandled</text>
-  <text x="632" y="115" text-anchor="middle" font-size="6.8" font-weight="bold" fill="#059669">Zero</text>
-  <text x="632" y="130" text-anchor="middle" font-size="6.8" font-weight="bold" fill="#059669">Loss</text>
+  <!-- Normal Sequence Flow -->
+  <!-- Activation at LocalStaff -->
+  <rect x="293" y="142" width="8" height="45" fill="#dbeafe" stroke="#1e3a8a"/>
+  <line x1="171" y1="145" x2="293" y2="145" stroke="#1e3a8a" stroke-width="1.5" marker-end="url(#seq-arrow)"/>
+  <text x="230" y="140" text-anchor="middle" font-size="7.2" fill="#1e3a8a">[valid severity] passToNext()</text>
 
-  <!-- Audit Trail Box -->
-  <rect x="20" y="165" width="640" height="45" rx="3" fill="#ffffff" stroke="#cbd5e1"/>
-  <text x="340" y="180" text-anchor="middle" font-size="8" font-weight="bold" fill="#0f294a">IMMUTABLE AUDIT TRAIL VECTOR (ComplaintRoutingResult)</text>
-  <text x="340" y="196" text-anchor="middle" font-size="7.5" fill="#334155">Trajectory: CITIZEN → ValidationTriageHandler → LocalStaffHandler → SupervisorHandler → CityManagerHandler</text>
-  <text x="340" y="206" text-anchor="middle" font-size="7" fill="#64748b">Each step records ISO-8601 millisecond timestamp, station name, action taken, and assignment notes.</text>
+  <!-- LocalStaff Resolution for LOW -->
+  <text x="345" y="156" font-size="7" fill="#059669">[LOW] resolve: Dispatched Local Crew</text>
+
+  <!-- Pass to Supervisor -->
+  <rect x="413" y="170" width="8" height="45" fill="#dbeafe" stroke="#1e3a8a"/>
+  <line x1="301" y1="175" x2="413" y2="175" stroke="#1e3a8a" stroke-width="1.5" marker-end="url(#seq-arrow)"/>
+  <text x="355" y="170" text-anchor="middle" font-size="7.2" fill="#1e3a8a">[severity &gt; LOW] passToNext()</text>
+  <text x="465" y="186" font-size="7" fill="#059669">[MEDIUM] resolve: Area Contractors</text>
+
+  <!-- Pass to CityManager -->
+  <rect x="533" y="200" width="8" height="45" fill="#e0e7ff" stroke="#0f294a"/>
+  <line x1="421" y1="205" x2="533" y2="205" stroke="#1e3a8a" stroke-width="1.5" marker-end="url(#seq-arrow)"/>
+  <text x="475" y="200" text-anchor="middle" font-size="7.2" fill="#1e3a8a">[severity &gt;= HIGH] passToNext()</text>
+  <text x="548" y="220" font-size="7" font-weight="bold" fill="#0f294a">[HIGH/CRITICAL] resolve: Emergency Crisis Taskforce</text>
+
+  <!-- Fallback check -->
+  <rect x="631" y="235" width="8" height="20" fill="#f1f5f9" stroke="#64748b"/>
+  <line x1="541" y1="240" x2="631" y2="240" stroke="#64748b" stroke-width="1.2" stroke-dasharray="2,2" marker-end="url(#seq-arrow)"/>
+  <text x="585" y="236" text-anchor="middle" font-size="6.8" fill="#64748b">[unhandled] fallback</text>
+
+  <!-- Return result to Citizen -->
+  <line x1="533" y1="255" x2="59" y2="255" stroke="#059669" stroke-width="1.5" stroke-dasharray="3,3" marker-end="url(#seq-ret)"/>
+  <text x="300" y="252" text-anchor="middle" font-size="7.5" font-weight="bold" fill="#059669">ComplaintRoutingResult with complete immutable Audit Trail Vector</text>
+
+  <!-- Sequence Footer -->
+  <rect x="15" y="268" width="650" height="26" rx="3" fill="#ffffff" stroke="#cbd5e1"/>
+  <text x="340" y="284" text-anchor="middle" font-size="7.2" fill="#334155">Complete Sequence Trail: Citizen &rarr; ValidationTriage &rarr; LocalStaff &rarr; Supervisor &rarr; CityManager &rarr; TerminalFallback</text>
 </svg>"""
 
-    # 4. Flyweight Memory SVG
+    # 4. Flyweight Memory Architecture
     svg4 = """<svg width="680" height="250" viewBox="0 0 680 250" xmlns="http://www.w3.org/2000/svg" style="background:#ffffff; font-family:'Segoe UI', Arial, sans-serif;">
   <rect x="10" y="8" width="660" height="234" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
-  <text x="340" y="25" text-anchor="middle" font-size="10.5" font-weight="bold" fill="#0f294a">JVM 64-BIT HEAP MEMORY ARCHITECTURE & FLYWEIGHT REUSE POOL</text>
+  <text x="340" y="25" text-anchor="middle" font-size="10.5" font-weight="bold" fill="#0f294a">JVM 64-BIT HEAP MEMORY ARCHITECTURE &amp; FLYWEIGHT REUSE POOL</text>
 
   <!-- Left Box: Intrinsic Shared Profiles -->
   <rect x="25" y="42" width="280" height="185" rx="5" fill="#ffffff" stroke="#0f294a" stroke-width="1.8"/>
@@ -275,7 +289,7 @@ def create_svgs():
   <text x="522" y="216" text-anchor="middle" font-size="7" fill="#475569">Theoretical Un-Deduplicated Savings: up to 94.9% (25.6 MB)</text>
 </svg>"""
 
-    # 5. Interpreter AST SVG
+    # 5. Interpreter AST & UML Class Diagram
     svg5 = """<svg width="680" height="260" viewBox="0 0 680 260" xmlns="http://www.w3.org/2000/svg" style="background:#ffffff; font-family:'Segoe UI', Arial, sans-serif;">
   <defs>
     <marker id="tri-ast" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
@@ -359,8 +373,123 @@ def create_svgs():
   <text x="458" y="222" font-size="7.2" font-weight="bold" fill="#059669">left.interpret() || right.interpret()</text>
 </svg>"""
 
-    # 6. System Architecture SVG
-    svg6 = """<svg width="680" height="230" viewBox="0 0 680 230" xmlns="http://www.w3.org/2000/svg" style="background:#ffffff; font-family:'Segoe UI', Arial, sans-serif;">
+    # 6. UML Use Case Diagram for SmartCity360 (Part F)
+    svg6 = """<svg width="680" height="340" viewBox="0 0 680 340" xmlns="http://www.w3.org/2000/svg" style="background:#ffffff; font-family:'Segoe UI', Arial, sans-serif;">
+  <defs>
+    <marker id="uc-arr" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <polygon points="0 0, 7 4, 0 8" fill="#1e3a8a"/>
+    </marker>
+  </defs>
+
+  <!-- Background Boundary -->
+  <rect x="8" y="8" width="664" height="324" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+  <text x="340" y="24" text-anchor="middle" font-size="11" font-weight="bold" fill="#0f294a">UML USE CASE DIAGRAM: SMARTCITY360 MUNICIPAL OPERATIONAL SYSTEM</text>
+
+  <!-- System Boundary Box -->
+  <rect x="155" y="38" width="370" height="284" rx="5" fill="#ffffff" stroke="#0f294a" stroke-width="2"/>
+  <text x="340" y="54" text-anchor="middle" font-size="9" font-weight="bold" fill="#0f294a">&lt;&lt;system boundary&gt;&gt; SmartCity360 Municipal Operating Platform</text>
+
+  <!-- ================= ACTORS ================= -->
+  <!-- Actor 1: Citizen (Left Top) -->
+  <g transform="translate(45, 80)">
+    <circle cx="20" cy="12" r="10" fill="#ffffff" stroke="#0f294a" stroke-width="1.8"/>
+    <line x1="20" y1="22" x2="20" y2="44" stroke="#0f294a" stroke-width="1.8"/>
+    <line x1="8" y1="30" x2="32" y2="30" stroke="#0f294a" stroke-width="1.8"/>
+    <line x1="20" y1="44" x2="8" y2="60" stroke="#0f294a" stroke-width="1.8"/>
+    <line x1="20" y1="44" x2="32" y2="60" stroke="#0f294a" stroke-width="1.8"/>
+    <text x="20" y="74" text-anchor="middle" font-size="8" font-weight="bold" fill="#0f294a">Citizen</text>
+  </g>
+
+  <!-- Actor 2: IoT Sensor Gateway (Left Bottom) -->
+  <g transform="translate(45, 215)">
+    <rect x="5" y="10" width="30" height="26" rx="3" fill="#ffffff" stroke="#0f294a" stroke-width="1.8"/>
+    <line x1="20" y1="36" x2="20" y2="46" stroke="#0f294a" stroke-width="1.8"/>
+    <line x1="10" y1="46" x2="30" y2="46" stroke="#0f294a" stroke-width="1.8"/>
+    <circle cx="20" cy="23" r="4" fill="#1e3a8a"/>
+    <text x="20" y="60" text-anchor="middle" font-size="7.5" font-weight="bold" fill="#0f294a">IoT Gateway</text>
+    <text x="20" y="70" text-anchor="middle" font-size="6.8" fill="#475569">(Grid Meters)</text>
+  </g>
+
+  <!-- Actor 3: Area Supervisor / Staff (Right Top) -->
+  <g transform="translate(595, 80)">
+    <circle cx="20" cy="12" r="10" fill="#ffffff" stroke="#0f294a" stroke-width="1.8"/>
+    <line x1="20" y1="22" x2="20" y2="44" stroke="#0f294a" stroke-width="1.8"/>
+    <line x1="8" y1="30" x2="32" y2="30" stroke="#0f294a" stroke-width="1.8"/>
+    <line x1="20" y1="44" x2="8" y2="60" stroke="#0f294a" stroke-width="1.8"/>
+    <line x1="20" y1="44" x2="32" y2="60" stroke="#0f294a" stroke-width="1.8"/>
+    <text x="20" y="74" text-anchor="middle" font-size="8" font-weight="bold" fill="#0f294a">Municipal Staff</text>
+    <text x="20" y="84" text-anchor="middle" font-size="6.8" fill="#475569">&amp; Supervisors</text>
+  </g>
+
+  <!-- Actor 4: City Manager / Administrator (Right Bottom) -->
+  <g transform="translate(595, 215)">
+    <circle cx="20" cy="12" r="10" fill="#ffffff" stroke="#0f294a" stroke-width="1.8"/>
+    <line x1="20" y1="22" x2="20" y2="44" stroke="#0f294a" stroke-width="1.8"/>
+    <line x1="8" y1="30" x2="32" y2="30" stroke="#0f294a" stroke-width="1.8"/>
+    <line x1="20" y1="44" x2="8" y2="60" stroke="#0f294a" stroke-width="1.8"/>
+    <line x1="20" y1="44" x2="32" y2="60" stroke="#0f294a" stroke-width="1.8"/>
+    <text x="20" y="74" text-anchor="middle" font-size="8" font-weight="bold" fill="#0f294a">City Manager</text>
+    <text x="20" y="84" text-anchor="middle" font-size="6.8" fill="#475569">(Administrator)</text>
+  </g>
+
+  <!-- ================= USE CASES ================= -->
+  <!-- UC 1: Lodge Citizen Complaint -->
+  <ellipse cx="255" cy="85" rx="80" ry="18" fill="#f8fafc" stroke="#1e3a8a" stroke-width="1.5"/>
+  <text x="255" y="88" text-anchor="middle" font-size="7.5" font-weight="bold" fill="#0f294a">UC-01: Lodge Citizen Complaint</text>
+
+  <!-- UC 2: Triage & Escalate Complaint -->
+  <ellipse cx="435" cy="85" rx="78" ry="18" fill="#f8fafc" stroke="#dc2626" stroke-width="1.5"/>
+  <text x="435" y="88" text-anchor="middle" font-size="7.5" font-weight="bold" fill="#dc2626">UC-02: Triage &amp; Escalate Ticket</text>
+
+  <!-- UC 3: Ingest Secured Energy Stream -->
+  <ellipse cx="255" cy="150" rx="80" ry="18" fill="#f8fafc" stroke="#1e3a8a" stroke-width="1.5"/>
+  <text x="255" y="153" text-anchor="middle" font-size="7.5" font-weight="bold" fill="#0f294a">UC-03: Ingest Secured Telemetry</text>
+
+  <!-- UC 4: Broadcast Zone Power Commands -->
+  <ellipse cx="435" cy="150" rx="80" ry="18" fill="#f8fafc" stroke="#1e3a8a" stroke-width="1.5"/>
+  <text x="435" y="153" text-anchor="middle" font-size="7.5" font-weight="bold" fill="#0f294a">UC-04: Broadcast Zone Command</text>
+
+  <!-- UC 5: Monitor Streetlight Fleet Memory -->
+  <ellipse cx="255" cy="215" rx="80" ry="18" fill="#f8fafc" stroke="#1e3a8a" stroke-width="1.5"/>
+  <text x="255" y="218" text-anchor="middle" font-size="7.5" font-weight="bold" fill="#0f294a">UC-05: Monitor Streetlight Fleet</text>
+
+  <!-- UC 6: Query Aggregate Power Rollup -->
+  <ellipse cx="435" cy="215" rx="80" ry="18" fill="#f8fafc" stroke="#059669" stroke-width="1.5"/>
+  <text x="435" y="218" text-anchor="middle" font-size="7.5" font-weight="bold" fill="#059669">UC-06: Rollup Zone Power</text>
+
+  <!-- UC 7: Author & Evaluate Policy DSL -->
+  <ellipse cx="345" cy="280" rx="82" ry="18" fill="#f8fafc" stroke="#1e3a8a" stroke-width="1.5"/>
+  <text x="345" y="283" text-anchor="middle" font-size="7.5" font-weight="bold" fill="#0f294a">UC-07: Evaluate Policy DSL</text>
+
+  <!-- ================= ASSOCIATIONS ================= -->
+  <!-- Citizen -> UC1 -->
+  <line x1="75" y1="100" x2="178" y2="88" stroke="#0f294a" stroke-width="1.2"/>
+
+  <!-- UC1 include UC2 -->
+  <line x1="335" y1="85" x2="357" y2="85" stroke="#dc2626" stroke-dasharray="3,2" stroke-width="1.2" marker-end="url(#uc-arr)"/>
+  <text x="346" y="78" text-anchor="middle" font-size="6.5" font-weight="bold" fill="#dc2626">&lt;&lt;include&gt;&gt;</text>
+
+  <!-- UC2 -> Staff & CityManager -->
+  <line x1="513" y1="85" x2="595" y2="105" stroke="#0f294a" stroke-width="1.2"/>
+  <line x1="513" y1="88" x2="595" y2="230" stroke="#0f294a" stroke-width="1.2"/>
+
+  <!-- IoT Gateway -> UC3 -->
+  <line x1="75" y1="230" x2="185" y2="160" stroke="#0f294a" stroke-width="1.2"/>
+
+  <!-- City Manager -> UC4 & UC7 -->
+  <line x1="595" y1="240" x2="515" y2="155" stroke="#0f294a" stroke-width="1.2"/>
+  <line x1="595" y1="250" x2="427" y2="280" stroke="#0f294a" stroke-width="1.2"/>
+
+  <!-- UC4 extend UC6 -->
+  <line x1="435" y1="168" x2="435" y2="197" stroke="#059669" stroke-dasharray="3,2" stroke-width="1.2" marker-end="url(#uc-arr)"/>
+  <text x="458" y="185" font-size="6.5" font-weight="bold" fill="#059669">&lt;&lt;extend&gt;&gt;</text>
+
+  <!-- Staff -> UC5 -->
+  <line x1="595" y1="120" x2="330" y2="210" stroke="#0f294a" stroke-width="1.2"/>
+</svg>"""
+
+    # 7. End-to-End Enterprise System Architecture Diagram (Component / Deployment)
+    svg7 = """<svg width="680" height="230" viewBox="0 0 680 230" xmlns="http://www.w3.org/2000/svg" style="background:#ffffff; font-family:'Segoe UI', Arial, sans-serif;">
   <rect x="10" y="8" width="660" height="214" rx="5" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
   <text x="340" y="24" text-anchor="middle" font-size="10.5" font-weight="bold" fill="#0f294a">SMARTCITY360 END-TO-END MULTI-TIER ENTERPRISE ARCHITECTURE</text>
 
@@ -443,7 +572,8 @@ def create_svgs():
         ("03_chain_of_responsibility.svg", svg3),
         ("04_flyweight_memory.svg", svg4),
         ("05_interpreter_ast.svg", svg5),
-        ("06_system_architecture.svg", svg6),
+        ("06_system_architecture.svg", svg7),
+        ("07_system_use_case.svg", svg6),
     ]
 
     for fname, svg_content in files:
@@ -454,4 +584,3 @@ def create_svgs():
 
 if __name__ == "__main__":
     create_svgs()
-
