@@ -59,11 +59,16 @@ public class ComprehensiveTestSuite {
         testChainAuditTrail();
 
         testFlyweightProfileReusability();
+        testFlyweightCacheKeyDistinction();
         testFlyweightThreadSafety();
         testFlyweightContextSeparation();
         testFlyweightEmpiricalBenchmark();
 
+        testCompositeCycleDetection();
+
         testInterpreterSimpleRelational();
+        testInterpreterBetweenExpression();
+        testInterpreterNonNumericValueRejection();
         testInterpreterAndExpression();
         testInterpreterOrExpression();
         testInterpreterParentheses();
@@ -378,6 +383,35 @@ public class ComprehensiveTestSuite {
         }
     }
 
+    private void testFlyweightCacheKeyDistinction() {
+        try {
+            StreetlightProfileFactory.clear();
+            SharedStreetlightProfile p1 = StreetlightProfileFactory.getProfile("Philips-150", "LED", 150, 18000, 4000, "v1.0");
+            SharedStreetlightProfile p2 = StreetlightProfileFactory.getProfile("Philips-150", "LED", 150, 24000, 4000, "v2.0");
+            boolean distinct = (p1 != p2) && (StreetlightProfileFactory.getFlyweightCount() == 2);
+            results.add(new TestResult("testFlyweightCacheKeyDistinction", "Flyweight", "Profiles with differing lumens/firmware produce distinct cached instances", "Distinct instances: " + distinct + ", Pool size: " + StreetlightProfileFactory.getFlyweightCount(), distinct));
+        } catch (Exception e) {
+            results.add(new TestResult("testFlyweightCacheKeyDistinction", "Flyweight", "Cache key distinction", e.getMessage(), false));
+        }
+    }
+
+    private void testCompositeCycleDetection() {
+        try {
+            ZoneComposite c1 = new ZoneComposite("C1", "District 1", "DISTRICT");
+            ZoneComposite c2 = new ZoneComposite("C2", "Street A", "STREET");
+            c1.add(c2);
+            boolean caughtCycle = false;
+            try {
+                c2.add(c1);
+            } catch (IllegalArgumentException e) {
+                caughtCycle = true;
+            }
+            results.add(new TestResult("testCompositeCycleDetection", "Composite", "Adding parent to descendant composite triggers cycle rejection", "Cycle detected and rejected: " + caughtCycle, caughtCycle));
+        } catch (Exception e) {
+            results.add(new TestResult("testCompositeCycleDetection", "Composite", "Cycle detection", e.getMessage(), false));
+        }
+    }
+
     private void testFlyweightThreadSafety() {
         try {
             StreetlightProfileFactory.clear();
@@ -438,6 +472,39 @@ public class ComprehensiveTestSuite {
             results.add(new TestResult("testInterpreterSimpleRelational", "Interpreter", "All relational operators evaluate correctly", "VAL > 40, VAL <= 42, VAL == 42 all TRUE: " + ok, ok));
         } catch (Exception e) {
             results.add(new TestResult("testInterpreterSimpleRelational", "Interpreter", "Relational ops", e.getMessage(), false));
+        }
+    }
+
+    private void testInterpreterBetweenExpression() {
+        try {
+            PolicyContext ctx = new PolicyContext();
+            ctx.set("PARKING_HOUR", 14.0);
+            Expression e = DslPolicyParser.parse("PARKING_HOUR BETWEEN 8 AND 18");
+            boolean ok1 = e.interpret(ctx);
+
+            ctx.set("PARKING_HOUR", 21.0);
+            boolean ok2 = !e.interpret(ctx);
+
+            boolean ok = ok1 && ok2;
+            results.add(new TestResult("testInterpreterBetweenExpression", "Interpreter", "BETWEEN operator evaluates range boundaries [min <= x <= max]", "14 in [8,18]: " + ok1 + ", 21 in [8,18]: " + ok2, ok));
+        } catch (Exception e) {
+            results.add(new TestResult("testInterpreterBetweenExpression", "Interpreter", "BETWEEN operator", e.getMessage(), false));
+        }
+    }
+
+    private void testInterpreterNonNumericValueRejection() {
+        try {
+            PolicyContext ctx = new PolicyContext();
+            ctx.set("SENSOR", "invalid_number_string");
+            boolean caught = false;
+            try {
+                ctx.getDouble("SENSOR");
+            } catch (IllegalArgumentException e) {
+                caught = true;
+            }
+            results.add(new TestResult("testInterpreterNonNumericValueRejection", "Interpreter", "Non-numeric context values throw IllegalArgumentException", "Exception thrown: " + caught, caught));
+        } catch (Exception e) {
+            results.add(new TestResult("testInterpreterNonNumericValueRejection", "Interpreter", "Non-numeric rejection", e.getMessage(), false));
         }
     }
 

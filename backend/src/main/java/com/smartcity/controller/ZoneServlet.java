@@ -70,10 +70,25 @@ public class ZoneServlet extends HttpServlet {
         }
 
         String id = pathInfo.substring(1);
+        if (id.endsWith("/command")) {
+            id = id.replace("/command", "");
+        }
         try {
             Map body = JsonUtil.fromRequest(req, Map.class);
             String status = (String) body.get("status");
+            String command = (String) body.get("command");
             Boolean recursive = (Boolean) body.get("recursive");
+
+            if (command != null && !command.isEmpty()) {
+                recursive = true;
+                if ("SHUTDOWN_POWER".equalsIgnoreCase(command) || "SHUTDOWN".equalsIgnoreCase(command)) {
+                    status = "OFFLINE";
+                } else if ("EMERGENCY_ISOLATE".equalsIgnoreCase(command) || "ISOLATE".equalsIgnoreCase(command)) {
+                    status = "ISOLATED";
+                } else {
+                    status = "OPERATIONAL";
+                }
+            }
 
             boolean ok;
             if (Boolean.TRUE.equals(recursive)) {

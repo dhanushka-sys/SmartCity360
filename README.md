@@ -4,7 +4,7 @@
 [![Java](https://img.shields.io/badge/Java-17%20LTS-orange.svg)](https://www.oracle.com/java/)
 [![Next.js](https://img.shields.io/badge/Next.js-14.2%20App%20Router-black.svg)](https://nextjs.org/)
 [![Database](https://img.shields.io/badge/Database-MySQL%208.0-blue.svg)](https://www.mysql.com/)
-[![Tests](https://img.shields.io/badge/Tests-31%2F31%20Passing%20(100%25)-brightgreen.svg)](file:///SmartCity360_Test_Report.md)
+[![Tests](https://img.shields.io/badge/Tests-35%2F35%20Passing%20(100%25)-brightgreen.svg)](file:///SmartCity360_Test_Report.md)
 
 > **Academic Unit:** Object-Oriented Design Patterns II (**JIAT/OODP II / EX / 01**)  
 > **Industrial Context:** Senior Software Architect at **UrbanTech Solutions**  
@@ -26,7 +26,7 @@ The architecture strictly implements **five core Gang of Four (GoF) design patte
 | **Part C: Citizen Complaints** | Routing grievances through municipal administrative levels according to severity. | **Chain of Responsibility** *(Behavioral)* | Safe triage via `ValidationTriageHandler` (missing/unknown severity **never defaults to LOW**), local staff, supervisors, city managers, and terminal fallback. |
 | **Part D: Streetlights** | Managing 25,000 smart LED streetlights without heap memory bloat or GC pause latency. | **Flyweight Pattern** *(Structural)* | Clean separation of immutable intrinsic hardware profiles from mutable extrinsic pole coordinates. **Empirically measured 72.2% layout memory savings**. |
 | **Part E: City Policies** | Dynamic runtime evaluation of municipal environmental ordinances without code deployment. | **Interpreter Pattern** *(Behavioral)* | True recursive-descent `DslPolicyParser` compiling mini-language expressions into a sandboxed AST with microsecond evaluation latency (6.0 µs). |
-| **Part F: Demonstration & Tests** | Automated test evidence and comprehensive 10–15 minute presentation defense. | **VIVA & Test Suite** | 31/31 automated tests passing (100% pass rate), detailed demo script, and 30-page academic report. |
+| **Part F: Demonstration & Tests** | Automated test evidence and comprehensive 10–15 minute presentation defense. | **VIVA & Test Suite** | 35/35 automated tests passing (100% pass rate), detailed demo script, and academic report. |
 
 ---
 
@@ -139,7 +139,7 @@ SMARTCITY360 AUTOMATED COMPREHENSIVE REGRESSION SUITE
 [TEST 30] Interpreter: Missing Context Variable ................. PASS
 [TEST 31] Interpreter: Malformed Syntax Rejection ............... PASS
 ================================================================================
-ALL 31 TESTS COMPLETED: 31 PASSED, 0 FAILED (100.0% SUCCESS RATE)
+ALL 35 TESTS COMPLETED: 35 PASSED, 0 FAILED (100.0% SUCCESS RATE)
 ================================================================================
 ```
 

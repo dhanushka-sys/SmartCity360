@@ -12,6 +12,7 @@ public class FlyweightBenchmark {
         public long naiveAllocatedBytes;
         public long flyweightAllocatedBytes;
         public double savingsPercent;
+        public double measuredHeapSavingsPercent;
         public long naiveTimeMs;
         public long flyweightTimeMs;
         public int flyweightPoolSize;
@@ -36,14 +37,36 @@ public class FlyweightBenchmark {
         int bytesPerSharedProfile = 288;
         res.naiveEstimatedBytes = (long) count * bytesPerNaiveObject;
         res.flyweightEstimatedBytes = ((long) count * bytesPerFlyweightContext) + (3L * bytesPerSharedProfile);
+        res.savingsPercent = ((double) (res.naiveEstimatedBytes - res.flyweightEstimatedBytes) / res.naiveEstimatedBytes) * 100.0;
 
         MemoryMXBean mem = ManagementFactory.getMemoryMXBean();
+
+        // 1. Measure Naive Heavy allocation in isolation
+        settleGc();
+        long memBeforeNaive = mem.getHeapMemoryUsage().getUsed();
+        long t0 = System.currentTimeMillis();
+        NaiveHeavyStreetlight[] naiveArray = new NaiveHeavyStreetlight[count];
+        for (int i = 0; i < count; i++) {
+            int idx = i % 3;
+            naiveArray[i] = new NaiveHeavyStreetlight(
+                    "POLE-" + String.format("%06d", i),
+                    6.9271 + (i * 0.0001),
+                    79.8612 + (i * 0.0001),
+                    models[idx], types[idx], wattages[idx], lumens[idx], temps[idx], firmware
+            );
+        }
+        res.naiveTimeMs = System.currentTimeMillis() - t0;
+        long memAfterNaive = mem.getHeapMemoryUsage().getUsed();
+        res.naiveAllocatedBytes = Math.max(1, memAfterNaive - memBeforeNaive);
+
+        // Discard naive array and settle GC before measuring Flyweight
+        naiveArray = null;
         settleGc();
 
+        // 2. Measure Flyweight pattern allocation in isolation
         StreetlightProfileFactory.clear();
         long memBeforeFly = mem.getHeapMemoryUsage().getUsed();
         long t1 = System.currentTimeMillis();
-
         StreetlightContext[] flyArray = new StreetlightContext[count];
         for (int i = 0; i < count; i++) {
             int idx = i % 3;
@@ -62,27 +85,13 @@ public class FlyweightBenchmark {
         res.flyweightAllocatedBytes = Math.max(1, memAfterFly - memBeforeFly);
         res.flyweightPoolSize = StreetlightProfileFactory.getFlyweightCount();
 
+        if (res.naiveAllocatedBytes > 0 && res.flyweightAllocatedBytes > 0) {
+            double measured = ((double) (res.naiveAllocatedBytes - res.flyweightAllocatedBytes) / res.naiveAllocatedBytes) * 100.0;
+            res.measuredHeapSavingsPercent = Math.max(0.0, Math.min(99.0, measured));
+        }
+
+        flyArray = null;
         settleGc();
-        long memBeforeNaive = mem.getHeapMemoryUsage().getUsed();
-        long t0 = System.currentTimeMillis();
-
-        NaiveHeavyStreetlight[] naiveArray = new NaiveHeavyStreetlight[count];
-        for (int i = 0; i < count; i++) {
-            int idx = i % 3;
-            naiveArray[i] = new NaiveHeavyStreetlight(
-                    "POLE-" + String.format("%06d", i),
-                    6.9271 + (i * 0.0001),
-                    79.8612 + (i * 0.0001),
-                    models[idx], types[idx], wattages[idx], lumens[idx], temps[idx], firmware
-            );
-        }
-        res.naiveTimeMs = System.currentTimeMillis() - t0;
-        long memAfterNaive = mem.getHeapMemoryUsage().getUsed();
-        res.naiveAllocatedBytes = Math.max(1, memAfterNaive - memBeforeNaive);
-
-        if (flyArray.length > 0 && naiveArray.length > 0) {
-            res.savingsPercent = ((double) (res.naiveEstimatedBytes - res.flyweightEstimatedBytes) / res.naiveEstimatedBytes) * 100.0;
-        }
 
         return res;
     }

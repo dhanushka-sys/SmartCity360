@@ -20,7 +20,25 @@ public class ZoneComposite extends ZoneComponent {
         if (component == this) {
             throw new IllegalArgumentException("Cannot add composite to itself");
         }
+        if (component instanceof ZoneComposite && ((ZoneComposite) component).contains(this)) {
+            throw new IllegalArgumentException("Cannot add component: cycle detected (target composite already contains this node)");
+        }
+        if (this.contains(component)) {
+            throw new IllegalArgumentException("Component already exists in this hierarchy");
+        }
         this.children.add(component);
+    }
+
+    public boolean contains(ZoneComponent target) {
+        if (target == null) return false;
+        if (this == target) return true;
+        for (ZoneComponent child : this.children) {
+            if (child == target) return true;
+            if (child instanceof ZoneComposite) {
+                if (((ZoneComposite) child).contains(target)) return true;
+            }
+        }
+        return false;
     }
 
     @Override

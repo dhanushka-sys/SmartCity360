@@ -13,7 +13,7 @@ public class EncryptionDecorator extends StreamDataDecorator {
 
     public static final int GCM_IV_LENGTH = 12;
     public static final int GCM_TAG_LENGTH = 128;
-    private static final byte[] DEFAULT_KEY = new byte[] {
+    private static final byte[] FALLBACK_KEY = new byte[] {
             (byte) 0x2b, (byte) 0x7e, (byte) 0x15, (byte) 0x16,
             (byte) 0x28, (byte) 0xae, (byte) 0xd2, (byte) 0xa6,
             (byte) 0xab, (byte) 0xf7, (byte) 0x15, (byte) 0x88,
@@ -24,13 +24,24 @@ public class EncryptionDecorator extends StreamDataDecorator {
             (byte) 0x45, (byte) 0x19, (byte) 0x0c, (byte) 0xfe
     };
 
+    public static byte[] resolveDefaultKey() {
+        String envKey = System.getenv("STREAM_AES_KEY");
+        if (envKey != null && !envKey.trim().isEmpty()) {
+            try {
+                byte[] decoded = Base64.getDecoder().decode(envKey.trim());
+                if (decoded.length == 32) return decoded;
+            } catch (Exception ignored) {}
+        }
+        return FALLBACK_KEY;
+    }
+
     private final String encryptedJson;
     private final byte[] ivBytes;
     private final byte[] ciphertextBytes;
     private final byte[] keyBytes;
 
     public EncryptionDecorator(StreamData wrappee) {
-        this(wrappee, DEFAULT_KEY);
+        this(wrappee, resolveDefaultKey());
     }
 
     public EncryptionDecorator(StreamData wrappee, byte[] keyBytes) {

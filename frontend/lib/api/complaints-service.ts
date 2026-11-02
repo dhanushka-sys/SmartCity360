@@ -22,7 +22,7 @@ function resolveInitialHandler(severity: ComplaintSeverity): {
   escalationHistory: EscalationRecord[];
 } {
   const now = new Date().toISOString();
-  if (severity === "LOW" || severity === "MEDIUM") {
+  if (severity === "LOW") {
     return {
       role: "LOCAL_STAFF",
       escalationHistory: [
@@ -31,12 +31,12 @@ function resolveInitialHandler(severity: ComplaintSeverity): {
           fromRole: "CITIZEN",
           toRole: "LOCAL_STAFF",
           timestamp: now,
-          reason: `Severity ${severity}: Direct assignment to Local Staff field handler.`,
+          reason: "Severity LOW: Direct assignment to Local Staff field handler.",
           automated: true,
         },
       ],
     };
-  } else if (severity === "HIGH") {
+  } else if (severity === "MEDIUM") {
     return {
       role: "SUPERVISOR",
       escalationHistory: [
@@ -45,7 +45,7 @@ function resolveInitialHandler(severity: ComplaintSeverity): {
           fromRole: "CITIZEN",
           toRole: "LOCAL_STAFF",
           timestamp: now,
-          reason: "Intake registered.",
+          reason: "Intake registered at Local Staff gateway.",
           automated: true,
         },
         {
@@ -53,13 +53,12 @@ function resolveInitialHandler(severity: ComplaintSeverity): {
           fromRole: "LOCAL_STAFF",
           toRole: "SUPERVISOR",
           timestamp: now,
-          reason: "Severity HIGH: Exceeds Local Staff resolution limit; forwarded along Chain of Responsibility.",
+          reason: "Severity MEDIUM: Exceeds Local Staff resolution limit; forwarded along Chain of Responsibility.",
           automated: true,
         },
       ],
     };
-  } else {
-    // CRITICAL
+  } else if (severity === "HIGH") {
     return {
       role: "CITY_MANAGER",
       escalationHistory: [
@@ -68,7 +67,7 @@ function resolveInitialHandler(severity: ComplaintSeverity): {
           fromRole: "CITIZEN",
           toRole: "LOCAL_STAFF",
           timestamp: now,
-          reason: "Intake registered.",
+          reason: "Intake registered at Local Staff gateway.",
           automated: true,
         },
         {
@@ -76,7 +75,37 @@ function resolveInitialHandler(severity: ComplaintSeverity): {
           fromRole: "LOCAL_STAFF",
           toRole: "SUPERVISOR",
           timestamp: now,
-          reason: "Severity CRITICAL: Forwarded along chain.",
+          reason: "Severity HIGH: Exceeds Tier 1; forwarded to Supervisor.",
+          automated: true,
+        },
+        {
+          id: `esc-${Math.random().toString(36).substring(2, 7)}`,
+          fromRole: "SUPERVISOR",
+          toRole: "CITY_MANAGER",
+          timestamp: now,
+          reason: "Severity HIGH: Escalated to City Manager for departmental intervention.",
+          automated: true,
+        },
+      ],
+    };
+  } else if (severity === "CRITICAL") {
+    return {
+      role: "CITY_MANAGER",
+      escalationHistory: [
+        {
+          id: `esc-${Math.random().toString(36).substring(2, 7)}`,
+          fromRole: "CITIZEN",
+          toRole: "LOCAL_STAFF",
+          timestamp: now,
+          reason: "Intake registered at Local Staff gateway.",
+          automated: true,
+        },
+        {
+          id: `esc-${Math.random().toString(36).substring(2, 7)}`,
+          fromRole: "LOCAL_STAFF",
+          toRole: "SUPERVISOR",
+          timestamp: now,
+          reason: "Severity CRITICAL: Forwarded along chain immediately.",
           automated: true,
         },
         {
@@ -85,6 +114,21 @@ function resolveInitialHandler(severity: ComplaintSeverity): {
           toRole: "CITY_MANAGER",
           timestamp: now,
           reason: "Severity CRITICAL: Requires executive inter-agency authorization.",
+          automated: true,
+        },
+      ],
+    };
+  } else {
+    // Missing or invalid severity - ValidationTriageHandler NEVER defaults to LOW
+    return {
+      role: "TRIAGE_OFFICER",
+      escalationHistory: [
+        {
+          id: `esc-${Math.random().toString(36).substring(2, 7)}`,
+          fromRole: "CITIZEN",
+          toRole: "TRIAGE_OFFICER",
+          timestamp: now,
+          reason: "Missing/Unverified Severity: Intercepted by ValidationTriageHandler. Routed to Manual Triage.",
           automated: true,
         },
       ],
@@ -117,6 +161,19 @@ export const ComplaintsService = {
     citizenName: string;
     citizenContact: string;
   }): Promise<CitizenComplaint> {
+    try {
+      const backendComplaint = await fetchFromBackend<CitizenComplaint>("/complaints", {
+        method: "POST",
+        body: JSON.stringify(data),
+      });
+      if (backendComplaint && backendComplaint.id) {
+        complaintsState = [backendComplaint, ...complaintsState];
+        return backendComplaint;
+      }
+    } catch {
+      // Fallback to local simulation if backend unavailable
+    }
+
     await delay(250);
     const { role, escalationHistory } = resolveInitialHandler(data.severity);
     const now = new Date().toISOString();
@@ -142,10 +199,6 @@ export const ComplaintsService = {
     };
 
     complaintsState = [newComplaint, ...complaintsState];
-    fetchFromBackend("/complaints", {
-      method: "POST",
-      body: JSON.stringify(newComplaint),
-    }).catch(() => {});
     return newComplaint;
   },
 
@@ -154,22 +207,39 @@ export const ComplaintsService = {
     reason: string,
     customToRole?: HandlerRole
   ): Promise<CitizenComplaint> {
-    await delay(250);
     const complaint = complaintsState.find((c) => c.id === complaintId);
-    if (!complaint) throw new Error("Complaint not found");
-
     let nextRole: HandlerRole;
     if (customToRole) {
       nextRole = customToRole;
     } else {
-      if (complaint.currentHandlerRole === "LOCAL_STAFF") {
+      if (complaint?.currentHandlerRole === "LOCAL_STAFF") {
         nextRole = "SUPERVISOR";
-      } else if (complaint.currentHandlerRole === "SUPERVISOR") {
+      } else if (complaint?.currentHandlerRole === "SUPERVISOR") {
         nextRole = "CITY_MANAGER";
       } else {
-        throw new Error("Complaint is already at the highest escalation tier (City Manager).");
+        nextRole = "CITY_MANAGER";
       }
     }
+
+    try {
+      const backendComplaint = await fetchFromBackend<CitizenComplaint>(
+        `/complaints/${complaintId}/escalate`,
+        {
+          method: "PUT",
+          body: JSON.stringify({ toRole: nextRole, reason, author: "Operations Officer" }),
+        }
+      );
+      if (backendComplaint) {
+        const idx = complaintsState.findIndex((c) => c.id === complaintId);
+        if (idx !== -1) complaintsState[idx] = backendComplaint;
+        return backendComplaint;
+      }
+    } catch {
+      // Fallback
+    }
+
+    await delay(250);
+    if (!complaint) throw new Error("Complaint not found");
 
     const now = new Date().toISOString();
     const escalationRecord: EscalationRecord = {
@@ -195,11 +265,6 @@ export const ComplaintsService = {
     complaint.updatedAt = now;
     complaint.escalationHistory.push(escalationRecord);
     complaint.notes.push(newNote);
-
-    fetchFromBackend(`/complaints/${complaintId}/escalate`, {
-      method: "PUT",
-      body: JSON.stringify({ toRole: nextRole, reason, author: "Operations Officer" }),
-    }).catch(() => {});
 
     return { ...complaint };
   },

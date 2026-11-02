@@ -20,15 +20,20 @@ public class PolicyContext {
 
     public double getDouble(String key) {
         Object val = get(key);
+        if (val == null) {
+            return 0.0;
+        }
         if (val instanceof Number) {
             return ((Number) val).doubleValue();
         }
         if (val instanceof String) {
             try {
                 return Double.parseDouble(((String) val).trim());
-            } catch (NumberFormatException ignored) {}
+            } catch (NumberFormatException e) {
+                throw new IllegalArgumentException("Variable '" + key + "' value '" + val + "' cannot be parsed as a numeric double", e);
+            }
         }
-        return 0.0;
+        throw new IllegalArgumentException("Variable '" + key + "' has unsupported non-numeric type: " + val.getClass().getSimpleName());
     }
 
     public boolean has(String key) {

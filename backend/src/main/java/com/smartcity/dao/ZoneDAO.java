@@ -2,6 +2,10 @@ package com.smartcity.dao;
 
 import com.smartcity.config.DatabaseConfig;
 import com.smartcity.model.Zone;
+import com.smartcity.pattern.composite.BuildingLeaf;
+import com.smartcity.pattern.composite.ZoneCommand;
+import com.smartcity.pattern.composite.ZoneComponent;
+import com.smartcity.pattern.composite.ZoneComposite;
 
 import java.sql.*;
 import java.util.*;
@@ -44,6 +48,27 @@ public class ZoneDAO {
             }
         }
         return root != null ? root : all.get(0);
+    }
+
+    public ZoneComponent buildCompositeHierarchy(List<Zone> all, String rootId) {
+        Map<String, ZoneComponent> compMap = new HashMap<>();
+        for (Zone z : all) {
+            if ("BUILDING".equalsIgnoreCase(z.getType())) {
+                compMap.put(z.getId(), new BuildingLeaf(z.getId(), z.getName(), z.getPowerUsageKw()));
+            } else {
+                compMap.put(z.getId(), new ZoneComposite(z.getId(), z.getName(), z.getType()));
+            }
+        }
+        for (Zone z : all) {
+            if (z.getParentId() != null && !z.getParentId().isEmpty()) {
+                ZoneComponent parent = compMap.get(z.getParentId());
+                ZoneComponent child = compMap.get(z.getId());
+                if (parent instanceof ZoneComposite && child != null) {
+                    ((ZoneComposite) parent).add(child);
+                }
+            }
+        }
+        return compMap.get(rootId);
     }
 
     public Zone getZoneById(String id) throws SQLException {
@@ -103,17 +128,34 @@ public class ZoneDAO {
 
     public boolean updateZoneStatusRecursively(String rootId, String status) throws SQLException {
         List<Zone> all = getAllZones();
-        Set<String> targetIds = new HashSet<>();
-        collectDescendantIds(all, rootId, targetIds);
-        targetIds.add(rootId);
+        ZoneComponent rootComp = buildCompositeHierarchy(all, rootId);
+        if (rootComp == null) {
+            return false;
+        }
 
-        String sql = "UPDATE zones SET status = ? WHERE id = ?";
+        ZoneCommand cmd;
+        if ("OFFLINE".equalsIgnoreCase(status) || "SHUTDOWN".equalsIgnoreCase(status)) {
+            cmd = ZoneCommand.SHUTDOWN_POWER;
+        } else if ("ISOLATED".equalsIgnoreCase(status)) {
+            cmd = ZoneCommand.EMERGENCY_ISOLATE;
+        } else {
+            cmd = ZoneCommand.RESTORE_POWER;
+        }
+
+        rootComp.executeCommand(cmd);
+
+        Map<String, ZoneComponent> stateMap = new HashMap<>();
+        collectComponents(rootComp, stateMap);
+
+        String sql = "UPDATE zones SET status = ?, power_usage_kw = ? WHERE id = ?";
         try (Connection conn = DatabaseConfig.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            for (String zid : targetIds) {
-                stmt.setString(1, status);
-                stmt.setString(2, zid);
+            for (Map.Entry<String, ZoneComponent> entry : stateMap.entrySet()) {
+                ZoneComponent comp = entry.getValue();
+                stmt.setString(1, comp.getStatus());
+                stmt.setDouble(2, comp.getPowerConsumption());
+                stmt.setString(3, entry.getKey());
                 stmt.addBatch();
             }
             stmt.executeBatch();
@@ -121,11 +163,12 @@ public class ZoneDAO {
         }
     }
 
-    private void collectDescendantIds(List<Zone> all, String parentId, Set<String> targetIds) {
-        for (Zone z : all) {
-            if (parentId.equals(z.getParentId())) {
-                targetIds.add(z.getId());
-                collectDescendantIds(all, z.getId(), targetIds);
+    private void collectComponents(ZoneComponent comp, Map<String, ZoneComponent> out) {
+        if (comp == null) return;
+        out.put(comp.getId(), comp);
+        if (comp instanceof ZoneComposite) {
+            for (ZoneComponent child : ((ZoneComposite) comp).getChildren()) {
+                collectComponents(child, out);
             }
         }
     }

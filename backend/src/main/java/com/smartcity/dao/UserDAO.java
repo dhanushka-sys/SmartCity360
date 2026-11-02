@@ -15,8 +15,20 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class UserDAO {
 
+    public static class UserSession {
+        public final String userId;
+        public final String role;
+        public final long loginTimestamp;
+
+        public UserSession(String userId, String role) {
+            this.userId = userId;
+            this.role = role;
+            this.loginTimestamp = System.currentTimeMillis();
+        }
+    }
+
     private static final String SALT = "SmartCity360SecureSalt2026";
-    private static final Map<String, String> activeTokens = new ConcurrentHashMap<>();
+    private static final Map<String, UserSession> activeTokens = new ConcurrentHashMap<>();
     private static final SecureRandom secureRandom = new SecureRandom();
 
     public static String hashPassword(String password) {
@@ -34,7 +46,7 @@ public class UserDAO {
         }
     }
 
-    public static String generateSecureToken(String userId) {
+    public static String generateSecureToken(String userId, String role) {
         byte[] randomBytes = new byte[32];
         secureRandom.nextBytes(randomBytes);
         StringBuilder sb = new StringBuilder("SC360_");
@@ -42,12 +54,30 @@ public class UserDAO {
             sb.append(String.format("%02x", b));
         }
         String token = sb.toString();
-        activeTokens.put(token, userId);
+        activeTokens.put(token, new UserSession(userId, role != null ? role : "OPERATOR"));
         return token;
+    }
+
+    public static String generateSecureToken(String userId) {
+        return generateSecureToken(userId, "OPERATOR");
     }
 
     public static boolean validateToken(String token) {
         return token != null && activeTokens.containsKey(token);
+    }
+
+    public static UserSession getSession(String token) {
+        if (token == null) return null;
+        return activeTokens.get(token);
+    }
+
+    public static boolean hasRole(String token, String... allowedRoles) {
+        UserSession session = getSession(token);
+        if (session == null || session.role == null) return false;
+        for (String r : allowedRoles) {
+            if (r.equalsIgnoreCase(session.role)) return true;
+        }
+        return false;
     }
 
     public static void invalidateToken(String token) {
@@ -62,26 +92,46 @@ public class UserDAO {
         }
 
         String hashed = hashPassword(password);
-        String sql = "SELECT * FROM users WHERE (username = ? OR email = ?) AND (password = ? OR password = ?)";
+        String sql = "SELECT * FROM users WHERE username = ? OR email = ?";
 
         try (Connection conn = DatabaseConfig.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, identifier.trim());
             stmt.setString(2, identifier.trim());
-            stmt.setString(3, hashed);
-            stmt.setString(4, password);
 
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    User user = mapResultSetToUser(rs);
-                    user.setPassword(null);
-                    user.setToken(generateSecureToken(user.getId()));
-                    return user;
+                    String storedPass = rs.getString("password");
+                    boolean passwordMatches = false;
+
+                    if (storedPass != null && storedPass.equals(hashed)) {
+                        passwordMatches = true;
+                    } else if (storedPass != null && storedPass.equals(password)) {
+                        passwordMatches = true;
+                        upgradeUserPassword(rs.getString("id"), hashed);
+                    }
+
+                    if (passwordMatches) {
+                        User user = mapResultSetToUser(rs);
+                        user.setPassword(null);
+                        user.setToken(generateSecureToken(user.getId(), user.getRole()));
+                        return user;
+                    }
                 }
             }
         }
         return null;
+    }
+
+    public void upgradeUserPassword(String userId, String newHashedPassword) {
+        String updateSql = "UPDATE users SET password = ? WHERE id = ?";
+        try (Connection conn = DatabaseConfig.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(updateSql)) {
+            stmt.setString(1, newHashedPassword);
+            stmt.setString(2, userId);
+            stmt.executeUpdate();
+        } catch (Exception ignored) {}
     }
 
     public User getById(String id) throws SQLException {

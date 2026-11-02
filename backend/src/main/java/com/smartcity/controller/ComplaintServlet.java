@@ -73,16 +73,26 @@ public class ComplaintServlet extends HttpServlet {
                 complaint.setId("CMP-" + (ts % 10000));
                 complaint.setTrackingNumber("TRK-2026-" + (ts % 10000));
             }
-            if (complaint.getStatus() == null) {
-                complaint.setStatus("ASSIGNED");
-            }
-            if (complaint.getCurrentHandlerRole() == null || complaint.getCurrentHandlerRole().isEmpty()) {
-                ComplaintChainFactory.createChain().handle(complaint);
-            }
+
+            // ALWAYS execute Chain of Responsibility to guarantee strict triage & routing
+            ComplaintRoutingResult result = ComplaintChainFactory.createChain().handle(complaint);
+            complaint.setCurrentHandlerRole(result.getHandledByRole());
+            complaint.setStatus(result.getStatus());
 
             boolean created = complaintDAO.createComplaint(complaint);
             if (created) {
-                JsonUtil.sendJson(resp, HttpServletResponse.SC_CREATED, complaint);
+                if (result.getAuditTrail() != null) {
+                    for (com.smartcity.pattern.chain.ComplaintAuditRecord rec : result.getAuditTrail()) {
+                        complaintDAO.addNote(
+                                complaint.getId(),
+                                rec.getFromRole() != null ? rec.getFromRole() : "Gateway",
+                                rec.getToRole() != null ? rec.getToRole() : "Handler",
+                                "[" + rec.getAction() + "] " + rec.getReason()
+                        );
+                    }
+                }
+                Complaint updated = complaintDAO.getComplaintById(complaint.getId());
+                JsonUtil.sendJson(resp, HttpServletResponse.SC_CREATED, updated != null ? updated : complaint);
             } else {
                 JsonUtil.sendJson(resp, HttpServletResponse.SC_BAD_REQUEST, Map.of("error", "Failed to create complaint"));
             }

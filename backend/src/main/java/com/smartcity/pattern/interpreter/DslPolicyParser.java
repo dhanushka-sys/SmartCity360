@@ -5,12 +5,16 @@ import java.util.List;
 
 public class DslPolicyParser {
 
+    public static final int MAX_TOKENS = 120;
+    public static final int MAX_RECURSION_DEPTH = 25;
+
     private enum TokenType {
         IDENTIFIER,
         OPERATOR,
         NUMBER,
         AND,
         OR,
+        BETWEEN,
         LPAREN,
         RPAREN,
         EOF
@@ -102,8 +106,13 @@ public class DslPolicyParser {
                     tokens.add(new Token(TokenType.AND, "AND"));
                 } else if ("OR".equalsIgnoreCase(word)) {
                     tokens.add(new Token(TokenType.OR, "OR"));
+                } else if ("BETWEEN".equalsIgnoreCase(word)) {
+                    tokens.add(new Token(TokenType.BETWEEN, "BETWEEN"));
                 } else {
                     tokens.add(new Token(TokenType.IDENTIFIER, word));
+                }
+                if (tokens.size() > MAX_TOKENS) {
+                    throw new DslSyntaxException("Token count exceeded safety limit of " + MAX_TOKENS);
                 }
                 continue;
             }
@@ -119,6 +128,7 @@ public class DslPolicyParser {
         private final List<Token> tokens;
         private final String originalText;
         private int pos = 0;
+        private int depth = 0;
 
         Parser(List<Token> tokens, String originalText) {
             this.tokens = tokens;
@@ -146,7 +156,14 @@ public class DslPolicyParser {
         }
 
         Expression parseExpression() {
-            return parseOr();
+            if (++depth > MAX_RECURSION_DEPTH) {
+                throw new DslSyntaxException("Expression recursion depth exceeded limit of " + MAX_RECURSION_DEPTH);
+            }
+            try {
+                return parseOr();
+            } finally {
+                depth--;
+            }
         }
 
         Expression parseOr() {
@@ -181,6 +198,26 @@ public class DslPolicyParser {
                 throw new DslSyntaxException("Expected variable identifier but found '" + varToken.text + "' in: " + originalText);
             }
 
+            if (match(TokenType.BETWEEN)) {
+                Token minToken = advance();
+                if (minToken.type != TokenType.NUMBER) {
+                    throw new DslSyntaxException("Expected numeric start value after BETWEEN for '" + varToken.text + "' but found '" + minToken.text + "' in: " + originalText);
+                }
+                if (!match(TokenType.AND)) {
+                    throw new DslSyntaxException("Expected AND after BETWEEN <start> for '" + varToken.text + "' in: " + originalText);
+                }
+                Token maxToken = advance();
+                if (maxToken.type != TokenType.NUMBER) {
+                    throw new DslSyntaxException("Expected numeric end value after AND for '" + varToken.text + "' but found '" + maxToken.text + "' in: " + originalText);
+                }
+                double minVal = Double.parseDouble(minToken.text);
+                double maxVal = Double.parseDouble(maxToken.text);
+                return new AndExpression(
+                        new TerminalExpression(varToken.text, ">=", minVal),
+                        new TerminalExpression(varToken.text, "<=", maxVal)
+                );
+            }
+
             Token opToken = advance();
             if (opToken.type != TokenType.OPERATOR) {
                 throw new DslSyntaxException("Expected comparison operator (>, >=, <, <=, ==, !=) after '" + varToken.text + "' but found '" + opToken.text + "' in: " + originalText);
@@ -207,6 +244,18 @@ public class DslPolicyParser {
         long t0 = System.nanoTime();
         for (int i = 0; i < iterations; i++) {
             parse(dsl);
+        }
+        long elapsedNanos = System.nanoTime() - t0;
+        return (elapsedNanos / 1000.0) / iterations;
+    }
+
+    public static double benchmarkAverageParseAndEvalMicros(String dsl, PolicyContext context, int iterations) {
+        Expression expr = parse(dsl);
+        expr.interpret(context);
+        long t0 = System.nanoTime();
+        for (int i = 0; i < iterations; i++) {
+            Expression e = parse(dsl);
+            e.interpret(context);
         }
         long elapsedNanos = System.nanoTime() - t0;
         return (elapsedNanos / 1000.0) / iterations;

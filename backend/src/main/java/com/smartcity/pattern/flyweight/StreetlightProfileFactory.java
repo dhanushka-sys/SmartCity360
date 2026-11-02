@@ -8,7 +8,7 @@ public class StreetlightProfileFactory {
     private static final ConcurrentMap<String, SharedStreetlightProfile> profiles = new ConcurrentHashMap<>();
 
     public static SharedStreetlightProfile getProfile(String model, String lampType, int wattage, int maxLumens, int colorTemperatureK, String firmware) {
-        String key = (model != null ? model : "") + "|" + (lampType != null ? lampType : "") + "|" + wattage + "|" + colorTemperatureK;
+        String key = (model != null ? model : "") + "|" + (lampType != null ? lampType : "") + "|" + wattage + "|" + maxLumens + "|" + colorTemperatureK + "|" + (firmware != null ? firmware : "");
         return profiles.computeIfAbsent(key, k -> new SharedStreetlightProfile(model, lampType, wattage, maxLumens, colorTemperatureK, firmware));
     }
 

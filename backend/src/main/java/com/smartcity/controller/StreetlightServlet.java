@@ -1,6 +1,7 @@
 package com.smartcity.controller;
 
 import com.smartcity.dao.StreetlightDAO;
+import com.smartcity.model.Streetlight;
 import com.smartcity.util.JsonUtil;
 
 import javax.servlet.annotation.WebServlet;
@@ -32,6 +33,24 @@ public class StreetlightServlet extends HttpServlet {
     }
 
     @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        try {
+            Streetlight light = JsonUtil.fromRequest(req, Streetlight.class);
+            if (light.getId() == null || light.getId().isEmpty()) {
+                light.setId("SL-" + System.currentTimeMillis());
+            }
+            boolean ok = streetlightDAO.createStreetlight(light);
+            if (ok) {
+                JsonUtil.sendJson(resp, HttpServletResponse.SC_CREATED, light);
+            } else {
+                JsonUtil.sendJson(resp, HttpServletResponse.SC_BAD_REQUEST, Map.of("error", "Failed to create streetlight"));
+            }
+        } catch (Exception e) {
+            JsonUtil.sendJson(resp, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, Map.of("error", e.getMessage()));
+        }
+    }
+
+    @Override
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         String pathInfo = req.getPathInfo();
         try {
@@ -47,12 +66,22 @@ public class StreetlightServlet extends HttpServlet {
 
             if (pathInfo != null && pathInfo.length() > 1) {
                 String id = pathInfo.substring(1);
-                if (body.containsKey("brightness")) {
-                    int brightness = ((Number) body.get("brightness")).intValue();
+                boolean isStatusSubpath = false;
+                boolean isBrightnessSubpath = false;
+                if (id.endsWith("/status")) {
+                    id = id.replace("/status", "");
+                    isStatusSubpath = true;
+                } else if (id.endsWith("/brightness")) {
+                    id = id.replace("/brightness", "");
+                    isBrightnessSubpath = true;
+                }
+
+                if (body.containsKey("brightness") || isBrightnessSubpath) {
+                    int brightness = ((Number) body.getOrDefault("brightness", 80)).intValue();
                     boolean ok = streetlightDAO.updateBrightness(id, brightness);
                     JsonUtil.sendJson(resp, HttpServletResponse.SC_OK, Map.of("success", ok, "id", id, "brightness", brightness));
-                } else if (body.containsKey("status")) {
-                    String status = (String) body.get("status");
+                } else if (body.containsKey("status") || isStatusSubpath) {
+                    String status = (String) body.getOrDefault("status", "ACTIVE");
                     boolean ok = streetlightDAO.updateStatus(id, status);
                     JsonUtil.sendJson(resp, HttpServletResponse.SC_OK, Map.of("success", ok, "id", id, "status", status));
                 } else {

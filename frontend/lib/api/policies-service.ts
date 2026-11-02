@@ -245,6 +245,56 @@ export const PoliciesService = {
     context: PolicyEvaluationContext,
     policyMeta?: { id?: string; name?: string }
   ): Promise<PolicyEvaluationResult> {
+    try {
+      const backendRes = await fetchFromBackend<{
+        success: boolean;
+        passed: boolean;
+        ast: string;
+        expression: string;
+        evaluationMicros: number;
+        status: string;
+      }>("/policies/evaluate", {
+        method: "POST",
+        body: JSON.stringify({
+          expression,
+          id: policyMeta?.id,
+          context: {
+            NOISE_LEVEL: context.noiseLevelDb ?? 55,
+            VEHICLE_SPEED: context.vehicleSpeedKmh ?? 35,
+            AIR_QUALITY_AQI: context.airQualityAqi ?? 42,
+            ENERGY_CONSUMPTION: context.energyConsumptionKw ?? 3400,
+            CURRENT_HOUR: context.currentHour ?? 14,
+            PARKING_HOUR: context.currentHour ?? 14,
+          },
+        }),
+      });
+
+      if (backendRes && typeof backendRes.passed === "boolean") {
+        const result: PolicyEvaluationResult = {
+          policyId: policyMeta?.id || "CUSTOM-TEST",
+          policyName: policyMeta?.name || "Dynamic Policy Evaluation",
+          expression,
+          passed: backendRes.passed,
+          actualValuesEvaluated: {
+            NOISE_LEVEL: context.noiseLevelDb ?? 55,
+            VEHICLE_SPEED: context.vehicleSpeedKmh ?? 35,
+            AIR_QUALITY_AQI: context.airQualityAqi ?? 42,
+            ENERGY_CONSUMPTION: context.energyConsumptionKw ?? 3400,
+            CURRENT_HOUR: context.currentHour ?? 14,
+          },
+          evaluatedConditionExplanation: `Java Interpreter evaluated AST: [${backendRes.ast}] in ${backendRes.evaluationMicros} µs -> ${backendRes.status}`,
+          actionRecommended: backendRes.passed
+            ? "Condition verified compliant via Java AST interpreter. Normal operations continued."
+            : "Rule threshold breached. Automated municipal compliance advisory generated.",
+          timestamp: new Date().toISOString(),
+        };
+        evaluationLogsState = [result, ...evaluationLogsState.slice(0, 49)];
+        return result;
+      }
+    } catch {
+      // Fallback to local TypeScript evaluation if backend is offline
+    }
+
     await delay(200);
     const { ast, error } = parseExpression(expression);
     if (!ast) {

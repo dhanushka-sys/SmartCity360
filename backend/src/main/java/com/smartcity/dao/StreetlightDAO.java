@@ -3,6 +3,7 @@ package com.smartcity.dao;
 import com.smartcity.config.DatabaseConfig;
 import com.smartcity.model.Streetlight;
 import com.smartcity.model.StreetlightProfile;
+import com.smartcity.pattern.flyweight.StreetlightProfileFactory;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -43,10 +44,41 @@ public class StreetlightDAO {
                 p.setDefaultBrightness(rs.getInt("default_brightness"));
                 p.setOperatingSchedule(rs.getString("operating_schedule"));
                 p.setColorTempKelvin(rs.getInt("color_temp_kelvin"));
+
+                // Seed Flyweight factory pool with intrinsic profiles
+                StreetlightProfileFactory.getProfile(
+                        p.getModelName(),
+                        p.getLampType(),
+                        p.getWattageRating(),
+                        p.getWattageRating() * 95,
+                        p.getColorTempKelvin(),
+                        "v3.2.0-firmware"
+                );
+
                 list.add(p);
             }
         }
         return list;
+    }
+
+    public boolean createStreetlight(Streetlight s) throws SQLException {
+        String sql = "INSERT INTO streetlights (id, serial_number, profile_id, zone_id, zone_name, street_name, latitude, longitude, status, brightness) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        try (Connection conn = DatabaseConfig.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, s.getId());
+            stmt.setString(2, s.getSerialNumber() != null ? s.getSerialNumber() : "SN-" + s.getId());
+            stmt.setString(3, s.getProfileId() != null ? s.getProfileId() : "PROF-01");
+            stmt.setString(4, s.getZoneId() != null ? s.getZoneId() : "ZN-01");
+            stmt.setString(5, s.getZoneName() != null ? s.getZoneName() : "Central District");
+            stmt.setString(6, s.getStreetName() != null ? s.getStreetName() : "Main St");
+            stmt.setDouble(7, s.getLatitude());
+            stmt.setDouble(8, s.getLongitude());
+            stmt.setString(9, s.getStatus() != null ? s.getStatus() : "ACTIVE");
+            stmt.setInt(10, s.getBrightness() > 0 ? s.getBrightness() : 80);
+
+            return stmt.executeUpdate() > 0;
+        }
     }
 
     public boolean updateBrightness(String id, int brightness) throws SQLException {

@@ -9,14 +9,22 @@ import java.util.Base64;
 
 public class AuthenticationDecorator extends StreamDataDecorator {
 
-    private static final byte[] DEFAULT_HMAC_KEY = "SmartCity360-Gateway-Hmac-Secret-Key-2026".getBytes(StandardCharsets.UTF_8);
+    private static final byte[] FALLBACK_HMAC_KEY = "SmartCity360-Gateway-Hmac-Secret-Key-2026".getBytes(StandardCharsets.UTF_8);
+
+    public static byte[] resolveDefaultKey() {
+        String envKey = System.getenv("STREAM_HMAC_KEY");
+        if (envKey != null && !envKey.trim().isEmpty()) {
+            return envKey.trim().getBytes(StandardCharsets.UTF_8);
+        }
+        return FALLBACK_HMAC_KEY;
+    }
 
     private final String authenticatedJson;
     private final String signatureBase64;
     private final byte[] hmacKey;
 
     public AuthenticationDecorator(StreamData wrappee) {
-        this(wrappee, DEFAULT_HMAC_KEY);
+        this(wrappee, resolveDefaultKey());
     }
 
     public AuthenticationDecorator(StreamData wrappee, byte[] hmacKey) {

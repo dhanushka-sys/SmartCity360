@@ -43,7 +43,7 @@ The Part F component of the OODP II assessment awards **25 Marks**, distributed 
 1. **Speak with Architectural Authority:** Frame your explanations from the perspective of a Senior Software Developer at UrbanTech Solutions designing enterprise infrastructure for Metropolis Neo-Prime.
 2. **Emphasize Trade-offs:** University examiners award top marks when a student demonstrates awareness of engineering compromises (e.g. Transparency vs Safety in Composite, Compression-before-Encryption in Decorator, Intrinsic vs Extrinsic footprint in Flyweight).
 3. **Highlight Zero Comments in Java Code:** Mention that your Java source code is self-documenting, following clean code standards with zero clutter comments.
-4. **Show Live Evidence:** Point to the 31/31 passed automated tests and empirical benchmark numbers rather than hypothetical estimates.
+4. **Show Live Evidence:** Point to the 35/35 passed automated tests and empirical benchmark numbers rather than hypothetical estimates.
 
 ---
 

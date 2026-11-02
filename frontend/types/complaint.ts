@@ -8,7 +8,7 @@ export type ComplaintCategory =
 
 export type ComplaintSeverity = "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
 
-export type HandlerRole = "LOCAL_STAFF" | "SUPERVISOR" | "CITY_MANAGER";
+export type HandlerRole = "LOCAL_STAFF" | "SUPERVISOR" | "CITY_MANAGER" | "TRIAGE_OFFICER";
 
 export type ComplaintStatus =
   | "SUBMITTED"
