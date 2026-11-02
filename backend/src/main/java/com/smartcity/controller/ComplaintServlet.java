@@ -2,6 +2,8 @@ package com.smartcity.controller;
 
 import com.smartcity.dao.ComplaintDAO;
 import com.smartcity.model.Complaint;
+import com.smartcity.pattern.chain.ComplaintChainFactory;
+import com.smartcity.pattern.chain.ComplaintRoutingResult;
 import com.smartcity.util.JsonUtil;
 
 import javax.servlet.annotation.WebServlet;
@@ -41,6 +43,13 @@ public class ComplaintServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         String pathInfo = req.getPathInfo();
         try {
+            if (pathInfo != null && pathInfo.contains("/route")) {
+                Complaint complaint = JsonUtil.fromRequest(req, Complaint.class);
+                ComplaintRoutingResult result = ComplaintChainFactory.createChain().handle(complaint);
+                JsonUtil.sendJson(resp, HttpServletResponse.SC_OK, result);
+                return;
+            }
+
             if (pathInfo != null && pathInfo.contains("/notes")) {
                 String complaintId = pathInfo.substring(1).replace("/notes", "");
                 Map body = JsonUtil.fromRequest(req, Map.class);
@@ -67,14 +76,8 @@ public class ComplaintServlet extends HttpServlet {
             if (complaint.getStatus() == null) {
                 complaint.setStatus("ASSIGNED");
             }
-            if (complaint.getCurrentHandlerRole() == null) {
-                if ("CRITICAL".equalsIgnoreCase(complaint.getSeverity())) {
-                    complaint.setCurrentHandlerRole("CITY_MANAGER");
-                } else if ("HIGH".equalsIgnoreCase(complaint.getSeverity())) {
-                    complaint.setCurrentHandlerRole("SUPERVISOR");
-                } else {
-                    complaint.setCurrentHandlerRole("LOCAL_STAFF");
-                }
+            if (complaint.getCurrentHandlerRole() == null || complaint.getCurrentHandlerRole().isEmpty()) {
+                ComplaintChainFactory.createChain().handle(complaint);
             }
 
             boolean created = complaintDAO.createComplaint(complaint);
@@ -106,6 +109,21 @@ public class ComplaintServlet extends HttpServlet {
                 String reason = (String) body.get("reason");
                 String author = (String) body.getOrDefault("author", "Operations Officer");
 
+                if (toRole == null || toRole.isEmpty()) {
+                    Complaint existing = complaintDAO.getComplaintById(id);
+                    if (existing != null) {
+                        if ("LOCAL_STAFF".equalsIgnoreCase(existing.getCurrentHandlerRole())) {
+                            toRole = "SUPERVISOR";
+                        } else if ("SUPERVISOR".equalsIgnoreCase(existing.getCurrentHandlerRole())) {
+                            toRole = "CITY_MANAGER";
+                        } else {
+                            toRole = "CITY_MANAGER";
+                        }
+                    } else {
+                        toRole = "SUPERVISOR";
+                    }
+                }
+
                 boolean ok = complaintDAO.escalateComplaint(id, toRole, reason, author);
                 if (ok) {
                     Complaint updated = complaintDAO.getComplaintById(id);
@@ -132,4 +150,3 @@ public class ComplaintServlet extends HttpServlet {
         }
     }
 }
-

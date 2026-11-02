@@ -406,3 +406,4 @@ The implementation of Part A proves that the **Decorator Pattern** allows SmartC
 1. Gamma, E., Helm, R., Johnson, R., & Vlissides, J. (1994). *Design Patterns: Elements of Reusable Object-Oriented Software*. Addison-Wesley.
 2. Java Institute for Advanced Technology. (2026). *Object Oriented Design Patterns - II Lecture Notes & Syllabus*.
 3. Martin, R. C. (2008). *Clean Code: A Handbook of Agile Software Craftsmanship*. Prentice Hall.
+
