@@ -24,6 +24,16 @@ public class StreetlightServlet extends HttpServlet {
         try {
             if (pathInfo != null && pathInfo.equals("/profiles")) {
                 JsonUtil.sendJson(resp, HttpServletResponse.SC_OK, streetlightDAO.getAllProfiles());
+            } else if (pathInfo != null && pathInfo.equals("/benchmark")) {
+                int count = 25000;
+                String countParam = req.getParameter("count");
+                if (countParam != null && !countParam.trim().isEmpty()) {
+                    try {
+                        count = Integer.parseInt(countParam.trim());
+                    } catch (NumberFormatException ignored) {}
+                }
+                var benchmarkRes = com.smartcity.pattern.flyweight.FlyweightBenchmark.runBenchmark(count);
+                JsonUtil.sendJson(resp, HttpServletResponse.SC_OK, benchmarkRes);
             } else {
                 JsonUtil.sendJson(resp, HttpServletResponse.SC_OK, streetlightDAO.getAllStreetlights());
             }

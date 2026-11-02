@@ -12,7 +12,8 @@ public class StreetlightProfileFactory {
         return profiles.computeIfAbsent(key, k -> new SharedStreetlightProfile(model, lampType, wattage, maxLumens, colorTemperatureK, firmware));
     }
 
-    public static SharedStreetlightProfile getProfile(String model, String lampType, int wattage, int maxLumens, String firmware) {
+    public static SharedStreetlightProfile getProfile(String model, String lampType, int wattage, int maxLumens,
+            String firmware) {
         return getProfile(model, lampType, wattage, maxLumens, 4000, firmware);
     }
 

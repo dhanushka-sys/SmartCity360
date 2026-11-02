@@ -21,10 +21,10 @@ When analyzing the initial system requirements, it became clear that conventiona
 1. The Decorator Pattern (Structural): Designed to dynamically attach and detach data transformation and security layers onto high-frequency energy meter telemetry streams without altering the underlying polling engine. The processing pipeline strictly applies GZIP compression prior to AES-256-GCM encryption, complemented by an outer HMAC-SHA256 signature for perimeter origin verification.
 2. The Composite Pattern (Structural): Applied to organize nested municipal zones (City, Districts, Streets, Buildings) into a unified tree structure, enabling uniform broadcasting of administrative commands (such as SHUTDOWN_POWER and RESTORE_POWER via a type-safe ZoneCommand abstraction) and recursive energy aggregation.
 3. The Chain of Responsibility Pattern (Behavioral): Employed to route citizen grievances through a decoupled, multi-tiered escalation pipeline (Validation Triage, Local Staff, Area Supervisors, City Manager, and Terminal Fallback). Critically, unclassified or missing severities are safely intercepted by a triage handler and never defaulted to LOW.
-4. The Flyweight Pattern (Structural): Implemented to optimize the heap memory footprint of 25,000 smart LED streetlights by sharing immutable hardware profiles across instances via a thread-safe ConcurrentHashMap cache, achieving an empirical 72.2% JVM object layout memory reduction and up to 94.9% theoretical heap savings.
+4. The Flyweight Pattern (Structural): Implemented to optimize the heap memory footprint of 25,000 smart LED streetlights by sharing immutable hardware profiles across instances via a thread-safe ConcurrentHashMap cache, achieving an empirical 72.2% JVM object layout memory reduction (and up to 94.9% theoretical heap savings under un-deduplicated 1 KB buffer allocations).
 5. The Interpreter Pattern (Behavioral): Designed to parse and safely evaluate municipal environmental ordinances written in a Domain-Specific Language (DSL) via a recursive-descent parser and sandboxed Abstract Syntax Tree (AST), executing in microseconds without exposing municipal servers to script-injection vulnerabilities.
 
-This report documents my complete architectural reasoning, algorithmic derivations, quantitative memory calculations, anti-pattern mitigation analysis, and empirical test evidence (31/31 automated tests passing). In accordance with academic guidelines, key illustrative architectural code snippets are presented below, with the complete compilable codebase packaged in the accompanying project source archive."""
+This report documents my complete architectural reasoning, algorithmic derivations, quantitative memory calculations, anti-pattern mitigation analysis, and empirical test evidence (35/35 automated tests passing). In accordance with academic guidelines, key illustrative architectural code snippets are presented below, with the complete compilable codebase packaged in the accompanying project source archive."""
 
 PART_A = {
     "title": "Part A — Dynamic Security Wrappers for Data Streams",
@@ -685,7 +685,7 @@ PART_F = {
 • Fully decoupled GoF implementations (Decorator, Composite, Chain of Responsibility, Flyweight, Interpreter) with clean mathematical models and zero source code comments.
 
 4. Data Persistence Tier:
-• Relational persistence via MySQL 8.0 Engine with connection pooling and prepared statements preventing SQL injection.""",
+• Relational persistence via MySQL 8.0 Engine with an ArrayBlockingQueue dynamic proxy connection pool and parameterized prepared statements preventing SQL injection.""",
     "f2_antipatterns": [
         ("Spaghetti Code", "Convoluted branching logic and tangled dependencies", "Decomposed monolithic procedural code into discrete GoF pattern classes with single responsibilities."),
         ("God Object", "Single mega-class managing multiple unrelated domains", "Distributed responsibilities into modular handlers, decorators, and composite nodes."),

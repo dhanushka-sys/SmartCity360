@@ -57,7 +57,8 @@ public class ZoneComposite extends ZoneComponent {
     @Override
     public ZoneComponent getChild(int index) {
         if (index < 0 || index >= this.children.size()) {
-            throw new IndexOutOfBoundsException("Child index " + index + " out of bounds for size " + this.children.size());
+            throw new IndexOutOfBoundsException(
+                    "Child index " + index + " out of bounds for size " + this.children.size());
         }
         return this.children.get(index);
     }

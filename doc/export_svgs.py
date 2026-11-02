@@ -563,7 +563,7 @@ def create_svgs():
   <text x="545" y="124" font-size="7.2" fill="#1e293b">• complaints &amp; logs</text>
   <text x="545" y="138" font-size="7.2" fill="#1e293b">• streetlights &amp; specs</text>
   <text x="545" y="152" font-size="7.2" fill="#1e293b">• municipal_policies</text>
-  <text x="597" y="195" text-anchor="middle" font-size="7.5" font-weight="bold" fill="#059669">HikariCP Pool</text>
+  <text x="597" y="195" text-anchor="middle" font-size="7.5" font-weight="bold" fill="#059669">Connection Pool</text>
 </svg>"""
 
     files = [

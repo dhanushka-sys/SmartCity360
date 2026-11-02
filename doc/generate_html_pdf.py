@@ -330,7 +330,7 @@ def generate_formal_html():
   <tr><td style="padding-left: 20px;">7.2 End-to-End Enterprise Architecture Diagram</td><td style="text-align: right;">20</td></tr>
   <tr><td style="padding-left: 20px;">7.3 Municipal Operational Use Case Model (UML Use Case Diagram)</td><td style="text-align: right;">21</td></tr>
   <tr><td style="padding-left: 20px;">7.4 Key Architectural Choices & Anti-Pattern Defense Matrix</td><td style="text-align: right;">22</td></tr>
-  <tr><td style="padding-left: 20px;">7.5 Empirical Automated Test Execution Results (31/31 PASS - 100% Rate)</td><td style="text-align: right;">23</td></tr>
+  <tr><td style="padding-left: 20px;">7.5 Empirical Automated Test Execution Results (35/35 PASS - 100% Rate)</td><td style="text-align: right;">23</td></tr>
   <tr><td style="padding-left: 20px;">7.6 Final Submission Deliverables Verification</td><td style="text-align: right;">24</td></tr>
   <tr><td><b>8. Conclusion & Academic References</b></td><td style="text-align: right;">25</td></tr>
 </table>
@@ -455,7 +455,7 @@ def generate_formal_html():
     # 7.4 Automated Verification
     html_parts.append("""
 <h2>7.4 Empirical Automated Test Execution Results (100% Pass Rate)</h2>
-<p>To substantiate the architectural integrity, mathematical soundness, and runtime stability of the SmartCity360 platform, a comprehensive automated regression suite (<code>com.smartcity.test.ComprehensiveTestSuite</code>) was executed against the production build. All 31 test cases across the five core design patterns and multi-tier APIs passed with zero regressions:</p>
+<p>To substantiate the architectural integrity, mathematical soundness, and runtime stability of the SmartCity360 platform, a comprehensive automated regression suite (<code>com.smartcity.test.ComprehensiveTestSuite</code>) was executed against the production build. All 35 test cases across the five core design patterns and multi-tier APIs passed with zero regressions:</p>
 
 <table class="formal-table">
   <tr>
@@ -476,8 +476,8 @@ def generate_formal_html():
   </tr>
   <tr>
     <td><b>Composite Pattern</b></td>
-    <td style="text-align: center;">6</td>
-    <td style="text-align: center; color: #059669; font-weight: bold;">6</td>
+    <td style="text-align: center;">8</td>
+    <td style="text-align: center; color: #059669; font-weight: bold;">8</td>
     <td style="text-align: center;">0</td>
     <td style="text-align: center; color: #059669; font-weight: bold;">100.0%</td>
     <td>Recursive shutdown/restore; baseline power restoration; leaf safety</td>
@@ -492,24 +492,24 @@ def generate_formal_html():
   </tr>
   <tr>
     <td><b>Flyweight Pattern</b></td>
-    <td style="text-align: center;">4</td>
-    <td style="text-align: center; color: #059669; font-weight: bold;">4</td>
+    <td style="text-align: center;">5</td>
+    <td style="text-align: center; color: #059669; font-weight: bold;">5</td>
     <td style="text-align: center;">0</td>
     <td style="text-align: center; color: #059669; font-weight: bold;">100.0%</td>
     <td>Profile instance identity; 8-thread concurrency; 72.2% layout savings</td>
   </tr>
   <tr>
     <td><b>Interpreter Pattern</b></td>
-    <td style="text-align: center;">7</td>
-    <td style="text-align: center; color: #059669; font-weight: bold;">7</td>
+    <td style="text-align: center;">8</td>
+    <td style="text-align: center; color: #059669; font-weight: bold;">8</td>
     <td style="text-align: center;">0</td>
     <td style="text-align: center; color: #059669; font-weight: bold;">100.0%</td>
     <td>Recursive-descent AST; nested parentheses; 6.0 µs parse latency</td>
   </tr>
   <tr style="background: #f1f5f9; font-weight: bold;">
     <td>Total Test Suite</td>
-    <td style="text-align: center;">31</td>
-    <td style="text-align: center; color: #059669;">31</td>
+    <td style="text-align: center;">35</td>
+    <td style="text-align: center; color: #059669;">35</td>
     <td style="text-align: center;">0</td>
     <td style="text-align: center; color: #059669;">100.0%</td>
     <td>Fully Compliant with Assignment Specification</td>

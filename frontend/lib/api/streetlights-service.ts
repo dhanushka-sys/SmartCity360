@@ -40,19 +40,42 @@ export const StreetlightsService = {
    * vs. referencing shared Flyweight profile objects (with Flyweight).
    */
   async getMemoryAnalysis(): Promise<FlyweightMemoryAnalysis> {
+    try {
+      const backendRes = await fetchFromBackend<any>("/streetlights/benchmark?count=24500");
+      if (backendRes && backendRes.savingsPercent !== undefined) {
+        const withoutKb = Math.round(backendRes.naiveEstimatedBytes / 1024);
+        const withKb = Math.round(backendRes.flyweightEstimatedBytes / 1024);
+        const savedKb = withoutKb - withKb;
+        const savingsPercent = Number(backendRes.savingsPercent.toFixed(1));
+
+        return {
+          totalLightCount: backendRes.objectCount || 24500,
+          uniqueProfilesCount: backendRes.flyweightPoolSize || profilesState.length || 3,
+          estimatedMemoryWithoutFlyweightKb: withoutKb,
+          estimatedMemoryWithFlyweightKb: withKb,
+          memorySavedKb: savedKb,
+          savingsPercentage: savingsPercent,
+          profileUsageBreakdown: profilesState.map((profile) => ({
+            profileId: profile.id,
+            profileName: profile.modelName,
+            model: profile.modelName.split(" ")[0],
+            assignedLightCount: Math.round(24500 / (profilesState.length || 3)),
+          })),
+        };
+      }
+    } catch {
+      // Fallback
+    }
+
     await delay(120);
-    // City-wide scale simulation: 24,500 physical light poles in Metropolis Neo-Prime
     const simulatedTotalLights = 24500;
-    const profileCount = profilesState.length;
+    const profileCount = profilesState.length || 3;
 
-    // Estimated memory sizes in bytes
-    const INTRINSIC_PROFILE_BYTES = 1024; // Wattage, optic curve, schedule, model name, warranty metadata
-    const EXTRINSIC_INSTANCE_BYTES = 128; // Coordinates, ID, status enum, dynamic brightness, pointer
+    // Measured JVM memory layout sizes (matching FlyweightBenchmark.java: 288 bytes naive vs 80 bytes context)
+    const INTRINSIC_PROFILE_BYTES = 288;
+    const EXTRINSIC_INSTANCE_BYTES = 80;
 
-    // Without Flyweight: Each of the 24,500 lights holds full duplicate profile state
-    const memoryWithoutFlyweightBytes = simulatedTotalLights * (INTRINSIC_PROFILE_BYTES + EXTRINSIC_INSTANCE_BYTES);
-
-    // With Flyweight: Only 4 profiles allocated in Flyweight Factory pool + 24,500 light pointers
+    const memoryWithoutFlyweightBytes = simulatedTotalLights * INTRINSIC_PROFILE_BYTES;
     const memoryWithFlyweightBytes =
       profileCount * INTRINSIC_PROFILE_BYTES + simulatedTotalLights * EXTRINSIC_INSTANCE_BYTES;
 
