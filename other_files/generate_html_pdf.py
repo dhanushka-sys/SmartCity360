@@ -577,9 +577,9 @@ def convert_html_to_pdf(html_path):
     doc_dir = os.path.dirname(os.path.abspath(html_path))
     root_dir = os.path.abspath(os.path.join(doc_dir, ".."))
     
-    out_pdf_doc = os.path.join(doc_dir, "SmartCity360_Final_Report.pdf")
-    out_pdf_root = os.path.join(root_dir, "SmartCity360_Final_Report.pdf")
-    out_pdf_compat = os.path.join(doc_dir, "SmartCity360_OODP_II_Final_Submission.pdf")
+    out_pdf_doc = os.path.join(root_dir, "doc", "SmartCity360_OODP_II_Final_Submission.pdf")
+    out_pdf_root = os.path.join(root_dir, "docs", "SmartCity360_OODP_II_Final_Submission.pdf")
+    out_pdf_compat = os.path.join(root_dir, "other_files", "SmartCity360_Final_Report.pdf")
     
     edge_path = r"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe"
     if not os.path.exists(edge_path):
