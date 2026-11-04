@@ -5,6 +5,7 @@ import html
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import content
+from generate_submission_files import CODE_SCREENSHOTS_METADATA, APPENDIX_CODE_FILES
 
 def load_svg(filename):
     svg_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "SmartCity360_UML", filename)
@@ -333,6 +334,12 @@ def generate_formal_html():
   <tr><td style="padding-left: 20px;">7.5 Empirical Automated Test Execution Results (35/35 PASS - 100% Rate)</td><td style="text-align: right;">23</td></tr>
   <tr><td style="padding-left: 20px;">7.6 Final Submission Deliverables Verification</td><td style="text-align: right;">24</td></tr>
   <tr><td><b>8. Conclusion & Academic References</b></td><td style="text-align: right;">25</td></tr>
+  <tr><td><b>9. Appendix A — Comprehensive Source Code Implementation Screenshot Catalog</b></td><td style="text-align: right;">26</td></tr>
+  <tr><td style="padding-left: 20px;">9.1 Part A: Data Stream Security Wrappers Source Code Screenshots (Decorator Pattern)</td><td style="text-align: right;">26</td></tr>
+  <tr><td style="padding-left: 20px;">9.2 Part B: Hierarchical Smart Zones Source Code Screenshots (Composite Pattern)</td><td style="text-align: right;">27</td></tr>
+  <tr><td style="padding-left: 20px;">9.3 Part C: Citizen Grievance Escalation Source Code Screenshots (Chain of Responsibility)</td><td style="text-align: right;">28</td></tr>
+  <tr><td style="padding-left: 20px;">9.4 Part D: Smart Streetlight Memory Optimization Source Code Screenshots (Flyweight)</td><td style="text-align: right;">29</td></tr>
+  <tr><td style="padding-left: 20px;">9.5 Part E: Municipal Policy DSL Grammar Source Code Screenshots (Interpreter Pattern)</td><td style="text-align: right;">30</td></tr>
 </table>
 """)
 
@@ -385,17 +392,44 @@ def generate_formal_html():
 </div>
 """)
 
-        if "illustrative_code" in part_data and part_data["illustrative_code"]:
+        part_letter = ["A", "B", "C", "D", "E"][int(part_num) - 2]
+        if part_letter in CODE_SCREENSHOTS_METADATA:
+            cm = CODE_SCREENSHOTS_METADATA[part_letter]
+            manifest_html = "".join([f"<li><code>{html.escape(fn)}</code> — {html.escape(fdesc)}</li>" for fn, fdesc in cm["files"]])
             html_parts.append(f"""
-<h2>{part_num}.4 Architectural Implementation Highlights (Zero Comments)</h2>
-<p style="font-size: 9.5pt; font-style: italic; color: #475569;">Key architectural implementation snippet demonstrating pattern structure (the complete compilable source codebase is packaged in the project archive):</p>
-<div class="code-card">
-  <div class="code-card-header">
-    <span>Architecture Implementation: {part_data['title'].split('—')[1].strip() if '—' in part_data['title'] else part_data['title']}</span>
-    <span class="tag">Java 17 Specification</span>
+<h2>{part_num}.4 Architectural Implementation Highlights &amp; Source Code Architecture</h2>
+<div class="diagram-card" style="border-left: 5px solid #1e3a8a; background: #f8fafc; padding: 16px 20px; border-radius: 6px; margin: 18px 0; border: 1px solid #cbd5e1; page-break-inside: avoid;">
+  <div style="font-weight: bold; color: #0f294a; font-size: 10.5pt; margin-bottom: 3px;">
+    📸 [ SOURCE CODE SCREENSHOT PLACEHOLDER — LISTING {cm['listing_num']} ]
   </div>
-  <pre>{html.escape(part_data['illustrative_code'])}</pre>
+  <div style="font-size: 11.5pt; font-weight: bold; color: #1e3a8a; margin-bottom: 6px;">
+    Production Source Code Screenshot: {html.escape(cm['pattern_name'])}
+  </div>
+  <p style="font-size: 9.5pt; margin-bottom: 6px;">
+    <b>Target Source File:</b> <code style="font-family: Consolas, monospace; background: #e2e8f0; padding: 2px 6px; border-radius: 4px; color: #1e3a8a; font-weight: bold;">{cm['primary_file']}</code>
+  </p>
+  <div style="font-size: 9pt; color: #475569; font-style: italic; margin-bottom: 4px;">
+    Complete Package File Manifest (<code>{cm['directory']}</code>) — packaged in project source ZIP:
+  </div>
+  <ul style="font-size: 8.5pt; color: #334155; margin: 4px 0 10px 18px; line-height: 1.45;">
+    {manifest_html}
+  </ul>
+  <div style="border: 2px dashed #94a3b8; background: #ffffff; border-radius: 6px; padding: 20px; text-align: center; margin: 12px 0;">
+    <div style="font-family: Consolas, monospace; font-size: 9.5pt; color: #64748b; font-weight: bold;">
+      &gt;&gt;&gt; PASTE / INSERT SOURCE CODE SCREENSHOT HERE &lt;&lt;&lt;
+    </div>
+    <div style="font-family: Consolas, monospace; font-size: 8.5pt; color: #1e3a8a; margin-top: 4px;">
+      {cm['primary_file']}
+    </div>
+    <div style="font-size: 8pt; color: #94a3b8; margin-top: 4px;">
+      Recommended IDE View: Capture class declaration &amp; core methods with syntax highlighting (300 DPI)
+    </div>
+  </div>
+  <div style="font-size: 8.5pt; color: #475569; font-style: italic;">
+    📌 <b>Candidate Screenshot Guide:</b> Open '<code>{cm['primary_file']}</code>' in your IDE (VS Code / IntelliJ IDEA). Take a clean, high-resolution screenshot and paste into this placeholder box. {cm['scope_guide']}
+  </div>
 </div>
+<div class="diagram-caption" style="margin-top: 4px; margin-bottom: 16px;">Listing {cm['listing_num']}: {cm['caption']} — {cm['primary_file']}</div>
 """)
 
     render_formal_part(content.PART_A, "2", load_svg("01_decorator_pipeline.svg"), "Figure 2.1 — UML Activity & Data Transformation Pipeline Flow Diagram")
@@ -556,8 +590,51 @@ The SmartCity360 platform exemplifies how classic Gang of Four design patterns s
 """)
     for r in content.REFERENCES:
         html_parts.append(f"<li style='margin-bottom: 6px;'>{html.escape(r)}</li>")
+
+    # 9. APPENDIX A — SOURCE CODE SCREENSHOT CATALOG
     html_parts.append("""
-</ul>
+<div class="page-break"></div>
+<h1>9. APPENDIX A — COMPREHENSIVE SOURCE CODE IMPLEMENTATION SCREENSHOT CATALOG</h1>
+<p style="text-align: justify;">This appendix provides a structured, formal catalog of all production source code files developed for the SmartCity360 municipal platform. In compliance with Part F.3 of the assessment specification ('prepare comprehensive project documentation, including working code to illustrate the design and functionality of your application'), each pattern's source files are mapped with their exact repository paths, architectural role, and dedicated high-resolution screenshot drop zones. Candidates can capture screenshots directly from their IDE (VS Code / IntelliJ IDEA) and insert them into each designated container below:</p>
+""")
+    app_counter = 1
+    for p_letter in ["A", "B", "C", "D", "E"]:
+        if p_letter in APPENDIX_CODE_FILES:
+            app_data = APPENDIX_CODE_FILES[p_letter]
+            html_parts.append(f"""
+<h2>9.{app_counter} {html.escape(app_data['part_title'])}</h2>
+<p style="font-family: Consolas, monospace; font-size: 9pt; color: #475569; margin-bottom: 10px;">Package: <b>{app_data['package']}</b></p>
+""")
+            for f_idx, (fn, rel_path, role_desc, cap_tip) in enumerate(app_data["files"]):
+                shot_id = f"A.{app_counter}.{f_idx + 1}"
+                html_parts.append(f"""
+<div class="diagram-card" style="border-left: 4px solid #1e3a8a; background: #f8fafc; padding: 14px 18px; border-radius: 6px; margin: 14px 0; border: 1px solid #cbd5e1; page-break-inside: avoid;">
+  <div style="font-weight: bold; color: #0f294a; font-size: 10pt; margin-bottom: 2px;">
+    📸 Screenshot {shot_id}: {html.escape(fn)}
+  </div>
+  <p style="font-size: 8.5pt; margin-bottom: 3px;">
+    <b>File Path:</b> <code style="font-family: Consolas, monospace; background: #e2e8f0; padding: 2px 6px; border-radius: 4px; color: #1e3a8a; font-weight: bold;">{rel_path}</code>
+  </p>
+  <p style="font-size: 8.5pt; color: #475569; margin-bottom: 6px;">
+    <b>Architectural Role:</b> {html.escape(role_desc)}
+  </p>
+  <div style="border: 2px dashed #94a3b8; background: #ffffff; border-radius: 6px; padding: 16px; text-align: center; margin: 8px 0;">
+    <div style="font-family: Consolas, monospace; font-size: 9pt; color: #64748b; font-weight: bold;">
+      &gt;&gt;&gt; PASTE / INSERT SCREENSHOT FOR: {html.escape(fn)} &lt;&lt;&lt;
+    </div>
+    <div style="font-family: Consolas, monospace; font-size: 8pt; color: #1e3a8a; margin-top: 3px;">
+      {rel_path}
+    </div>
+  </div>
+  <div style="font-size: 8pt; color: #64748b; font-style: italic;">
+    📌 <b>Capture Tip:</b> {html.escape(cap_tip)}
+  </div>
+</div>
+<div class="diagram-caption" style="margin-top: 2px; margin-bottom: 12px; font-size: 8.5pt;">Screenshot {shot_id}: {html.escape(fn)} — {html.escape(role_desc)}</div>
+""")
+            app_counter += 1
+
+    html_parts.append("""
 </body>
 </html>
 """)

@@ -303,6 +303,12 @@
   <tr><td style="padding-left: 20px;">7.5 Empirical Automated Test Execution Results (35/35 PASS - 100% Rate)</td><td style="text-align: right;">23</td></tr>
   <tr><td style="padding-left: 20px;">7.6 Final Submission Deliverables Verification</td><td style="text-align: right;">24</td></tr>
   <tr><td><b>8. Conclusion & Academic References</b></td><td style="text-align: right;">25</td></tr>
+  <tr><td><b>9. Appendix A — Comprehensive Source Code Implementation Screenshot Catalog</b></td><td style="text-align: right;">26</td></tr>
+  <tr><td style="padding-left: 20px;">9.1 Part A: Data Stream Security Wrappers Source Code Screenshots (Decorator Pattern)</td><td style="text-align: right;">26</td></tr>
+  <tr><td style="padding-left: 20px;">9.2 Part B: Hierarchical Smart Zones Source Code Screenshots (Composite Pattern)</td><td style="text-align: right;">27</td></tr>
+  <tr><td style="padding-left: 20px;">9.3 Part C: Citizen Grievance Escalation Source Code Screenshots (Chain of Responsibility)</td><td style="text-align: right;">28</td></tr>
+  <tr><td style="padding-left: 20px;">9.4 Part D: Smart Streetlight Memory Optimization Source Code Screenshots (Flyweight)</td><td style="text-align: right;">29</td></tr>
+  <tr><td style="padding-left: 20px;">9.5 Part E: Municipal Policy DSL Grammar Source Code Screenshots (Interpreter Pattern)</td><td style="text-align: right;">30</td></tr>
 </table>
 
 <div class="page-break"></div>
@@ -399,80 +405,39 @@
   <div class="diagram-caption">Figure 2.1 — UML Activity & Data Transformation Pipeline Flow Diagram</div>
 </div>
 
-<h2>2.4 Architectural Implementation Highlights (Zero Comments)</h2>
-<p style="font-size: 9.5pt; font-style: italic; color: #475569;">Key architectural implementation snippet demonstrating pattern structure (the complete compilable source codebase is packaged in the project archive):</p>
-<div class="code-card">
-  <div class="code-card-header">
-    <span>Architecture Implementation: Dynamic Security Wrappers for Data Streams</span>
-    <span class="tag">Java 17 Specification</span>
+<h2>2.4 Architectural Implementation Highlights &amp; Source Code Architecture</h2>
+<div class="diagram-card" style="border-left: 5px solid #1e3a8a; background: #f8fafc; padding: 16px 20px; border-radius: 6px; margin: 18px 0; border: 1px solid #cbd5e1; page-break-inside: avoid;">
+  <div style="font-weight: bold; color: #0f294a; font-size: 10.5pt; margin-bottom: 3px;">
+    📸 [ SOURCE CODE SCREENSHOT PLACEHOLDER — LISTING 2.1 ]
   </div>
-  <pre>package com.smartcity.pattern.decorator;
-
-public interface StreamData {
-    String getData();
-    byte[] getPayloadBytes();
-    int getPayloadSize();
-    String getDescription();
-}
-
-public abstract class StreamDataDecorator implements StreamData {
-    protected final StreamData wrappee;
-
-    public StreamDataDecorator(StreamData wrappee) {
-        this.wrappee = wrappee;
-    }
-
-    public String getData() {
-        return wrappee.getData();
-    }
-
-    public byte[] getPayloadBytes() {
-        return wrappee.getPayloadBytes();
-    }
-
-    public int getPayloadSize() {
-        return wrappee.getPayloadSize();
-    }
-
-    public String getDescription() {
-        return wrappee.getDescription();
-    }
-}
-
-public class CompressionDecorator extends StreamDataDecorator {
-    public CompressionDecorator(StreamData wrappee) {
-        super(wrappee);
-    }
-
-    public byte[] getPayloadBytes() {
-        return compress(wrappee.getPayloadBytes());
-    }
-
-    public String getData() {
-        return java.util.Base64.getEncoder().encodeToString(getPayloadBytes());
-    }
-
-    public int getPayloadSize() {
-        return getPayloadBytes().length;
-    }
-
-    public String getDescription() {
-        return wrappee.getDescription() + &quot; + GZIP&quot;;
-    }
-
-    private byte[] compress(byte[] input) {
-        try {
-            java.io.ByteArrayOutputStream baos = new java.io.ByteArrayOutputStream();
-            try (java.util.zip.GZIPOutputStream gzos = new java.util.zip.GZIPOutputStream(baos)) {
-                gzos.write(input);
-            }
-            return baos.toByteArray();
-        } catch (Exception e) {
-            return input;
-        }
-    }
-}</pre>
+  <div style="font-size: 11.5pt; font-weight: bold; color: #1e3a8a; margin-bottom: 6px;">
+    Production Source Code Screenshot: Dynamic Security Wrappers (Decorator Pattern)
+  </div>
+  <p style="font-size: 9.5pt; margin-bottom: 6px;">
+    <b>Target Source File:</b> <code style="font-family: Consolas, monospace; background: #e2e8f0; padding: 2px 6px; border-radius: 4px; color: #1e3a8a; font-weight: bold;">backend/src/main/java/com/smartcity/pattern/decorator/EncryptionDecorator.java</code>
+  </p>
+  <div style="font-size: 9pt; color: #475569; font-style: italic; margin-bottom: 4px;">
+    Complete Package File Manifest (<code>backend/src/main/java/com/smartcity/pattern/decorator/</code>) — packaged in project source ZIP:
+  </div>
+  <ul style="font-size: 8.5pt; color: #334155; margin: 4px 0 10px 18px; line-height: 1.45;">
+    <li><code>StreamData.java</code> — Component Interface — Declares getData(), getPayloadBytes(), getPayloadSize() contract.</li><li><code>EnergyStreamData.java</code> — Concrete Component — Ingests and packages raw smart meter telemetry payloads.</li><li><code>StreamDataDecorator.java</code> — Abstract Base Decorator — Holds protected wrappedStream: StreamData reference with transparent delegation.</li><li><code>EncryptionDecorator.java</code> — Concrete Decorator — Implements AES-256-GCM AEAD encryption with cryptographic IV generation.</li><li><code>CompressionDecorator.java</code> — Concrete Decorator — Implements GZIP stream compaction before ciphering.</li><li><code>AuthenticationDecorator.java</code> — Concrete Decorator — Generates and verifies HMAC-SHA256 payload authenticity signatures.</li><li><code>Test.java</code> — Verification Suite — Validates layered composition, compression ratio, cipher integrity, and HMAC checks.</li>
+  </ul>
+  <div style="border: 2px dashed #94a3b8; background: #ffffff; border-radius: 6px; padding: 20px; text-align: center; margin: 12px 0;">
+    <div style="font-family: Consolas, monospace; font-size: 9.5pt; color: #64748b; font-weight: bold;">
+      &gt;&gt;&gt; PASTE / INSERT SOURCE CODE SCREENSHOT HERE &lt;&lt;&lt;
+    </div>
+    <div style="font-family: Consolas, monospace; font-size: 8.5pt; color: #1e3a8a; margin-top: 4px;">
+      backend/src/main/java/com/smartcity/pattern/decorator/EncryptionDecorator.java
+    </div>
+    <div style="font-size: 8pt; color: #94a3b8; margin-top: 4px;">
+      Recommended IDE View: Capture class declaration &amp; core methods with syntax highlighting (300 DPI)
+    </div>
+  </div>
+  <div style="font-size: 8.5pt; color: #475569; font-style: italic;">
+    📌 <b>Candidate Screenshot Guide:</b> Open '<code>backend/src/main/java/com/smartcity/pattern/decorator/EncryptionDecorator.java</code>' in your IDE (VS Code / IntelliJ IDEA). Take a clean, high-resolution screenshot and paste into this placeholder box. Capture the class declaration, constructor wrapping, and cryptographic processData() / getData() routine in your IDE editor.
+  </div>
 </div>
+<div class="diagram-caption" style="margin-top: 4px; margin-bottom: 16px;">Listing 2.1: Production Source Code Implementation Screenshot — Dynamic Security Decorator Pattern — backend/src/main/java/com/smartcity/pattern/decorator/EncryptionDecorator.java</div>
 
 <div class="page-break"></div>
 <h1>
@@ -551,86 +516,39 @@ public class CompressionDecorator extends StreamDataDecorator {
   <div class="diagram-caption">Figure 3.1 — UML Class Diagram: Composite Pattern Structural Architecture & Component Relationships</div>
 </div>
 
-<h2>3.4 Architectural Implementation Highlights (Zero Comments)</h2>
-<p style="font-size: 9.5pt; font-style: italic; color: #475569;">Key architectural implementation snippet demonstrating pattern structure (the complete compilable source codebase is packaged in the project archive):</p>
-<div class="code-card">
-  <div class="code-card-header">
-    <span>Architecture Implementation: Hierarchical Structure of Smart Zones</span>
-    <span class="tag">Java 17 Specification</span>
+<h2>3.4 Architectural Implementation Highlights &amp; Source Code Architecture</h2>
+<div class="diagram-card" style="border-left: 5px solid #1e3a8a; background: #f8fafc; padding: 16px 20px; border-radius: 6px; margin: 18px 0; border: 1px solid #cbd5e1; page-break-inside: avoid;">
+  <div style="font-weight: bold; color: #0f294a; font-size: 10.5pt; margin-bottom: 3px;">
+    📸 [ SOURCE CODE SCREENSHOT PLACEHOLDER — LISTING 3.1 ]
   </div>
-  <pre>package com.smartcity.pattern.composite;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-public enum ZoneCommand {
-    SHUTDOWN_POWER,
-    RESTORE_POWER,
-    EMERGENCY_ISOLATE;
-
-    public static ZoneCommand fromString(String raw) {
-        if (raw == null) throw new IllegalArgumentException(&quot;Command cannot be null&quot;);
-        return ZoneCommand.valueOf(raw.trim().toUpperCase());
-    }
-}
-
-public abstract class ZoneComponent {
-    protected final String id;
-    protected final String name;
-    protected final String type;
-
-    public ZoneComponent(String id, String name, String type) {
-        this.id = id;
-        this.name = name;
-        this.type = type;
-    }
-
-    public abstract void executeCommand(ZoneCommand command);
-    public abstract double getPowerConsumption();
-    public abstract double getTotalPowerConsumption();
-    public abstract String getStatus();
-
-    public void add(ZoneComponent component) {
-        throw new UnsupportedOperationException(&quot;Cannot add child to leaf node&quot;);
-    }
-
-    public void remove(ZoneComponent component) {
-        throw new UnsupportedOperationException(&quot;Cannot remove child from leaf node&quot;);
-    }
-
-    public List&lt;ZoneComponent&gt; getChildren() {
-        return Collections.emptyList();
-    }
-}
-
-public class BuildingLeaf extends ZoneComponent {
-    private final double baselinePowerKw;
-    private double currentPowerKw;
-    private String status;
-
-    public BuildingLeaf(String id, String name, double baselinePowerKw) {
-        super(id, name, &quot;BUILDING&quot;);
-        this.baselinePowerKw = baselinePowerKw;
-        this.currentPowerKw = baselinePowerKw;
-        this.status = &quot;ONLINE&quot;;
-    }
-
-    public void executeCommand(ZoneCommand command) {
-        if (command == ZoneCommand.SHUTDOWN_POWER) {
-            this.status = &quot;OFFLINE&quot;;
-            this.currentPowerKw = 0.0;
-        } else if (command == ZoneCommand.RESTORE_POWER) {
-            this.status = &quot;ONLINE&quot;;
-            this.currentPowerKw = this.baselinePowerKw;
-        }
-    }
-
-    public double getPowerConsumption() { return currentPowerKw; }
-    public double getTotalPowerConsumption() { return currentPowerKw; }
-    public String getStatus() { return status; }
-}</pre>
+  <div style="font-size: 11.5pt; font-weight: bold; color: #1e3a8a; margin-bottom: 6px;">
+    Production Source Code Screenshot: Hierarchical Smart Zones (Composite Pattern)
+  </div>
+  <p style="font-size: 9.5pt; margin-bottom: 6px;">
+    <b>Target Source File:</b> <code style="font-family: Consolas, monospace; background: #e2e8f0; padding: 2px 6px; border-radius: 4px; color: #1e3a8a; font-weight: bold;">backend/src/main/java/com/smartcity/pattern/composite/ZoneComposite.java</code>
+  </p>
+  <div style="font-size: 9pt; color: #475569; font-style: italic; margin-bottom: 4px;">
+    Complete Package File Manifest (<code>backend/src/main/java/com/smartcity/pattern/composite/</code>) — packaged in project source ZIP:
+  </div>
+  <ul style="font-size: 8.5pt; color: #334155; margin: 4px 0 10px 18px; line-height: 1.45;">
+    <li><code>ZoneComponent.java</code> — Component Interface — Declares executeCommand(), getEnergyConsumption(), add(), remove(), getChildren().</li><li><code>BuildingLeaf.java</code> — Leaf Component — Represents atomic smart buildings / assets; throws safe UnsupportedOperationException on child operations.</li><li><code>ZoneComposite.java</code> — Composite Container — Holds List&lt;ZoneComponent&gt; children with recursive command broadcasting and power rollup.</li><li><code>ZoneCommand.java</code> — Command Abstraction — Type-safe enum (SHUTDOWN_POWER, RESTORE_POWER, EMERGENCY_LOCKDOWN, REPORT_STATUS).</li><li><code>Test.java</code> — Verification Suite — Validates recursive tree execution, baseline power restoration, and structural safety.</li>
+  </ul>
+  <div style="border: 2px dashed #94a3b8; background: #ffffff; border-radius: 6px; padding: 20px; text-align: center; margin: 12px 0;">
+    <div style="font-family: Consolas, monospace; font-size: 9.5pt; color: #64748b; font-weight: bold;">
+      &gt;&gt;&gt; PASTE / INSERT SOURCE CODE SCREENSHOT HERE &lt;&lt;&lt;
+    </div>
+    <div style="font-family: Consolas, monospace; font-size: 8.5pt; color: #1e3a8a; margin-top: 4px;">
+      backend/src/main/java/com/smartcity/pattern/composite/ZoneComposite.java
+    </div>
+    <div style="font-size: 8pt; color: #94a3b8; margin-top: 4px;">
+      Recommended IDE View: Capture class declaration &amp; core methods with syntax highlighting (300 DPI)
+    </div>
+  </div>
+  <div style="font-size: 8.5pt; color: #475569; font-style: italic;">
+    📌 <b>Candidate Screenshot Guide:</b> Open '<code>backend/src/main/java/com/smartcity/pattern/composite/ZoneComposite.java</code>' in your IDE (VS Code / IntelliJ IDEA). Take a clean, high-resolution screenshot and paste into this placeholder box. Capture ZoneComposite.java showing the recursive executeCommand() loop, children collection management, and aggregate telemetry rollup.
+  </div>
 </div>
+<div class="diagram-caption" style="margin-top: 4px; margin-bottom: 16px;">Listing 3.1: Production Source Code Implementation Screenshot — Hierarchical Zone Composite Pattern — backend/src/main/java/com/smartcity/pattern/composite/ZoneComposite.java</div>
 
 <div class="page-break"></div>
 <h1>
@@ -741,58 +659,39 @@ public class BuildingLeaf extends ZoneComponent {
   <div class="diagram-caption">Figure 4.1 — UML Sequence Diagram: Citizen Complaint Escalation & Safe Triage Lifecycle</div>
 </div>
 
-<h2>4.4 Architectural Implementation Highlights (Zero Comments)</h2>
-<p style="font-size: 9.5pt; font-style: italic; color: #475569;">Key architectural implementation snippet demonstrating pattern structure (the complete compilable source codebase is packaged in the project archive):</p>
-<div class="code-card">
-  <div class="code-card-header">
-    <span>Architecture Implementation: Escalation of Citizen Complaints</span>
-    <span class="tag">Java 17 Specification</span>
+<h2>4.4 Architectural Implementation Highlights &amp; Source Code Architecture</h2>
+<div class="diagram-card" style="border-left: 5px solid #1e3a8a; background: #f8fafc; padding: 16px 20px; border-radius: 6px; margin: 18px 0; border: 1px solid #cbd5e1; page-break-inside: avoid;">
+  <div style="font-weight: bold; color: #0f294a; font-size: 10.5pt; margin-bottom: 3px;">
+    📸 [ SOURCE CODE SCREENSHOT PLACEHOLDER — LISTING 4.1 ]
   </div>
-  <pre>package com.smartcity.pattern.chain;
-
-public enum ComplaintSeverity {
-    LOW, MEDIUM, HIGH, CRITICAL;
-
-    public static ComplaintSeverity parse(String raw) {
-        if (raw == null || raw.trim().isEmpty()) return null;
-        try {
-            return ComplaintSeverity.valueOf(raw.trim().toUpperCase());
-        } catch (IllegalArgumentException e) {
-            return null;
-        }
-    }
-}
-
-public class ValidationTriageHandler extends ComplaintHandler {
-    public ComplaintRoutingResult handle(Complaint complaint, ComplaintRoutingResult result) {
-        ComplaintSeverity sev = ComplaintSeverity.parse(complaint.getSeverity());
-        if (sev == null) {
-            result.recordStep(&quot;ValidationTriageHandler&quot;, &quot;TRIAGED&quot;, &quot;Missing or invalid severity routed to Manual Triage Officer&quot;);
-            result.setFinalStatus(&quot;TRIAGE_REQUIRED&quot;);
-            result.setAssignedRole(&quot;Manual Triage Officer&quot;);
-            result.setResolved(true);
-            return result;
-        }
-        result.recordStep(&quot;ValidationTriageHandler&quot;, &quot;VALIDATED&quot;, &quot;Validated severity: &quot; + sev);
-        return passToNext(complaint, result);
-    }
-}
-
-public class LocalStaffHandler extends ComplaintHandler {
-    public ComplaintRoutingResult handle(Complaint complaint, ComplaintRoutingResult result) {
-        ComplaintSeverity sev = ComplaintSeverity.parse(complaint.getSeverity());
-        if (sev == ComplaintSeverity.LOW) {
-            result.recordStep(&quot;LocalStaffHandler&quot;, &quot;RESOLVED&quot;, &quot;Dispatched local field crew for routine maintenance&quot;);
-            result.setFinalStatus(&quot;IN_PROGRESS&quot;);
-            result.setAssignedRole(&quot;Local Maintenance Crew&quot;);
-            result.setResolved(true);
-            return result;
-        }
-        result.recordStep(&quot;LocalStaffHandler&quot;, &quot;ESCALATED&quot;, &quot;Severity exceeds local threshold&quot;);
-        return passToNext(complaint, result);
-    }
-}</pre>
+  <div style="font-size: 11.5pt; font-weight: bold; color: #1e3a8a; margin-bottom: 6px;">
+    Production Source Code Screenshot: Citizen Grievance Escalation (Chain of Responsibility Pattern)
+  </div>
+  <p style="font-size: 9.5pt; margin-bottom: 6px;">
+    <b>Target Source File:</b> <code style="font-family: Consolas, monospace; background: #e2e8f0; padding: 2px 6px; border-radius: 4px; color: #1e3a8a; font-weight: bold;">backend/src/main/java/com/smartcity/pattern/chain/ComplaintHandler.java</code>
+  </p>
+  <div style="font-size: 9pt; color: #475569; font-style: italic; margin-bottom: 4px;">
+    Complete Package File Manifest (<code>backend/src/main/java/com/smartcity/pattern/chain/</code>) — packaged in project source ZIP:
+  </div>
+  <ul style="font-size: 8.5pt; color: #334155; margin: 4px 0 10px 18px; line-height: 1.45;">
+    <li><code>ComplaintHandler.java</code> — Abstract Base Handler — Maintains protected successor reference and handleRequest() delegation template.</li><li><code>LocalStaffHandler.java</code> — Concrete Handler 1 — Dispatches LOW severity municipal maintenance tickets.</li><li><code>SupervisorHandler.java</code> — Concrete Handler 2 — Resolves MEDIUM severity municipal issues within defined operational SLAs.</li><li><code>CityManagerHandler.java</code> — Concrete Handler 3 — Authorizes HIGH severity critical infrastructure repairs and emergency budgets.</li><li><code>TerminalFallbackHandler.java</code> — Emergency Fallback Handler — Safely traps CRITICAL or unhandled tickets into audit queue without drop hazards.</li><li><code>ValidationTriageHandler.java</code> — Validation Triage — Inspects raw complaint syntax, validates fields, and prevents premature LOW default.</li><li><code>ComplaintChainFactory.java</code> — Assembly Factory — Instantiates and wires the complete handler pipeline sequentially.</li><li><code>ComplaintSeverity.java</code> — Domain Enum — Severity levels: LOW, MEDIUM, HIGH, CRITICAL with safe parsing.</li><li><code>Test.java</code> — Verification Suite — Tests multi-tier escalation, triage safety, audit footprints, and zero dropped tickets.</li>
+  </ul>
+  <div style="border: 2px dashed #94a3b8; background: #ffffff; border-radius: 6px; padding: 20px; text-align: center; margin: 12px 0;">
+    <div style="font-family: Consolas, monospace; font-size: 9.5pt; color: #64748b; font-weight: bold;">
+      &gt;&gt;&gt; PASTE / INSERT SOURCE CODE SCREENSHOT HERE &lt;&lt;&lt;
+    </div>
+    <div style="font-family: Consolas, monospace; font-size: 8.5pt; color: #1e3a8a; margin-top: 4px;">
+      backend/src/main/java/com/smartcity/pattern/chain/ComplaintHandler.java
+    </div>
+    <div style="font-size: 8pt; color: #94a3b8; margin-top: 4px;">
+      Recommended IDE View: Capture class declaration &amp; core methods with syntax highlighting (300 DPI)
+    </div>
+  </div>
+  <div style="font-size: 8.5pt; color: #475569; font-style: italic;">
+    📌 <b>Candidate Screenshot Guide:</b> Open '<code>backend/src/main/java/com/smartcity/pattern/chain/ComplaintHandler.java</code>' in your IDE (VS Code / IntelliJ IDEA). Take a clean, high-resolution screenshot and paste into this placeholder box. Capture ComplaintHandler.java showing the nextHandler reference and handleRequest() template method alongside ComplaintChainFactory.java.
+  </div>
 </div>
+<div class="diagram-caption" style="margin-top: 4px; margin-bottom: 16px;">Listing 4.1: Production Source Code Implementation Screenshot — Multi-Tier Complaint Chain of Responsibility — backend/src/main/java/com/smartcity/pattern/chain/ComplaintHandler.java</div>
 
 <div class="page-break"></div>
 <h1>
@@ -858,54 +757,39 @@ public class LocalStaffHandler extends ComplaintHandler {
   <div class="diagram-caption">Figure 5.1 — JVM Heap Memory Allocation & Flyweight Profile Cache Pool Diagram</div>
 </div>
 
-<h2>5.4 Architectural Implementation Highlights (Zero Comments)</h2>
-<p style="font-size: 9.5pt; font-style: italic; color: #475569;">Key architectural implementation snippet demonstrating pattern structure (the complete compilable source codebase is packaged in the project archive):</p>
-<div class="code-card">
-  <div class="code-card-header">
-    <span>Architecture Implementation: Efficient Management of Smart Street Lights</span>
-    <span class="tag">Java 17 Specification</span>
+<h2>5.4 Architectural Implementation Highlights &amp; Source Code Architecture</h2>
+<div class="diagram-card" style="border-left: 5px solid #1e3a8a; background: #f8fafc; padding: 16px 20px; border-radius: 6px; margin: 18px 0; border: 1px solid #cbd5e1; page-break-inside: avoid;">
+  <div style="font-weight: bold; color: #0f294a; font-size: 10.5pt; margin-bottom: 3px;">
+    📸 [ SOURCE CODE SCREENSHOT PLACEHOLDER — LISTING 5.1 ]
   </div>
-  <pre>package com.smartcity.pattern.flyweight;
-
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-
-public class SharedStreetlightProfile {
-    private final String model;
-    private final String lampType;
-    private final int wattage;
-    private final int maxLumens;
-    private final int colorTemperatureK;
-    private final String firmwareVersion;
-
-    public SharedStreetlightProfile(String model, String lampType, int wattage, int maxLumens, int colorTemp, String firmware) {
-        this.model = model;
-        this.lampType = lampType;
-        this.wattage = wattage;
-        this.maxLumens = maxLumens;
-        this.colorTemperatureK = colorTemp;
-        this.firmwareVersion = firmware;
-    }
-
-    public String render(String poleId, double lat, double lng, int brightness, String status) {
-        return String.format(&quot;[%s] %s (%dW, %d lm) at (%.4f, %.4f) -&gt; %d%% [%s]&quot;,
-                poleId, model, wattage, maxLumens, lat, lng, brightness, status);
-    }
-}
-
-public class StreetlightProfileFactory {
-    private static final ConcurrentMap&lt;String, SharedStreetlightProfile&gt; cache = new ConcurrentHashMap&lt;&gt;();
-
-    public static SharedStreetlightProfile getProfile(String model, String lampType, int wattage, int maxLumens, int colorTemp, String firmware) {
-        String key = model + &quot;|&quot; + lampType + &quot;|&quot; + wattage + &quot;|&quot; + maxLumens + &quot;|&quot; + colorTemp + &quot;|&quot; + firmware;
-        return cache.computeIfAbsent(key, k -&gt; new SharedStreetlightProfile(model, lampType, wattage, maxLumens, colorTemp, firmware));
-    }
-
-    public static int getProfileCount() {
-        return cache.size();
-    }
-}</pre>
+  <div style="font-size: 11.5pt; font-weight: bold; color: #1e3a8a; margin-bottom: 6px;">
+    Production Source Code Screenshot: Smart Streetlight Memory Optimization (Flyweight Pattern)
+  </div>
+  <p style="font-size: 9.5pt; margin-bottom: 6px;">
+    <b>Target Source File:</b> <code style="font-family: Consolas, monospace; background: #e2e8f0; padding: 2px 6px; border-radius: 4px; color: #1e3a8a; font-weight: bold;">backend/src/main/java/com/smartcity/pattern/flyweight/StreetlightProfileFactory.java</code>
+  </p>
+  <div style="font-size: 9pt; color: #475569; font-style: italic; margin-bottom: 4px;">
+    Complete Package File Manifest (<code>backend/src/main/java/com/smartcity/pattern/flyweight/</code>) — packaged in project source ZIP:
+  </div>
+  <ul style="font-size: 8.5pt; color: #334155; margin: 4px 0 10px 18px; line-height: 1.45;">
+    <li><code>SharedStreetlightProfile.java</code> — Intrinsic Flyweight — Immutable hardware specification shared across 25,000 smart streetlight instances.</li><li><code>StreetlightProfileFactory.java</code> — Thread-Safe Factory Pool — Manages static ConcurrentHashMap cache via computeIfAbsent.</li><li><code>StreetlightContext.java</code> — Extrinsic Context — Lightweight object holding per-device state (GPS latitude/longitude, brightness, status).</li><li><code>FlyweightBenchmark.java</code> — Memory Measurement Engine — Measures exact HotSpot JVM object layout footprint (72.2% reduction).</li><li><code>NaiveHeavyStreetlight.java</code> — Unoptimized Baseline — Duplicates hardware properties across every streetlight for empirical comparison.</li><li><code>Test.java</code> — Verification Suite — Validates reference identity across 8 concurrent threads and zero cache duplication.</li>
+  </ul>
+  <div style="border: 2px dashed #94a3b8; background: #ffffff; border-radius: 6px; padding: 20px; text-align: center; margin: 12px 0;">
+    <div style="font-family: Consolas, monospace; font-size: 9.5pt; color: #64748b; font-weight: bold;">
+      &gt;&gt;&gt; PASTE / INSERT SOURCE CODE SCREENSHOT HERE &lt;&lt;&lt;
+    </div>
+    <div style="font-family: Consolas, monospace; font-size: 8.5pt; color: #1e3a8a; margin-top: 4px;">
+      backend/src/main/java/com/smartcity/pattern/flyweight/StreetlightProfileFactory.java
+    </div>
+    <div style="font-size: 8pt; color: #94a3b8; margin-top: 4px;">
+      Recommended IDE View: Capture class declaration &amp; core methods with syntax highlighting (300 DPI)
+    </div>
+  </div>
+  <div style="font-size: 8.5pt; color: #475569; font-style: italic;">
+    📌 <b>Candidate Screenshot Guide:</b> Open '<code>backend/src/main/java/com/smartcity/pattern/flyweight/StreetlightProfileFactory.java</code>' in your IDE (VS Code / IntelliJ IDEA). Take a clean, high-resolution screenshot and paste into this placeholder box. Capture StreetlightProfileFactory.java showing the ConcurrentHashMap cache pool and computeIfAbsent factory method alongside SharedStreetlightProfile.java.
+  </div>
 </div>
+<div class="diagram-caption" style="margin-top: 4px; margin-bottom: 16px;">Listing 5.1: Production Source Code Implementation Screenshot — Smart Streetlight Flyweight Pool Architecture — backend/src/main/java/com/smartcity/pattern/flyweight/StreetlightProfileFactory.java</div>
 
 <div class="page-break"></div>
 <h1>
@@ -1004,59 +888,39 @@ public class StreetlightProfileFactory {
   <div class="diagram-caption">Figure 6.1 — UML Class Diagram: Interpreter Pattern Class Hierarchy & AST Structure</div>
 </div>
 
-<h2>6.4 Architectural Implementation Highlights (Zero Comments)</h2>
-<p style="font-size: 9.5pt; font-style: italic; color: #475569;">Key architectural implementation snippet demonstrating pattern structure (the complete compilable source codebase is packaged in the project archive):</p>
-<div class="code-card">
-  <div class="code-card-header">
-    <span>Architecture Implementation: Interpreting City Policies Defined in DSL</span>
-    <span class="tag">Java 17 Specification</span>
+<h2>6.4 Architectural Implementation Highlights &amp; Source Code Architecture</h2>
+<div class="diagram-card" style="border-left: 5px solid #1e3a8a; background: #f8fafc; padding: 16px 20px; border-radius: 6px; margin: 18px 0; border: 1px solid #cbd5e1; page-break-inside: avoid;">
+  <div style="font-weight: bold; color: #0f294a; font-size: 10.5pt; margin-bottom: 3px;">
+    📸 [ SOURCE CODE SCREENSHOT PLACEHOLDER — LISTING 6.1 ]
   </div>
-  <pre>package com.smartcity.pattern.interpreter;
-
-public interface Expression {
-    boolean interpret(PolicyContext context);
-}
-
-public class TerminalExpression implements Expression {
-    private final String variable;
-    private final String operator;
-    private final double threshold;
-
-    public TerminalExpression(String variable, String operator, double threshold) {
-        this.variable = variable;
-        this.operator = operator;
-        this.threshold = threshold;
-    }
-
-    public boolean interpret(PolicyContext context) {
-        if (!context.has(variable)) return false;
-        double val = context.get(variable);
-        switch (operator) {
-            case &quot;&gt;&quot;: return val &gt; threshold;
-            case &quot;&gt;=&quot;: return val &gt;= threshold;
-            case &quot;&lt;&quot;: return val &lt; threshold;
-            case &quot;&lt;=&quot;: return val &lt;= threshold;
-            case &quot;==&quot;: return Math.abs(val - threshold) &lt; 0.0001;
-            case &quot;!=&quot;: return Math.abs(val - threshold) &gt;= 0.0001;
-            default: return false;
-        }
-    }
-}
-
-public class AndExpression implements Expression {
-    private final Expression left;
-    private final Expression right;
-
-    public AndExpression(Expression left, Expression right) {
-        this.left = left;
-        this.right = right;
-    }
-
-    public boolean interpret(PolicyContext context) {
-        return left.interpret(context) &amp;&amp; right.interpret(context);
-    }
-}</pre>
+  <div style="font-size: 11.5pt; font-weight: bold; color: #1e3a8a; margin-bottom: 6px;">
+    Production Source Code Screenshot: City Policy DSL Mini-Language (Interpreter Pattern)
+  </div>
+  <p style="font-size: 9.5pt; margin-bottom: 6px;">
+    <b>Target Source File:</b> <code style="font-family: Consolas, monospace; background: #e2e8f0; padding: 2px 6px; border-radius: 4px; color: #1e3a8a; font-weight: bold;">backend/src/main/java/com/smartcity/pattern/interpreter/DslPolicyParser.java</code>
+  </p>
+  <div style="font-size: 9pt; color: #475569; font-style: italic; margin-bottom: 4px;">
+    Complete Package File Manifest (<code>backend/src/main/java/com/smartcity/pattern/interpreter/</code>) — packaged in project source ZIP:
+  </div>
+  <ul style="font-size: 8.5pt; color: #334155; margin: 4px 0 10px 18px; line-height: 1.45;">
+    <li><code>Expression.java</code> — Abstract Expression Interface — Declares boolean interpret(PolicyContext context) contract.</li><li><code>TerminalExpression.java</code> — Terminal Expression — Evaluates atomic relational predicates (&gt;, &lt;, =, BETWEEN) against context telemetry.</li><li><code>AndExpression.java</code> — Non-Terminal Expression — Evaluates binary logical AND between two sub-expressions.</li><li><code>OrExpression.java</code> — Non-Terminal Expression — Evaluates binary logical OR between two sub-expressions.</li><li><code>DslPolicyParser.java</code> — Recursive-Descent Parser — Parses raw DSL strings into recursive AST with token &amp; depth security limits.</li><li><code>PolicyContext.java</code> — State Context — Stores runtime telemetry variable values (e.g. NOISE_LEVEL, AIR_QUALITY, TIME_HOUR).</li><li><code>Test.java</code> — Verification Suite — Validates complex boolean expressions, BETWEEN operator, parentheses precedence, and syntax exceptions.</li>
+  </ul>
+  <div style="border: 2px dashed #94a3b8; background: #ffffff; border-radius: 6px; padding: 20px; text-align: center; margin: 12px 0;">
+    <div style="font-family: Consolas, monospace; font-size: 9.5pt; color: #64748b; font-weight: bold;">
+      &gt;&gt;&gt; PASTE / INSERT SOURCE CODE SCREENSHOT HERE &lt;&lt;&lt;
+    </div>
+    <div style="font-family: Consolas, monospace; font-size: 8.5pt; color: #1e3a8a; margin-top: 4px;">
+      backend/src/main/java/com/smartcity/pattern/interpreter/DslPolicyParser.java
+    </div>
+    <div style="font-size: 8pt; color: #94a3b8; margin-top: 4px;">
+      Recommended IDE View: Capture class declaration &amp; core methods with syntax highlighting (300 DPI)
+    </div>
+  </div>
+  <div style="font-size: 8.5pt; color: #475569; font-style: italic;">
+    📌 <b>Candidate Screenshot Guide:</b> Open '<code>backend/src/main/java/com/smartcity/pattern/interpreter/DslPolicyParser.java</code>' in your IDE (VS Code / IntelliJ IDEA). Take a clean, high-resolution screenshot and paste into this placeholder box. Capture DslPolicyParser.java showing recursive grammar parsing rules and AST construction alongside TerminalExpression.java.
+  </div>
 </div>
+<div class="diagram-caption" style="margin-top: 4px; margin-bottom: 16px;">Listing 6.1: Production Source Code Implementation Screenshot — Municipal Policy DSL Grammar Interpreter — backend/src/main/java/com/smartcity/pattern/interpreter/DslPolicyParser.java</div>
 
 <div class="page-break"></div>
 <h1>
@@ -1455,6 +1319,648 @@ The SmartCity360 platform exemplifies how classic Gang of Four design patterns s
 <h3 style="margin-top: 20px; color: #0f294a;">Academic References & Literature:</h3>
 <ul style="padding-left: 20px; font-size: 10pt; line-height: 1.6;">
 <li style='margin-bottom: 6px;'>Gamma, E., Helm, R., Johnson, R., &amp; Vlissides, J. (1994). Design Patterns: Elements of Reusable Object-Oriented Software. Addison-Wesley.</li><li style='margin-bottom: 6px;'>Fowler, M. (2002). Patterns of Enterprise Application Architecture. Addison-Wesley.</li><li style='margin-bottom: 6px;'>Martin, R. C. (2008). Clean Code: A Handbook of Agile Software Craftsmanship. Prentice Hall.</li><li style='margin-bottom: 6px;'>Java Institute for Advanced Technology. (2026). Object Oriented Design Patterns - II Lecture Notes &amp; Academic Syllabus. Department of Examinations.</li><li style='margin-bottom: 6px;'>Oracle Corporation. (2024). Java SE 17 Developer Documentation &amp; HotSpot Virtual Machine Memory Management Guide.</li>
-</ul>
+<div class="page-break"></div>
+<h1>9. APPENDIX A — COMPREHENSIVE SOURCE CODE IMPLEMENTATION SCREENSHOT CATALOG</h1>
+<p style="text-align: justify;">This appendix provides a structured, formal catalog of all production source code files developed for the SmartCity360 municipal platform. In compliance with Part F.3 of the assessment specification ('prepare comprehensive project documentation, including working code to illustrate the design and functionality of your application'), each pattern's source files are mapped with their exact repository paths, architectural role, and dedicated high-resolution screenshot drop zones. Candidates can capture screenshots directly from their IDE (VS Code / IntelliJ IDEA) and insert them into each designated container below:</p>
+
+<h2>9.1 Part A: Dynamic Security Wrappers for Data Streams (Decorator Pattern)</h2>
+<p style="font-family: Consolas, monospace; font-size: 9pt; color: #475569; margin-bottom: 10px;">Package: <b>com.smartcity.pattern.decorator</b></p>
+
+<div class="diagram-card" style="border-left: 4px solid #1e3a8a; background: #f8fafc; padding: 14px 18px; border-radius: 6px; margin: 14px 0; border: 1px solid #cbd5e1; page-break-inside: avoid;">
+  <div style="font-weight: bold; color: #0f294a; font-size: 10pt; margin-bottom: 2px;">
+    📸 Screenshot A.1.1: StreamData.java
+  </div>
+  <p style="font-size: 8.5pt; margin-bottom: 3px;">
+    <b>File Path:</b> <code style="font-family: Consolas, monospace; background: #e2e8f0; padding: 2px 6px; border-radius: 4px; color: #1e3a8a; font-weight: bold;">backend/src/main/java/com/smartcity/pattern/decorator/StreamData.java</code>
+  </p>
+  <p style="font-size: 8.5pt; color: #475569; margin-bottom: 6px;">
+    <b>Architectural Role:</b> Component Interface — Defines uniform telemetry payload contract (getData(), getPayloadBytes(), getPayloadSize()).
+  </p>
+  <div style="border: 2px dashed #94a3b8; background: #ffffff; border-radius: 6px; padding: 16px; text-align: center; margin: 8px 0;">
+    <div style="font-family: Consolas, monospace; font-size: 9pt; color: #64748b; font-weight: bold;">
+      &gt;&gt;&gt; PASTE / INSERT SCREENSHOT FOR: StreamData.java &lt;&lt;&lt;
+    </div>
+    <div style="font-family: Consolas, monospace; font-size: 8pt; color: #1e3a8a; margin-top: 3px;">
+      backend/src/main/java/com/smartcity/pattern/decorator/StreamData.java
+    </div>
+  </div>
+  <div style="font-size: 8pt; color: #64748b; font-style: italic;">
+    📌 <b>Capture Tip:</b> Capture complete interface definition showing method signatures.
+  </div>
+</div>
+<div class="diagram-caption" style="margin-top: 2px; margin-bottom: 12px; font-size: 8.5pt;">Screenshot A.1.1: StreamData.java — Component Interface — Defines uniform telemetry payload contract (getData(), getPayloadBytes(), getPayloadSize()).</div>
+
+<div class="diagram-card" style="border-left: 4px solid #1e3a8a; background: #f8fafc; padding: 14px 18px; border-radius: 6px; margin: 14px 0; border: 1px solid #cbd5e1; page-break-inside: avoid;">
+  <div style="font-weight: bold; color: #0f294a; font-size: 10pt; margin-bottom: 2px;">
+    📸 Screenshot A.1.2: EnergyStreamData.java
+  </div>
+  <p style="font-size: 8.5pt; margin-bottom: 3px;">
+    <b>File Path:</b> <code style="font-family: Consolas, monospace; background: #e2e8f0; padding: 2px 6px; border-radius: 4px; color: #1e3a8a; font-weight: bold;">backend/src/main/java/com/smartcity/pattern/decorator/EnergyStreamData.java</code>
+  </p>
+  <p style="font-size: 8.5pt; color: #475569; margin-bottom: 6px;">
+    <b>Architectural Role:</b> Concrete Component — Ingests raw smart energy meter readings and stores unencrypted payload.
+  </p>
+  <div style="border: 2px dashed #94a3b8; background: #ffffff; border-radius: 6px; padding: 16px; text-align: center; margin: 8px 0;">
+    <div style="font-family: Consolas, monospace; font-size: 9pt; color: #64748b; font-weight: bold;">
+      &gt;&gt;&gt; PASTE / INSERT SCREENSHOT FOR: EnergyStreamData.java &lt;&lt;&lt;
+    </div>
+    <div style="font-family: Consolas, monospace; font-size: 8pt; color: #1e3a8a; margin-top: 3px;">
+      backend/src/main/java/com/smartcity/pattern/decorator/EnergyStreamData.java
+    </div>
+  </div>
+  <div style="font-size: 8pt; color: #64748b; font-style: italic;">
+    📌 <b>Capture Tip:</b> Capture class constructor, fields, and getData() implementation.
+  </div>
+</div>
+<div class="diagram-caption" style="margin-top: 2px; margin-bottom: 12px; font-size: 8.5pt;">Screenshot A.1.2: EnergyStreamData.java — Concrete Component — Ingests raw smart energy meter readings and stores unencrypted payload.</div>
+
+<div class="diagram-card" style="border-left: 4px solid #1e3a8a; background: #f8fafc; padding: 14px 18px; border-radius: 6px; margin: 14px 0; border: 1px solid #cbd5e1; page-break-inside: avoid;">
+  <div style="font-weight: bold; color: #0f294a; font-size: 10pt; margin-bottom: 2px;">
+    📸 Screenshot A.1.3: StreamDataDecorator.java
+  </div>
+  <p style="font-size: 8.5pt; margin-bottom: 3px;">
+    <b>File Path:</b> <code style="font-family: Consolas, monospace; background: #e2e8f0; padding: 2px 6px; border-radius: 4px; color: #1e3a8a; font-weight: bold;">backend/src/main/java/com/smartcity/pattern/decorator/StreamDataDecorator.java</code>
+  </p>
+  <p style="font-size: 8.5pt; color: #475569; margin-bottom: 6px;">
+    <b>Architectural Role:</b> Abstract Decorator — Holds protected wrappedStream reference and delegates calls.
+  </p>
+  <div style="border: 2px dashed #94a3b8; background: #ffffff; border-radius: 6px; padding: 16px; text-align: center; margin: 8px 0;">
+    <div style="font-family: Consolas, monospace; font-size: 9pt; color: #64748b; font-weight: bold;">
+      &gt;&gt;&gt; PASTE / INSERT SCREENSHOT FOR: StreamDataDecorator.java &lt;&lt;&lt;
+    </div>
+    <div style="font-family: Consolas, monospace; font-size: 8pt; color: #1e3a8a; margin-top: 3px;">
+      backend/src/main/java/com/smartcity/pattern/decorator/StreamDataDecorator.java
+    </div>
+  </div>
+  <div style="font-size: 8pt; color: #64748b; font-style: italic;">
+    📌 <b>Capture Tip:</b> Capture aggregation constructor and default forwarding methods.
+  </div>
+</div>
+<div class="diagram-caption" style="margin-top: 2px; margin-bottom: 12px; font-size: 8.5pt;">Screenshot A.1.3: StreamDataDecorator.java — Abstract Decorator — Holds protected wrappedStream reference and delegates calls.</div>
+
+<div class="diagram-card" style="border-left: 4px solid #1e3a8a; background: #f8fafc; padding: 14px 18px; border-radius: 6px; margin: 14px 0; border: 1px solid #cbd5e1; page-break-inside: avoid;">
+  <div style="font-weight: bold; color: #0f294a; font-size: 10pt; margin-bottom: 2px;">
+    📸 Screenshot A.1.4: EncryptionDecorator.java
+  </div>
+  <p style="font-size: 8.5pt; margin-bottom: 3px;">
+    <b>File Path:</b> <code style="font-family: Consolas, monospace; background: #e2e8f0; padding: 2px 6px; border-radius: 4px; color: #1e3a8a; font-weight: bold;">backend/src/main/java/com/smartcity/pattern/decorator/EncryptionDecorator.java</code>
+  </p>
+  <p style="font-size: 8.5pt; color: #475569; margin-bottom: 6px;">
+    <b>Architectural Role:</b> Concrete Decorator — 256-bit AES-GCM AEAD encryption engine with secure IV generation.
+  </p>
+  <div style="border: 2px dashed #94a3b8; background: #ffffff; border-radius: 6px; padding: 16px; text-align: center; margin: 8px 0;">
+    <div style="font-family: Consolas, monospace; font-size: 9pt; color: #64748b; font-weight: bold;">
+      &gt;&gt;&gt; PASTE / INSERT SCREENSHOT FOR: EncryptionDecorator.java &lt;&lt;&lt;
+    </div>
+    <div style="font-family: Consolas, monospace; font-size: 8pt; color: #1e3a8a; margin-top: 3px;">
+      backend/src/main/java/com/smartcity/pattern/decorator/EncryptionDecorator.java
+    </div>
+  </div>
+  <div style="font-size: 8pt; color: #64748b; font-style: italic;">
+    📌 <b>Capture Tip:</b> Capture AES-GCM cipher initialization, IV generation, and ciphertext wrapping.
+  </div>
+</div>
+<div class="diagram-caption" style="margin-top: 2px; margin-bottom: 12px; font-size: 8.5pt;">Screenshot A.1.4: EncryptionDecorator.java — Concrete Decorator — 256-bit AES-GCM AEAD encryption engine with secure IV generation.</div>
+
+<div class="diagram-card" style="border-left: 4px solid #1e3a8a; background: #f8fafc; padding: 14px 18px; border-radius: 6px; margin: 14px 0; border: 1px solid #cbd5e1; page-break-inside: avoid;">
+  <div style="font-weight: bold; color: #0f294a; font-size: 10pt; margin-bottom: 2px;">
+    📸 Screenshot A.1.5: CompressionDecorator.java
+  </div>
+  <p style="font-size: 8.5pt; margin-bottom: 3px;">
+    <b>File Path:</b> <code style="font-family: Consolas, monospace; background: #e2e8f0; padding: 2px 6px; border-radius: 4px; color: #1e3a8a; font-weight: bold;">backend/src/main/java/com/smartcity/pattern/decorator/CompressionDecorator.java</code>
+  </p>
+  <p style="font-size: 8.5pt; color: #475569; margin-bottom: 6px;">
+    <b>Architectural Role:</b> Concrete Decorator — GZIP compression wrapper applied prior to ciphering.
+  </p>
+  <div style="border: 2px dashed #94a3b8; background: #ffffff; border-radius: 6px; padding: 16px; text-align: center; margin: 8px 0;">
+    <div style="font-family: Consolas, monospace; font-size: 9pt; color: #64748b; font-weight: bold;">
+      &gt;&gt;&gt; PASTE / INSERT SCREENSHOT FOR: CompressionDecorator.java &lt;&lt;&lt;
+    </div>
+    <div style="font-family: Consolas, monospace; font-size: 8pt; color: #1e3a8a; margin-top: 3px;">
+      backend/src/main/java/com/smartcity/pattern/decorator/CompressionDecorator.java
+    </div>
+  </div>
+  <div style="font-size: 8pt; color: #64748b; font-style: italic;">
+    📌 <b>Capture Tip:</b> Capture GZIPOutputStream compaction stream pipeline and byte conversion.
+  </div>
+</div>
+<div class="diagram-caption" style="margin-top: 2px; margin-bottom: 12px; font-size: 8.5pt;">Screenshot A.1.5: CompressionDecorator.java — Concrete Decorator — GZIP compression wrapper applied prior to ciphering.</div>
+
+<div class="diagram-card" style="border-left: 4px solid #1e3a8a; background: #f8fafc; padding: 14px 18px; border-radius: 6px; margin: 14px 0; border: 1px solid #cbd5e1; page-break-inside: avoid;">
+  <div style="font-weight: bold; color: #0f294a; font-size: 10pt; margin-bottom: 2px;">
+    📸 Screenshot A.1.6: AuthenticationDecorator.java
+  </div>
+  <p style="font-size: 8.5pt; margin-bottom: 3px;">
+    <b>File Path:</b> <code style="font-family: Consolas, monospace; background: #e2e8f0; padding: 2px 6px; border-radius: 4px; color: #1e3a8a; font-weight: bold;">backend/src/main/java/com/smartcity/pattern/decorator/AuthenticationDecorator.java</code>
+  </p>
+  <p style="font-size: 8.5pt; color: #475569; margin-bottom: 6px;">
+    <b>Architectural Role:</b> Concrete Decorator — HMAC-SHA256 authenticity signature generator and perimeter verifier.
+  </p>
+  <div style="border: 2px dashed #94a3b8; background: #ffffff; border-radius: 6px; padding: 16px; text-align: center; margin: 8px 0;">
+    <div style="font-family: Consolas, monospace; font-size: 9pt; color: #64748b; font-weight: bold;">
+      &gt;&gt;&gt; PASTE / INSERT SCREENSHOT FOR: AuthenticationDecorator.java &lt;&lt;&lt;
+    </div>
+    <div style="font-family: Consolas, monospace; font-size: 8pt; color: #1e3a8a; margin-top: 3px;">
+      backend/src/main/java/com/smartcity/pattern/decorator/AuthenticationDecorator.java
+    </div>
+  </div>
+  <div style="font-size: 8pt; color: #64748b; font-style: italic;">
+    📌 <b>Capture Tip:</b> Capture Mac.getInstance(&#x27;HmacSHA256&#x27;) initialization and signature verification logic.
+  </div>
+</div>
+<div class="diagram-caption" style="margin-top: 2px; margin-bottom: 12px; font-size: 8.5pt;">Screenshot A.1.6: AuthenticationDecorator.java — Concrete Decorator — HMAC-SHA256 authenticity signature generator and perimeter verifier.</div>
+
+<h2>9.2 Part B: Hierarchical Structure of Smart Zones (Composite Pattern)</h2>
+<p style="font-family: Consolas, monospace; font-size: 9pt; color: #475569; margin-bottom: 10px;">Package: <b>com.smartcity.pattern.composite</b></p>
+
+<div class="diagram-card" style="border-left: 4px solid #1e3a8a; background: #f8fafc; padding: 14px 18px; border-radius: 6px; margin: 14px 0; border: 1px solid #cbd5e1; page-break-inside: avoid;">
+  <div style="font-weight: bold; color: #0f294a; font-size: 10pt; margin-bottom: 2px;">
+    📸 Screenshot A.2.1: ZoneComponent.java
+  </div>
+  <p style="font-size: 8.5pt; margin-bottom: 3px;">
+    <b>File Path:</b> <code style="font-family: Consolas, monospace; background: #e2e8f0; padding: 2px 6px; border-radius: 4px; color: #1e3a8a; font-weight: bold;">backend/src/main/java/com/smartcity/pattern/composite/ZoneComponent.java</code>
+  </p>
+  <p style="font-size: 8.5pt; color: #475569; margin-bottom: 6px;">
+    <b>Architectural Role:</b> Component Interface — Declares uniform operations for leaves and composite zones.
+  </p>
+  <div style="border: 2px dashed #94a3b8; background: #ffffff; border-radius: 6px; padding: 16px; text-align: center; margin: 8px 0;">
+    <div style="font-family: Consolas, monospace; font-size: 9pt; color: #64748b; font-weight: bold;">
+      &gt;&gt;&gt; PASTE / INSERT SCREENSHOT FOR: ZoneComponent.java &lt;&lt;&lt;
+    </div>
+    <div style="font-family: Consolas, monospace; font-size: 8pt; color: #1e3a8a; margin-top: 3px;">
+      backend/src/main/java/com/smartcity/pattern/composite/ZoneComponent.java
+    </div>
+  </div>
+  <div style="font-size: 8pt; color: #64748b; font-style: italic;">
+    📌 <b>Capture Tip:</b> Capture executeCommand(), getEnergyConsumption(), add(), remove(), and getChildren() signatures.
+  </div>
+</div>
+<div class="diagram-caption" style="margin-top: 2px; margin-bottom: 12px; font-size: 8.5pt;">Screenshot A.2.1: ZoneComponent.java — Component Interface — Declares uniform operations for leaves and composite zones.</div>
+
+<div class="diagram-card" style="border-left: 4px solid #1e3a8a; background: #f8fafc; padding: 14px 18px; border-radius: 6px; margin: 14px 0; border: 1px solid #cbd5e1; page-break-inside: avoid;">
+  <div style="font-weight: bold; color: #0f294a; font-size: 10pt; margin-bottom: 2px;">
+    📸 Screenshot A.2.2: BuildingLeaf.java
+  </div>
+  <p style="font-size: 8.5pt; margin-bottom: 3px;">
+    <b>File Path:</b> <code style="font-family: Consolas, monospace; background: #e2e8f0; padding: 2px 6px; border-radius: 4px; color: #1e3a8a; font-weight: bold;">backend/src/main/java/com/smartcity/pattern/composite/BuildingLeaf.java</code>
+  </p>
+  <p style="font-size: 8.5pt; color: #475569; margin-bottom: 6px;">
+    <b>Architectural Role:</b> Leaf Component — Represents atomic smart buildings / assets; safe leaf enforcement.
+  </p>
+  <div style="border: 2px dashed #94a3b8; background: #ffffff; border-radius: 6px; padding: 16px; text-align: center; margin: 8px 0;">
+    <div style="font-family: Consolas, monospace; font-size: 9pt; color: #64748b; font-weight: bold;">
+      &gt;&gt;&gt; PASTE / INSERT SCREENSHOT FOR: BuildingLeaf.java &lt;&lt;&lt;
+    </div>
+    <div style="font-family: Consolas, monospace; font-size: 8pt; color: #1e3a8a; margin-top: 3px;">
+      backend/src/main/java/com/smartcity/pattern/composite/BuildingLeaf.java
+    </div>
+  </div>
+  <div style="font-size: 8pt; color: #64748b; font-style: italic;">
+    📌 <b>Capture Tip:</b> Capture local command execution and safe UnsupportedOperationException throwing on child methods.
+  </div>
+</div>
+<div class="diagram-caption" style="margin-top: 2px; margin-bottom: 12px; font-size: 8.5pt;">Screenshot A.2.2: BuildingLeaf.java — Leaf Component — Represents atomic smart buildings / assets; safe leaf enforcement.</div>
+
+<div class="diagram-card" style="border-left: 4px solid #1e3a8a; background: #f8fafc; padding: 14px 18px; border-radius: 6px; margin: 14px 0; border: 1px solid #cbd5e1; page-break-inside: avoid;">
+  <div style="font-weight: bold; color: #0f294a; font-size: 10pt; margin-bottom: 2px;">
+    📸 Screenshot A.2.3: ZoneComposite.java
+  </div>
+  <p style="font-size: 8.5pt; margin-bottom: 3px;">
+    <b>File Path:</b> <code style="font-family: Consolas, monospace; background: #e2e8f0; padding: 2px 6px; border-radius: 4px; color: #1e3a8a; font-weight: bold;">backend/src/main/java/com/smartcity/pattern/composite/ZoneComposite.java</code>
+  </p>
+  <p style="font-size: 8.5pt; color: #475569; margin-bottom: 6px;">
+    <b>Architectural Role:</b> Composite Container — Maintains child components with recursive command broadcasting and power rollup.
+  </p>
+  <div style="border: 2px dashed #94a3b8; background: #ffffff; border-radius: 6px; padding: 16px; text-align: center; margin: 8px 0;">
+    <div style="font-family: Consolas, monospace; font-size: 9pt; color: #64748b; font-weight: bold;">
+      &gt;&gt;&gt; PASTE / INSERT SCREENSHOT FOR: ZoneComposite.java &lt;&lt;&lt;
+    </div>
+    <div style="font-family: Consolas, monospace; font-size: 8pt; color: #1e3a8a; margin-top: 3px;">
+      backend/src/main/java/com/smartcity/pattern/composite/ZoneComposite.java
+    </div>
+  </div>
+  <div style="font-size: 8pt; color: #64748b; font-style: italic;">
+    📌 <b>Capture Tip:</b> Capture List&lt;ZoneComponent&gt; children declaration, recursive loop in executeCommand(), and getEnergyConsumption().
+  </div>
+</div>
+<div class="diagram-caption" style="margin-top: 2px; margin-bottom: 12px; font-size: 8.5pt;">Screenshot A.2.3: ZoneComposite.java — Composite Container — Maintains child components with recursive command broadcasting and power rollup.</div>
+
+<div class="diagram-card" style="border-left: 4px solid #1e3a8a; background: #f8fafc; padding: 14px 18px; border-radius: 6px; margin: 14px 0; border: 1px solid #cbd5e1; page-break-inside: avoid;">
+  <div style="font-weight: bold; color: #0f294a; font-size: 10pt; margin-bottom: 2px;">
+    📸 Screenshot A.2.4: ZoneCommand.java
+  </div>
+  <p style="font-size: 8.5pt; margin-bottom: 3px;">
+    <b>File Path:</b> <code style="font-family: Consolas, monospace; background: #e2e8f0; padding: 2px 6px; border-radius: 4px; color: #1e3a8a; font-weight: bold;">backend/src/main/java/com/smartcity/pattern/composite/ZoneCommand.java</code>
+  </p>
+  <p style="font-size: 8.5pt; color: #475569; margin-bottom: 6px;">
+    <b>Architectural Role:</b> Command Abstraction — Type-safe enum for municipal command broadcasting.
+  </p>
+  <div style="border: 2px dashed #94a3b8; background: #ffffff; border-radius: 6px; padding: 16px; text-align: center; margin: 8px 0;">
+    <div style="font-family: Consolas, monospace; font-size: 9pt; color: #64748b; font-weight: bold;">
+      &gt;&gt;&gt; PASTE / INSERT SCREENSHOT FOR: ZoneCommand.java &lt;&lt;&lt;
+    </div>
+    <div style="font-family: Consolas, monospace; font-size: 8pt; color: #1e3a8a; margin-top: 3px;">
+      backend/src/main/java/com/smartcity/pattern/composite/ZoneCommand.java
+    </div>
+  </div>
+  <div style="font-size: 8pt; color: #64748b; font-style: italic;">
+    📌 <b>Capture Tip:</b> Capture enum values (SHUTDOWN_POWER, RESTORE_POWER, EMERGENCY_LOCKDOWN, REPORT_STATUS).
+  </div>
+</div>
+<div class="diagram-caption" style="margin-top: 2px; margin-bottom: 12px; font-size: 8.5pt;">Screenshot A.2.4: ZoneCommand.java — Command Abstraction — Type-safe enum for municipal command broadcasting.</div>
+
+<h2>9.3 Part C: Escalation of Citizen Complaints (Chain of Responsibility Pattern)</h2>
+<p style="font-family: Consolas, monospace; font-size: 9pt; color: #475569; margin-bottom: 10px;">Package: <b>com.smartcity.pattern.chain</b></p>
+
+<div class="diagram-card" style="border-left: 4px solid #1e3a8a; background: #f8fafc; padding: 14px 18px; border-radius: 6px; margin: 14px 0; border: 1px solid #cbd5e1; page-break-inside: avoid;">
+  <div style="font-weight: bold; color: #0f294a; font-size: 10pt; margin-bottom: 2px;">
+    📸 Screenshot A.3.1: ComplaintHandler.java
+  </div>
+  <p style="font-size: 8.5pt; margin-bottom: 3px;">
+    <b>File Path:</b> <code style="font-family: Consolas, monospace; background: #e2e8f0; padding: 2px 6px; border-radius: 4px; color: #1e3a8a; font-weight: bold;">backend/src/main/java/com/smartcity/pattern/chain/ComplaintHandler.java</code>
+  </p>
+  <p style="font-size: 8.5pt; color: #475569; margin-bottom: 6px;">
+    <b>Architectural Role:</b> Abstract Base Handler — Maintains protected successor reference and handleRequest() delegation template.
+  </p>
+  <div style="border: 2px dashed #94a3b8; background: #ffffff; border-radius: 6px; padding: 16px; text-align: center; margin: 8px 0;">
+    <div style="font-family: Consolas, monospace; font-size: 9pt; color: #64748b; font-weight: bold;">
+      &gt;&gt;&gt; PASTE / INSERT SCREENSHOT FOR: ComplaintHandler.java &lt;&lt;&lt;
+    </div>
+    <div style="font-family: Consolas, monospace; font-size: 8pt; color: #1e3a8a; margin-top: 3px;">
+      backend/src/main/java/com/smartcity/pattern/chain/ComplaintHandler.java
+    </div>
+  </div>
+  <div style="font-size: 8pt; color: #64748b; font-style: italic;">
+    📌 <b>Capture Tip:</b> Capture nextHandler field, setNext() chaining method, and abstract handleRequest().
+  </div>
+</div>
+<div class="diagram-caption" style="margin-top: 2px; margin-bottom: 12px; font-size: 8.5pt;">Screenshot A.3.1: ComplaintHandler.java — Abstract Base Handler — Maintains protected successor reference and handleRequest() delegation template.</div>
+
+<div class="diagram-card" style="border-left: 4px solid #1e3a8a; background: #f8fafc; padding: 14px 18px; border-radius: 6px; margin: 14px 0; border: 1px solid #cbd5e1; page-break-inside: avoid;">
+  <div style="font-weight: bold; color: #0f294a; font-size: 10pt; margin-bottom: 2px;">
+    📸 Screenshot A.3.2: LocalStaffHandler.java
+  </div>
+  <p style="font-size: 8.5pt; margin-bottom: 3px;">
+    <b>File Path:</b> <code style="font-family: Consolas, monospace; background: #e2e8f0; padding: 2px 6px; border-radius: 4px; color: #1e3a8a; font-weight: bold;">backend/src/main/java/com/smartcity/pattern/chain/LocalStaffHandler.java</code>
+  </p>
+  <p style="font-size: 8.5pt; color: #475569; margin-bottom: 6px;">
+    <b>Architectural Role:</b> Concrete Handler 1 — Dispatches LOW severity municipal maintenance issues.
+  </p>
+  <div style="border: 2px dashed #94a3b8; background: #ffffff; border-radius: 6px; padding: 16px; text-align: center; margin: 8px 0;">
+    <div style="font-family: Consolas, monospace; font-size: 9pt; color: #64748b; font-weight: bold;">
+      &gt;&gt;&gt; PASTE / INSERT SCREENSHOT FOR: LocalStaffHandler.java &lt;&lt;&lt;
+    </div>
+    <div style="font-family: Consolas, monospace; font-size: 8pt; color: #1e3a8a; margin-top: 3px;">
+      backend/src/main/java/com/smartcity/pattern/chain/LocalStaffHandler.java
+    </div>
+  </div>
+  <div style="font-size: 8pt; color: #64748b; font-style: italic;">
+    📌 <b>Capture Tip:</b> Capture severity check for LOW and pass-through delegation to nextHandler.
+  </div>
+</div>
+<div class="diagram-caption" style="margin-top: 2px; margin-bottom: 12px; font-size: 8.5pt;">Screenshot A.3.2: LocalStaffHandler.java — Concrete Handler 1 — Dispatches LOW severity municipal maintenance issues.</div>
+
+<div class="diagram-card" style="border-left: 4px solid #1e3a8a; background: #f8fafc; padding: 14px 18px; border-radius: 6px; margin: 14px 0; border: 1px solid #cbd5e1; page-break-inside: avoid;">
+  <div style="font-weight: bold; color: #0f294a; font-size: 10pt; margin-bottom: 2px;">
+    📸 Screenshot A.3.3: SupervisorHandler.java
+  </div>
+  <p style="font-size: 8.5pt; margin-bottom: 3px;">
+    <b>File Path:</b> <code style="font-family: Consolas, monospace; background: #e2e8f0; padding: 2px 6px; border-radius: 4px; color: #1e3a8a; font-weight: bold;">backend/src/main/java/com/smartcity/pattern/chain/SupervisorHandler.java</code>
+  </p>
+  <p style="font-size: 8.5pt; color: #475569; margin-bottom: 6px;">
+    <b>Architectural Role:</b> Concrete Handler 2 — Resolves MEDIUM severity municipal issues within operational SLAs.
+  </p>
+  <div style="border: 2px dashed #94a3b8; background: #ffffff; border-radius: 6px; padding: 16px; text-align: center; margin: 8px 0;">
+    <div style="font-family: Consolas, monospace; font-size: 9pt; color: #64748b; font-weight: bold;">
+      &gt;&gt;&gt; PASTE / INSERT SCREENSHOT FOR: SupervisorHandler.java &lt;&lt;&lt;
+    </div>
+    <div style="font-family: Consolas, monospace; font-size: 8pt; color: #1e3a8a; margin-top: 3px;">
+      backend/src/main/java/com/smartcity/pattern/chain/SupervisorHandler.java
+    </div>
+  </div>
+  <div style="font-size: 8pt; color: #64748b; font-style: italic;">
+    📌 <b>Capture Tip:</b> Capture severity check for MEDIUM and escalation delegation logic.
+  </div>
+</div>
+<div class="diagram-caption" style="margin-top: 2px; margin-bottom: 12px; font-size: 8.5pt;">Screenshot A.3.3: SupervisorHandler.java — Concrete Handler 2 — Resolves MEDIUM severity municipal issues within operational SLAs.</div>
+
+<div class="diagram-card" style="border-left: 4px solid #1e3a8a; background: #f8fafc; padding: 14px 18px; border-radius: 6px; margin: 14px 0; border: 1px solid #cbd5e1; page-break-inside: avoid;">
+  <div style="font-weight: bold; color: #0f294a; font-size: 10pt; margin-bottom: 2px;">
+    📸 Screenshot A.3.4: CityManagerHandler.java
+  </div>
+  <p style="font-size: 8.5pt; margin-bottom: 3px;">
+    <b>File Path:</b> <code style="font-family: Consolas, monospace; background: #e2e8f0; padding: 2px 6px; border-radius: 4px; color: #1e3a8a; font-weight: bold;">backend/src/main/java/com/smartcity/pattern/chain/CityManagerHandler.java</code>
+  </p>
+  <p style="font-size: 8.5pt; color: #475569; margin-bottom: 6px;">
+    <b>Architectural Role:</b> Concrete Handler 3 — Authorizes HIGH severity critical municipal infrastructure repairs.
+  </p>
+  <div style="border: 2px dashed #94a3b8; background: #ffffff; border-radius: 6px; padding: 16px; text-align: center; margin: 8px 0;">
+    <div style="font-family: Consolas, monospace; font-size: 9pt; color: #64748b; font-weight: bold;">
+      &gt;&gt;&gt; PASTE / INSERT SCREENSHOT FOR: CityManagerHandler.java &lt;&lt;&lt;
+    </div>
+    <div style="font-family: Consolas, monospace; font-size: 8pt; color: #1e3a8a; margin-top: 3px;">
+      backend/src/main/java/com/smartcity/pattern/chain/CityManagerHandler.java
+    </div>
+  </div>
+  <div style="font-size: 8pt; color: #64748b; font-style: italic;">
+    📌 <b>Capture Tip:</b> Capture severity check for HIGH and executive dispatch logic.
+  </div>
+</div>
+<div class="diagram-caption" style="margin-top: 2px; margin-bottom: 12px; font-size: 8.5pt;">Screenshot A.3.4: CityManagerHandler.java — Concrete Handler 3 — Authorizes HIGH severity critical municipal infrastructure repairs.</div>
+
+<div class="diagram-card" style="border-left: 4px solid #1e3a8a; background: #f8fafc; padding: 14px 18px; border-radius: 6px; margin: 14px 0; border: 1px solid #cbd5e1; page-break-inside: avoid;">
+  <div style="font-weight: bold; color: #0f294a; font-size: 10pt; margin-bottom: 2px;">
+    📸 Screenshot A.3.5: TerminalFallbackHandler.java
+  </div>
+  <p style="font-size: 8.5pt; margin-bottom: 3px;">
+    <b>File Path:</b> <code style="font-family: Consolas, monospace; background: #e2e8f0; padding: 2px 6px; border-radius: 4px; color: #1e3a8a; font-weight: bold;">backend/src/main/java/com/smartcity/pattern/chain/TerminalFallbackHandler.java</code>
+  </p>
+  <p style="font-size: 8.5pt; color: #475569; margin-bottom: 6px;">
+    <b>Architectural Role:</b> Emergency Fallback Handler — Safely traps CRITICAL or unhandled tickets into audit queue without drop hazards.
+  </p>
+  <div style="border: 2px dashed #94a3b8; background: #ffffff; border-radius: 6px; padding: 16px; text-align: center; margin: 8px 0;">
+    <div style="font-family: Consolas, monospace; font-size: 9pt; color: #64748b; font-weight: bold;">
+      &gt;&gt;&gt; PASTE / INSERT SCREENSHOT FOR: TerminalFallbackHandler.java &lt;&lt;&lt;
+    </div>
+    <div style="font-family: Consolas, monospace; font-size: 8pt; color: #1e3a8a; margin-top: 3px;">
+      backend/src/main/java/com/smartcity/pattern/chain/TerminalFallbackHandler.java
+    </div>
+  </div>
+  <div style="font-size: 8pt; color: #64748b; font-style: italic;">
+    📌 <b>Capture Tip:</b> Capture emergency routing to audit queue and final resolution logging.
+  </div>
+</div>
+<div class="diagram-caption" style="margin-top: 2px; margin-bottom: 12px; font-size: 8.5pt;">Screenshot A.3.5: TerminalFallbackHandler.java — Emergency Fallback Handler — Safely traps CRITICAL or unhandled tickets into audit queue without drop hazards.</div>
+
+<div class="diagram-card" style="border-left: 4px solid #1e3a8a; background: #f8fafc; padding: 14px 18px; border-radius: 6px; margin: 14px 0; border: 1px solid #cbd5e1; page-break-inside: avoid;">
+  <div style="font-weight: bold; color: #0f294a; font-size: 10pt; margin-bottom: 2px;">
+    📸 Screenshot A.3.6: ComplaintChainFactory.java
+  </div>
+  <p style="font-size: 8.5pt; margin-bottom: 3px;">
+    <b>File Path:</b> <code style="font-family: Consolas, monospace; background: #e2e8f0; padding: 2px 6px; border-radius: 4px; color: #1e3a8a; font-weight: bold;">backend/src/main/java/com/smartcity/pattern/chain/ComplaintChainFactory.java</code>
+  </p>
+  <p style="font-size: 8.5pt; color: #475569; margin-bottom: 6px;">
+    <b>Architectural Role:</b> Assembly Factory — Instantiates and wires the complete handler chain sequentially.
+  </p>
+  <div style="border: 2px dashed #94a3b8; background: #ffffff; border-radius: 6px; padding: 16px; text-align: center; margin: 8px 0;">
+    <div style="font-family: Consolas, monospace; font-size: 9pt; color: #64748b; font-weight: bold;">
+      &gt;&gt;&gt; PASTE / INSERT SCREENSHOT FOR: ComplaintChainFactory.java &lt;&lt;&lt;
+    </div>
+    <div style="font-family: Consolas, monospace; font-size: 8pt; color: #1e3a8a; margin-top: 3px;">
+      backend/src/main/java/com/smartcity/pattern/chain/ComplaintChainFactory.java
+    </div>
+  </div>
+  <div style="font-size: 8pt; color: #64748b; font-style: italic;">
+    📌 <b>Capture Tip:</b> Capture chain assembly: ValidationTriage -&gt; LocalStaff -&gt; Supervisor -&gt; CityManager -&gt; TerminalFallback.
+  </div>
+</div>
+<div class="diagram-caption" style="margin-top: 2px; margin-bottom: 12px; font-size: 8.5pt;">Screenshot A.3.6: ComplaintChainFactory.java — Assembly Factory — Instantiates and wires the complete handler chain sequentially.</div>
+
+<h2>9.4 Part D: Efficient Management of Smart Street Lights (Flyweight Pattern)</h2>
+<p style="font-family: Consolas, monospace; font-size: 9pt; color: #475569; margin-bottom: 10px;">Package: <b>com.smartcity.pattern.flyweight</b></p>
+
+<div class="diagram-card" style="border-left: 4px solid #1e3a8a; background: #f8fafc; padding: 14px 18px; border-radius: 6px; margin: 14px 0; border: 1px solid #cbd5e1; page-break-inside: avoid;">
+  <div style="font-weight: bold; color: #0f294a; font-size: 10pt; margin-bottom: 2px;">
+    📸 Screenshot A.4.1: SharedStreetlightProfile.java
+  </div>
+  <p style="font-size: 8.5pt; margin-bottom: 3px;">
+    <b>File Path:</b> <code style="font-family: Consolas, monospace; background: #e2e8f0; padding: 2px 6px; border-radius: 4px; color: #1e3a8a; font-weight: bold;">backend/src/main/java/com/smartcity/pattern/flyweight/SharedStreetlightProfile.java</code>
+  </p>
+  <p style="font-size: 8.5pt; color: #475569; margin-bottom: 6px;">
+    <b>Architectural Role:</b> Intrinsic Flyweight — Immutable hardware specification shared across 25,000 streetlights.
+  </p>
+  <div style="border: 2px dashed #94a3b8; background: #ffffff; border-radius: 6px; padding: 16px; text-align: center; margin: 8px 0;">
+    <div style="font-family: Consolas, monospace; font-size: 9pt; color: #64748b; font-weight: bold;">
+      &gt;&gt;&gt; PASTE / INSERT SCREENSHOT FOR: SharedStreetlightProfile.java &lt;&lt;&lt;
+    </div>
+    <div style="font-family: Consolas, monospace; font-size: 8pt; color: #1e3a8a; margin-top: 3px;">
+      backend/src/main/java/com/smartcity/pattern/flyweight/SharedStreetlightProfile.java
+    </div>
+  </div>
+  <div style="font-size: 8pt; color: #64748b; font-style: italic;">
+    📌 <b>Capture Tip:</b> Capture final immutable fields (model, bulbType, wattage, lumens, manufacturer) and constructor.
+  </div>
+</div>
+<div class="diagram-caption" style="margin-top: 2px; margin-bottom: 12px; font-size: 8.5pt;">Screenshot A.4.1: SharedStreetlightProfile.java — Intrinsic Flyweight — Immutable hardware specification shared across 25,000 streetlights.</div>
+
+<div class="diagram-card" style="border-left: 4px solid #1e3a8a; background: #f8fafc; padding: 14px 18px; border-radius: 6px; margin: 14px 0; border: 1px solid #cbd5e1; page-break-inside: avoid;">
+  <div style="font-weight: bold; color: #0f294a; font-size: 10pt; margin-bottom: 2px;">
+    📸 Screenshot A.4.2: StreetlightProfileFactory.java
+  </div>
+  <p style="font-size: 8.5pt; margin-bottom: 3px;">
+    <b>File Path:</b> <code style="font-family: Consolas, monospace; background: #e2e8f0; padding: 2px 6px; border-radius: 4px; color: #1e3a8a; font-weight: bold;">backend/src/main/java/com/smartcity/pattern/flyweight/StreetlightProfileFactory.java</code>
+  </p>
+  <p style="font-size: 8.5pt; color: #475569; margin-bottom: 6px;">
+    <b>Architectural Role:</b> Thread-Safe Factory Pool — Manages static ConcurrentHashMap cache via computeIfAbsent.
+  </p>
+  <div style="border: 2px dashed #94a3b8; background: #ffffff; border-radius: 6px; padding: 16px; text-align: center; margin: 8px 0;">
+    <div style="font-family: Consolas, monospace; font-size: 9pt; color: #64748b; font-weight: bold;">
+      &gt;&gt;&gt; PASTE / INSERT SCREENSHOT FOR: StreetlightProfileFactory.java &lt;&lt;&lt;
+    </div>
+    <div style="font-family: Consolas, monospace; font-size: 8pt; color: #1e3a8a; margin-top: 3px;">
+      backend/src/main/java/com/smartcity/pattern/flyweight/StreetlightProfileFactory.java
+    </div>
+  </div>
+  <div style="font-size: 8pt; color: #64748b; font-style: italic;">
+    📌 <b>Capture Tip:</b> Capture ConcurrentHashMap cache pool and computeIfAbsent factory retrieval method.
+  </div>
+</div>
+<div class="diagram-caption" style="margin-top: 2px; margin-bottom: 12px; font-size: 8.5pt;">Screenshot A.4.2: StreetlightProfileFactory.java — Thread-Safe Factory Pool — Manages static ConcurrentHashMap cache via computeIfAbsent.</div>
+
+<div class="diagram-card" style="border-left: 4px solid #1e3a8a; background: #f8fafc; padding: 14px 18px; border-radius: 6px; margin: 14px 0; border: 1px solid #cbd5e1; page-break-inside: avoid;">
+  <div style="font-weight: bold; color: #0f294a; font-size: 10pt; margin-bottom: 2px;">
+    📸 Screenshot A.4.3: StreetlightContext.java
+  </div>
+  <p style="font-size: 8.5pt; margin-bottom: 3px;">
+    <b>File Path:</b> <code style="font-family: Consolas, monospace; background: #e2e8f0; padding: 2px 6px; border-radius: 4px; color: #1e3a8a; font-weight: bold;">backend/src/main/java/com/smartcity/pattern/flyweight/StreetlightContext.java</code>
+  </p>
+  <p style="font-size: 8.5pt; color: #475569; margin-bottom: 6px;">
+    <b>Architectural Role:</b> Extrinsic Context — Lightweight object holding per-device state (GPS latitude/longitude, brightness, status).
+  </p>
+  <div style="border: 2px dashed #94a3b8; background: #ffffff; border-radius: 6px; padding: 16px; text-align: center; margin: 8px 0;">
+    <div style="font-family: Consolas, monospace; font-size: 9pt; color: #64748b; font-weight: bold;">
+      &gt;&gt;&gt; PASTE / INSERT SCREENSHOT FOR: StreetlightContext.java &lt;&lt;&lt;
+    </div>
+    <div style="font-family: Consolas, monospace; font-size: 8pt; color: #1e3a8a; margin-top: 3px;">
+      backend/src/main/java/com/smartcity/pattern/flyweight/StreetlightContext.java
+    </div>
+  </div>
+  <div style="font-size: 8pt; color: #64748b; font-style: italic;">
+    📌 <b>Capture Tip:</b> Capture context fields, profile reference, and display() operation.
+  </div>
+</div>
+<div class="diagram-caption" style="margin-top: 2px; margin-bottom: 12px; font-size: 8.5pt;">Screenshot A.4.3: StreetlightContext.java — Extrinsic Context — Lightweight object holding per-device state (GPS latitude/longitude, brightness, status).</div>
+
+<div class="diagram-card" style="border-left: 4px solid #1e3a8a; background: #f8fafc; padding: 14px 18px; border-radius: 6px; margin: 14px 0; border: 1px solid #cbd5e1; page-break-inside: avoid;">
+  <div style="font-weight: bold; color: #0f294a; font-size: 10pt; margin-bottom: 2px;">
+    📸 Screenshot A.4.4: FlyweightBenchmark.java
+  </div>
+  <p style="font-size: 8.5pt; margin-bottom: 3px;">
+    <b>File Path:</b> <code style="font-family: Consolas, monospace; background: #e2e8f0; padding: 2px 6px; border-radius: 4px; color: #1e3a8a; font-weight: bold;">backend/src/main/java/com/smartcity/pattern/flyweight/FlyweightBenchmark.java</code>
+  </p>
+  <p style="font-size: 8.5pt; color: #475569; margin-bottom: 6px;">
+    <b>Architectural Role:</b> Memory Measurement Engine — Measures exact HotSpot JVM object layout footprint (72.2% reduction).
+  </p>
+  <div style="border: 2px dashed #94a3b8; background: #ffffff; border-radius: 6px; padding: 16px; text-align: center; margin: 8px 0;">
+    <div style="font-family: Consolas, monospace; font-size: 9pt; color: #64748b; font-weight: bold;">
+      &gt;&gt;&gt; PASTE / INSERT SCREENSHOT FOR: FlyweightBenchmark.java &lt;&lt;&lt;
+    </div>
+    <div style="font-family: Consolas, monospace; font-size: 8pt; color: #1e3a8a; margin-top: 3px;">
+      backend/src/main/java/com/smartcity/pattern/flyweight/FlyweightBenchmark.java
+    </div>
+  </div>
+  <div style="font-size: 8pt; color: #64748b; font-style: italic;">
+    📌 <b>Capture Tip:</b> Capture memory footprint calculation comparing naive vs flyweight memory consumption.
+  </div>
+</div>
+<div class="diagram-caption" style="margin-top: 2px; margin-bottom: 12px; font-size: 8.5pt;">Screenshot A.4.4: FlyweightBenchmark.java — Memory Measurement Engine — Measures exact HotSpot JVM object layout footprint (72.2% reduction).</div>
+
+<h2>9.5 Part E: Interpreting City Policies Defined in DSL (Interpreter Pattern)</h2>
+<p style="font-family: Consolas, monospace; font-size: 9pt; color: #475569; margin-bottom: 10px;">Package: <b>com.smartcity.pattern.interpreter</b></p>
+
+<div class="diagram-card" style="border-left: 4px solid #1e3a8a; background: #f8fafc; padding: 14px 18px; border-radius: 6px; margin: 14px 0; border: 1px solid #cbd5e1; page-break-inside: avoid;">
+  <div style="font-weight: bold; color: #0f294a; font-size: 10pt; margin-bottom: 2px;">
+    📸 Screenshot A.5.1: Expression.java
+  </div>
+  <p style="font-size: 8.5pt; margin-bottom: 3px;">
+    <b>File Path:</b> <code style="font-family: Consolas, monospace; background: #e2e8f0; padding: 2px 6px; border-radius: 4px; color: #1e3a8a; font-weight: bold;">backend/src/main/java/com/smartcity/pattern/interpreter/Expression.java</code>
+  </p>
+  <p style="font-size: 8.5pt; color: #475569; margin-bottom: 6px;">
+    <b>Architectural Role:</b> Abstract Expression Interface — Declares boolean interpret(PolicyContext context) contract.
+  </p>
+  <div style="border: 2px dashed #94a3b8; background: #ffffff; border-radius: 6px; padding: 16px; text-align: center; margin: 8px 0;">
+    <div style="font-family: Consolas, monospace; font-size: 9pt; color: #64748b; font-weight: bold;">
+      &gt;&gt;&gt; PASTE / INSERT SCREENSHOT FOR: Expression.java &lt;&lt;&lt;
+    </div>
+    <div style="font-family: Consolas, monospace; font-size: 8pt; color: #1e3a8a; margin-top: 3px;">
+      backend/src/main/java/com/smartcity/pattern/interpreter/Expression.java
+    </div>
+  </div>
+  <div style="font-size: 8pt; color: #64748b; font-style: italic;">
+    📌 <b>Capture Tip:</b> Capture interface declaration and single abstract interpret() method.
+  </div>
+</div>
+<div class="diagram-caption" style="margin-top: 2px; margin-bottom: 12px; font-size: 8.5pt;">Screenshot A.5.1: Expression.java — Abstract Expression Interface — Declares boolean interpret(PolicyContext context) contract.</div>
+
+<div class="diagram-card" style="border-left: 4px solid #1e3a8a; background: #f8fafc; padding: 14px 18px; border-radius: 6px; margin: 14px 0; border: 1px solid #cbd5e1; page-break-inside: avoid;">
+  <div style="font-weight: bold; color: #0f294a; font-size: 10pt; margin-bottom: 2px;">
+    📸 Screenshot A.5.2: TerminalExpression.java
+  </div>
+  <p style="font-size: 8.5pt; margin-bottom: 3px;">
+    <b>File Path:</b> <code style="font-family: Consolas, monospace; background: #e2e8f0; padding: 2px 6px; border-radius: 4px; color: #1e3a8a; font-weight: bold;">backend/src/main/java/com/smartcity/pattern/interpreter/TerminalExpression.java</code>
+  </p>
+  <p style="font-size: 8.5pt; color: #475569; margin-bottom: 6px;">
+    <b>Architectural Role:</b> Terminal Expression — Evaluates atomic relational predicates (&gt;, &lt;, =, BETWEEN) against context telemetry.
+  </p>
+  <div style="border: 2px dashed #94a3b8; background: #ffffff; border-radius: 6px; padding: 16px; text-align: center; margin: 8px 0;">
+    <div style="font-family: Consolas, monospace; font-size: 9pt; color: #64748b; font-weight: bold;">
+      &gt;&gt;&gt; PASTE / INSERT SCREENSHOT FOR: TerminalExpression.java &lt;&lt;&lt;
+    </div>
+    <div style="font-family: Consolas, monospace; font-size: 8pt; color: #1e3a8a; margin-top: 3px;">
+      backend/src/main/java/com/smartcity/pattern/interpreter/TerminalExpression.java
+    </div>
+  </div>
+  <div style="font-size: 8pt; color: #64748b; font-style: italic;">
+    📌 <b>Capture Tip:</b> Capture operator evaluation logic (GREATER, LESS, EQUALS, BETWEEN) against PolicyContext.
+  </div>
+</div>
+<div class="diagram-caption" style="margin-top: 2px; margin-bottom: 12px; font-size: 8.5pt;">Screenshot A.5.2: TerminalExpression.java — Terminal Expression — Evaluates atomic relational predicates (&gt;, &lt;, =, BETWEEN) against context telemetry.</div>
+
+<div class="diagram-card" style="border-left: 4px solid #1e3a8a; background: #f8fafc; padding: 14px 18px; border-radius: 6px; margin: 14px 0; border: 1px solid #cbd5e1; page-break-inside: avoid;">
+  <div style="font-weight: bold; color: #0f294a; font-size: 10pt; margin-bottom: 2px;">
+    📸 Screenshot A.5.3: AndExpression.java
+  </div>
+  <p style="font-size: 8.5pt; margin-bottom: 3px;">
+    <b>File Path:</b> <code style="font-family: Consolas, monospace; background: #e2e8f0; padding: 2px 6px; border-radius: 4px; color: #1e3a8a; font-weight: bold;">backend/src/main/java/com/smartcity/pattern/interpreter/AndExpression.java</code>
+  </p>
+  <p style="font-size: 8.5pt; color: #475569; margin-bottom: 6px;">
+    <b>Architectural Role:</b> Non-Terminal Expression — Evaluates binary logical AND between two sub-expressions.
+  </p>
+  <div style="border: 2px dashed #94a3b8; background: #ffffff; border-radius: 6px; padding: 16px; text-align: center; margin: 8px 0;">
+    <div style="font-family: Consolas, monospace; font-size: 9pt; color: #64748b; font-weight: bold;">
+      &gt;&gt;&gt; PASTE / INSERT SCREENSHOT FOR: AndExpression.java &lt;&lt;&lt;
+    </div>
+    <div style="font-family: Consolas, monospace; font-size: 8pt; color: #1e3a8a; margin-top: 3px;">
+      backend/src/main/java/com/smartcity/pattern/interpreter/AndExpression.java
+    </div>
+  </div>
+  <div style="font-size: 8pt; color: #64748b; font-style: italic;">
+    📌 <b>Capture Tip:</b> Capture composite interpret() returning left.interpret(ctx) &amp;&amp; right.interpret(ctx).
+  </div>
+</div>
+<div class="diagram-caption" style="margin-top: 2px; margin-bottom: 12px; font-size: 8.5pt;">Screenshot A.5.3: AndExpression.java — Non-Terminal Expression — Evaluates binary logical AND between two sub-expressions.</div>
+
+<div class="diagram-card" style="border-left: 4px solid #1e3a8a; background: #f8fafc; padding: 14px 18px; border-radius: 6px; margin: 14px 0; border: 1px solid #cbd5e1; page-break-inside: avoid;">
+  <div style="font-weight: bold; color: #0f294a; font-size: 10pt; margin-bottom: 2px;">
+    📸 Screenshot A.5.4: OrExpression.java
+  </div>
+  <p style="font-size: 8.5pt; margin-bottom: 3px;">
+    <b>File Path:</b> <code style="font-family: Consolas, monospace; background: #e2e8f0; padding: 2px 6px; border-radius: 4px; color: #1e3a8a; font-weight: bold;">backend/src/main/java/com/smartcity/pattern/interpreter/OrExpression.java</code>
+  </p>
+  <p style="font-size: 8.5pt; color: #475569; margin-bottom: 6px;">
+    <b>Architectural Role:</b> Non-Terminal Expression — Evaluates binary logical OR between two sub-expressions.
+  </p>
+  <div style="border: 2px dashed #94a3b8; background: #ffffff; border-radius: 6px; padding: 16px; text-align: center; margin: 8px 0;">
+    <div style="font-family: Consolas, monospace; font-size: 9pt; color: #64748b; font-weight: bold;">
+      &gt;&gt;&gt; PASTE / INSERT SCREENSHOT FOR: OrExpression.java &lt;&lt;&lt;
+    </div>
+    <div style="font-family: Consolas, monospace; font-size: 8pt; color: #1e3a8a; margin-top: 3px;">
+      backend/src/main/java/com/smartcity/pattern/interpreter/OrExpression.java
+    </div>
+  </div>
+  <div style="font-size: 8pt; color: #64748b; font-style: italic;">
+    📌 <b>Capture Tip:</b> Capture composite interpret() returning left.interpret(ctx) || right.interpret(ctx).
+  </div>
+</div>
+<div class="diagram-caption" style="margin-top: 2px; margin-bottom: 12px; font-size: 8.5pt;">Screenshot A.5.4: OrExpression.java — Non-Terminal Expression — Evaluates binary logical OR between two sub-expressions.</div>
+
+<div class="diagram-card" style="border-left: 4px solid #1e3a8a; background: #f8fafc; padding: 14px 18px; border-radius: 6px; margin: 14px 0; border: 1px solid #cbd5e1; page-break-inside: avoid;">
+  <div style="font-weight: bold; color: #0f294a; font-size: 10pt; margin-bottom: 2px;">
+    📸 Screenshot A.5.5: DslPolicyParser.java
+  </div>
+  <p style="font-size: 8.5pt; margin-bottom: 3px;">
+    <b>File Path:</b> <code style="font-family: Consolas, monospace; background: #e2e8f0; padding: 2px 6px; border-radius: 4px; color: #1e3a8a; font-weight: bold;">backend/src/main/java/com/smartcity/pattern/interpreter/DslPolicyParser.java</code>
+  </p>
+  <p style="font-size: 8.5pt; color: #475569; margin-bottom: 6px;">
+    <b>Architectural Role:</b> Recursive-Descent Parser — Parses raw DSL strings into recursive AST with token &amp; depth security limits.
+  </p>
+  <div style="border: 2px dashed #94a3b8; background: #ffffff; border-radius: 6px; padding: 16px; text-align: center; margin: 8px 0;">
+    <div style="font-family: Consolas, monospace; font-size: 9pt; color: #64748b; font-weight: bold;">
+      &gt;&gt;&gt; PASTE / INSERT SCREENSHOT FOR: DslPolicyParser.java &lt;&lt;&lt;
+    </div>
+    <div style="font-family: Consolas, monospace; font-size: 8pt; color: #1e3a8a; margin-top: 3px;">
+      backend/src/main/java/com/smartcity/pattern/interpreter/DslPolicyParser.java
+    </div>
+  </div>
+  <div style="font-size: 8pt; color: #64748b; font-style: italic;">
+    📌 <b>Capture Tip:</b> Capture recursive-descent grammar methods: parse(), parseOr(), parseAnd(), parsePrimary().
+  </div>
+</div>
+<div class="diagram-caption" style="margin-top: 2px; margin-bottom: 12px; font-size: 8.5pt;">Screenshot A.5.5: DslPolicyParser.java — Recursive-Descent Parser — Parses raw DSL strings into recursive AST with token &amp; depth security limits.</div>
+
+<div class="diagram-card" style="border-left: 4px solid #1e3a8a; background: #f8fafc; padding: 14px 18px; border-radius: 6px; margin: 14px 0; border: 1px solid #cbd5e1; page-break-inside: avoid;">
+  <div style="font-weight: bold; color: #0f294a; font-size: 10pt; margin-bottom: 2px;">
+    📸 Screenshot A.5.6: PolicyContext.java
+  </div>
+  <p style="font-size: 8.5pt; margin-bottom: 3px;">
+    <b>File Path:</b> <code style="font-family: Consolas, monospace; background: #e2e8f0; padding: 2px 6px; border-radius: 4px; color: #1e3a8a; font-weight: bold;">backend/src/main/java/com/smartcity/pattern/interpreter/PolicyContext.java</code>
+  </p>
+  <p style="font-size: 8.5pt; color: #475569; margin-bottom: 6px;">
+    <b>Architectural Role:</b> State Context — Stores runtime telemetry variable values (e.g. NOISE_LEVEL, AIR_QUALITY, TIME_HOUR).
+  </p>
+  <div style="border: 2px dashed #94a3b8; background: #ffffff; border-radius: 6px; padding: 16px; text-align: center; margin: 8px 0;">
+    <div style="font-family: Consolas, monospace; font-size: 9pt; color: #64748b; font-weight: bold;">
+      &gt;&gt;&gt; PASTE / INSERT SCREENSHOT FOR: PolicyContext.java &lt;&lt;&lt;
+    </div>
+    <div style="font-family: Consolas, monospace; font-size: 8pt; color: #1e3a8a; margin-top: 3px;">
+      backend/src/main/java/com/smartcity/pattern/interpreter/PolicyContext.java
+    </div>
+  </div>
+  <div style="font-size: 8pt; color: #64748b; font-style: italic;">
+    📌 <b>Capture Tip:</b> Capture Map&lt;String, Object&gt; telemetry store and get(), set(), getDouble() accessors.
+  </div>
+</div>
+<div class="diagram-caption" style="margin-top: 2px; margin-bottom: 12px; font-size: 8.5pt;">Screenshot A.5.6: PolicyContext.java — State Context — Stores runtime telemetry variable values (e.g. NOISE_LEVEL, AIR_QUALITY, TIME_HOUR).</div>
+
 </body>
 </html>
