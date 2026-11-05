@@ -142,3 +142,4 @@ In accordance with Critical Rules 1–10:
    The 288-byte naive object and 80-byte context figures are modeled analytical estimates based on standard HotSpot 64-bit JVM compressed OOPs architecture, as defined in `FlyweightBenchmark.java`. Because runtime tests run on standard OpenJDK without external bytecode instrumentation agents (such as `org.openjdk.jol`), these figures are presented strictly as an analytical model rather than hardware-profiled physical byte layouts.
 2. **Physical Diagram & Screenshot Drop Zones:**  
    The report contains all necessary architectural specifications and placeholder containers for candidate insertion. The physical graphics must be inserted by the candidate before final PDF export.
+
