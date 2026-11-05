@@ -29,7 +29,7 @@
 | 17 | `testChainCriticalSeverity` | Chain of Resp | Handled by CITY_MANAGER (Executive Crisis) | Handled by CITY_MANAGER, Status=EXECUTIVE_ESCALATION | **PASS** |
 | 18 | `testChainMissingSeverity` | Chain of Resp | Intercepted by triage, NOT defaulted to LOW | Handled=false, Role=TRIAGE_DISPATCH_OFFICER, Status=VALIDATION_REQUIRED | **PASS** |
 | 19 | `testChainInvalidSeverity` | Chain of Resp | Intercepted by triage, NOT defaulted to LOW | Handled=false, Role=TRIAGE_DISPATCH_OFFICER, Status=VALIDATION_REQUIRED | **PASS** |
-| 20 | `testChainTerminalFallback` | Chain of Resp | CHAIN_EXHAUSTED returned when next handler missing | Status=CHAIN_EXHAUSTED, Message=No subsequent handler available in processing chain | **PASS** |
+| 20 | 	estChainTerminalFallback | Chain of Resp | Terminal fallback captures unhandled; CHAIN_EXHAUSTED safeguard active | FallbackCaptured=true, UnhandledSafeguard=true | **PASS** |
 | 21 | `testChainAuditTrail` | Chain of Resp | Audit records contain ISO-8601 timestamps & routing steps | Audit entries recorded: 4 | **PASS** |
 | 22 | `testFlyweightProfileReusability` | Flyweight | Identical profile returns cached instance (p1 == p2) | Instance match: true, Pool size: 1 | **PASS** |
 | 23 | `testFlyweightCacheKeyDistinction` | Flyweight | Profiles with differing lumens/firmware produce distinct cached instances | Distinct instances: true, Pool size: 2 | **PASS** |
@@ -38,7 +38,7 @@
 | 26 | `testFlyweightEmpiricalBenchmark` | Flyweight | Significant heap footprint reduction on 25,000 objects (>50%) | Calculated layout savings: 72.2% (Naive: 6.87 MB, Flyweight: 1.91 MB) | **PASS** |
 | 27 | `testCompositeCycleDetection` | Composite | Adding parent to descendant composite triggers cycle rejection | Cycle detected and rejected: true | **PASS** |
 | 28 | `testInterpreterSimpleRelational` | Interpreter | All relational operators evaluate correctly | VAL > 40, VAL <= 42, VAL == 42 all TRUE: true | **PASS** |
-| 29 | `testInterpreterBetweenExpression` | Interpreter | BETWEEN operator evaluates range boundaries [min <= x <= max] | 14 in [8,18]: true, 21 in [8,18]: true | **PASS** |
+| 29 | `testInterpreterBetweenExpression` | Interpreter | BETWEEN operator evaluates range boundaries [min <= x <= max] | 14 in [8,18]: true, 21 in [8,18]: false | **PASS** |
 | 30 | `testInterpreterNonNumericValueRejection` | Interpreter | Non-numeric context values throw IllegalArgumentException | Exception thrown: true | **PASS** |
 | 31 | `testInterpreterAndExpression` | Interpreter | AND conjunction evaluated to TRUE | Result: true for AST: (NOISE >= 70.0 AND HOUR > 22.0) | **PASS** |
 | 32 | `testInterpreterOrExpression` | Interpreter | OR disjunction evaluated to TRUE | Result: true for AST: (AIR > 150.0 OR NOISE > 85.0) | **PASS** |

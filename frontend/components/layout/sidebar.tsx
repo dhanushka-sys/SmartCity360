@@ -55,7 +55,6 @@ export function Sidebar({ collapsed, onToggleCollapse, mobileOpen, onMobileClose
       icon: Activity,
       subtitleNormal: "Real-time City Metrics",
       subtitleAcademic: undefined,
-      isDevelopModule: false,
     },
     {
       title: "Data Streams",
@@ -63,8 +62,6 @@ export function Sidebar({ collapsed, onToggleCollapse, mobileOpen, onMobileClose
       icon: Layers,
       subtitleNormal: "Telemetry Security",
       subtitleAcademic: "Decorator Pattern",
-      color: "text-amber-600 dark:text-amber-400",
-      isDevelopModule: true,
     },
     {
       title: "Zone Management",
@@ -72,8 +69,6 @@ export function Sidebar({ collapsed, onToggleCollapse, mobileOpen, onMobileClose
       icon: Network,
       subtitleNormal: "Urban Hierarchy",
       subtitleAcademic: "Composite Pattern",
-      color: "text-amber-600 dark:text-amber-400",
-      isDevelopModule: true,
     },
     {
       title: "Citizen Complaints",
@@ -81,8 +76,6 @@ export function Sidebar({ collapsed, onToggleCollapse, mobileOpen, onMobileClose
       icon: AlertTriangle,
       subtitleNormal: "Incident Escalation",
       subtitleAcademic: "Chain of Resp.",
-      color: "text-amber-600 dark:text-amber-400",
-      isDevelopModule: true,
     },
     {
       title: "Streetlights",
@@ -90,8 +83,6 @@ export function Sidebar({ collapsed, onToggleCollapse, mobileOpen, onMobileClose
       icon: Lightbulb,
       subtitleNormal: "Fleet Management",
       subtitleAcademic: "Flyweight Pattern",
-      color: "text-amber-600 dark:text-amber-400",
-      isDevelopModule: true,
     },
     {
       title: "City Policies",
@@ -99,8 +90,6 @@ export function Sidebar({ collapsed, onToggleCollapse, mobileOpen, onMobileClose
       icon: FileCode2,
       subtitleNormal: "Automated Rules",
       subtitleAcademic: "Interpreter Pattern",
-      color: "text-amber-600 dark:text-amber-400",
-      isDevelopModule: true,
     },
     {
       title: isAcademic ? "Test Center" : "System Diagnostics",
@@ -110,7 +99,6 @@ export function Sidebar({ collapsed, onToggleCollapse, mobileOpen, onMobileClose
       subtitleAcademic: "Academic Demo / VIVA",
       color: "text-emerald-600 dark:text-emerald-300",
       badge: isAcademic ? "5 Patterns" : "Verify",
-      isDevelopModule: false,
     },
     {
       title: "Settings",
@@ -118,7 +106,6 @@ export function Sidebar({ collapsed, onToggleCollapse, mobileOpen, onMobileClose
       icon: Settings,
       subtitleNormal: "System Preferences",
       subtitleAcademic: undefined,
-      isDevelopModule: false,
     },
   ];
 
@@ -135,14 +122,26 @@ export function Sidebar({ collapsed, onToggleCollapse, mobileOpen, onMobileClose
       {/* Sidebar Panel */}
       <aside
         className={cn(
-          "fixed inset-y-0 left-0 z-50 flex flex-col border-r border-slate-200 dark:border-slate-800/90 bg-white/95 dark:bg-[#0a101f]/95 backdrop-blur-xl transition-all duration-300 lg:static shadow-sm lg:shadow-none",
+          "fixed inset-y-0 left-0 z-50 flex flex-col border-r border-slate-200 dark:border-slate-800/90 bg-white/95 dark:bg-[#0a101f]/95 backdrop-blur-xl transition-all duration-300 lg:relative lg:z-40 shadow-sm lg:shadow-none",
           collapsed ? "w-20" : "w-64",
           mobileOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
         )}
       >
         {/* Brand Header */}
-        <div className="flex h-16 items-center justify-between px-4 border-b border-slate-200 dark:border-slate-800/80">
-          <Link href="/" className="flex items-center gap-3 overflow-hidden">
+        <div
+          className={cn(
+            "relative flex h-16 items-center border-b border-slate-200 dark:border-slate-800/80 transition-all",
+            collapsed ? "justify-center px-0" : "justify-between px-4"
+          )}
+        >
+          <Link
+            href="/"
+            className={cn(
+              "flex items-center gap-3 overflow-hidden",
+              collapsed && "justify-center"
+            )}
+            title="SmartCity360"
+          >
             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600 shadow-md shadow-cyan-500/20 text-white">
               <Cpu className="h-5 w-5" />
             </div>
@@ -161,7 +160,12 @@ export function Sidebar({ collapsed, onToggleCollapse, mobileOpen, onMobileClose
           {/* Desktop Collapse Toggle */}
           <button
             onClick={onToggleCollapse}
-            className="hidden lg:flex h-7 w-7 items-center justify-center rounded-lg border border-slate-200 dark:border-slate-700/60 bg-slate-100 dark:bg-slate-800/50 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
+            className={cn(
+              "hidden lg:flex items-center justify-center transition-all",
+              collapsed
+                ? "absolute -right-3.5 top-1/2 -translate-y-1/2 z-30 h-7 w-7 rounded-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white shadow-md hover:bg-slate-50 dark:hover:bg-slate-700"
+                : "h-7 w-7 rounded-lg border border-slate-200 dark:border-slate-700/60 bg-slate-100 dark:bg-slate-800/50 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-slate-700"
+            )}
             title={collapsed ? "Expand Sidebar" : "Collapse Sidebar"}
           >
             {collapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
@@ -170,19 +174,16 @@ export function Sidebar({ collapsed, onToggleCollapse, mobileOpen, onMobileClose
 
         {/* Navigation List */}
         <div className="flex-1 overflow-y-auto px-3 py-4 space-y-1">
-          <div className="px-2 pb-2">
-            {!collapsed && (
-              <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">
-                {isAcademic ? "Operations & Patterns" : "Operations & Modules"}
-              </p>
-            )}
+          <div className={cn("px-2", !collapsed ? "pb-2" : "hidden")}>
+            <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+              {isAcademic ? "Operations & Patterns" : "Operations & Modules"}
+            </p>
           </div>
 
           {navItems.map((item) => {
             const isActive = pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href));
             const Icon = item.icon;
             const subtitle = isAcademic ? item.subtitleAcademic : item.subtitleNormal;
-            const isDevelop = !!item.isDevelopModule;
 
             return (
               <Link
@@ -190,31 +191,21 @@ export function Sidebar({ collapsed, onToggleCollapse, mobileOpen, onMobileClose
                 href={item.href}
                 onClick={onMobileClose}
                 className={cn(
-                  "group relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs transition-all duration-150",
-                  isDevelop
-                    ? isActive
-                      ? "bg-amber-100/90 dark:bg-amber-950/70 text-amber-950 dark:text-amber-100 shadow-sm border border-amber-400 dark:border-amber-500/80 font-bold ring-1 ring-amber-400/40"
-                      : "bg-amber-50/50 dark:bg-amber-950/20 text-amber-900/90 dark:text-amber-200/90 border border-amber-200/70 dark:border-amber-900/50 hover:bg-amber-100/80 dark:hover:bg-amber-900/40 hover:border-amber-300 dark:hover:border-amber-700 font-medium"
-                    : isActive
+                  "group relative flex items-center rounded-xl text-xs transition-all duration-150",
+                  collapsed ? "justify-center px-0 py-2.5" : "gap-3 px-3 py-2.5",
+                  isActive
                     ? "bg-slate-100 dark:bg-slate-800/90 text-slate-900 dark:text-white shadow-sm border border-slate-300 dark:border-slate-700 font-semibold"
                     : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100/80 dark:hover:bg-slate-800/40 border border-transparent"
                 )}
                 title={collapsed ? item.title : undefined}
               >
                 {isActive && (
-                  <span
-                    className={cn(
-                      "absolute left-0 top-2 bottom-2 rounded-r-full",
-                      isDevelop ? "w-1.5 bg-amber-500 shadow-sm shadow-amber-500/50" : "w-1 bg-slate-500"
-                    )}
-                  />
+                  <span className="absolute left-0 top-2 bottom-2 rounded-r-full w-1 bg-slate-500" />
                 )}
                 <Icon
                   className={cn(
                     "h-4 w-4 shrink-0 transition-transform group-hover:scale-110",
-                    isDevelop
-                      ? "text-amber-600 dark:text-amber-400"
-                      : isActive
+                    isActive
                       ? "text-slate-700 dark:text-slate-200"
                       : item.color || "text-slate-500 dark:text-slate-400"
                   )}
@@ -226,11 +217,7 @@ export function Sidebar({ collapsed, onToggleCollapse, mobileOpen, onMobileClose
                       <span
                         className={cn(
                           "truncate",
-                          isDevelop
-                            ? isActive
-                              ? "font-bold text-amber-950 dark:text-amber-100"
-                              : "font-semibold text-amber-900 dark:text-amber-200"
-                            : isActive
+                          isActive
                             ? "font-semibold text-slate-900 dark:text-white"
                             : "text-slate-700 dark:text-slate-300"
                         )}
@@ -238,14 +225,7 @@ export function Sidebar({ collapsed, onToggleCollapse, mobileOpen, onMobileClose
                         {item.title}
                       </span>
                       {subtitle && (
-                        <span
-                          className={cn(
-                            "text-[10px] truncate",
-                            isDevelop
-                              ? "text-amber-700/75 dark:text-amber-400/80"
-                              : "text-slate-400 dark:text-slate-500"
-                          )}
-                        >
+                        <span className="text-[10px] truncate text-slate-400 dark:text-slate-500">
                           {subtitle}
                         </span>
                       )}

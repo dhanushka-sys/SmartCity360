@@ -51,7 +51,7 @@ SmartCity360/
 │   │   │   ├── flyweight/                    # Part D: ProfileFactory, StreetlightContext, Benchmark
 │   │   │   └── interpreter/                  # Part E: DslPolicyParser, AST Expressions, Context
 │   │   └── test/
-│   │       └── ComprehensiveTestSuite.java   # 31/31 Automated Test Harness
+│   │       └── ComprehensiveTestSuite.java   # 35/35 Automated Test Harness
 ├── frontend/                                 # Next.js 14 Presentation Tier
 │   ├── app/                                  # App Router pages (/data-streams, /zones, etc.)
 │   ├── components/                           # Reusable UI & layout widgets
@@ -69,7 +69,7 @@ SmartCity360/
 ├── run_backend.py                            # Lightweight HTTP server runner
 ├── SmartCity360_Final_Report.pdf             # 30-page Formal Academic Report
 ├── SmartCity360_Demo_Script.md               # 10–15 min Demonstration Walkthrough Script
-├── SmartCity360_Test_Report.md               # Complete 31/31 Executed Test Evidence
+├── SmartCity360_Test_Report.md               # Complete 35/35 Executed Test Evidence
 └── README.md                                 # This quickstart documentation
 ```
 
@@ -98,7 +98,7 @@ python compile_backend.py
 *Expected Output:* `Successfully compiled all Java source files to backend/target/classes`.
 
 ### 4. Run the Automated Test Suite
-Execute the 31-test regression harness to verify all pattern contracts and edge cases:
+Execute the 35-test regression harness to verify all pattern contracts and edge cases:
 ```bash
 java -cp backend/target/classes com.smartcity.test.ComprehensiveTestSuite
 ```
@@ -126,18 +126,22 @@ SMARTCITY360 AUTOMATED COMPREHENSIVE REGRESSION SUITE
 [TEST 17] Chain: CRITICAL Emergency Routed to City Manager ...... PASS
 [TEST 18] Chain: Missing Severity Intercepted by Triage ......... PASS
 [TEST 19] Chain: Invalid Severity Intercepted by Triage ......... PASS
-[TEST 20] Chain: Terminal Fallback Protection ................... PASS
+[TEST 20] Chain: Terminal Fallback Protection & Exhaustion ...... PASS
 [TEST 21] Chain: Audit Trail Verification ....................... PASS
 [TEST 22] Flyweight: Profile Instance Identity Reuse ............ PASS
-[TEST 23] Flyweight: Multithreaded Factory Concurrency .......... PASS
-[TEST 24] Flyweight: Extrinsic State Separation ................. PASS
-[TEST 25] Flyweight: Empirical Memory Benchmark (25k Objects) ... PASS
-[TEST 26] Interpreter: Relational Comparison Operators .......... PASS
-[TEST 27] Interpreter: Logical AND Conjunction .................. PASS
-[TEST 28] Interpreter: Logical OR Disjunction ................... PASS
-[TEST 29] Interpreter: Nested Parenthesized AST ................. PASS
-[TEST 30] Interpreter: Missing Context Variable ................. PASS
-[TEST 31] Interpreter: Malformed Syntax Rejection ............... PASS
+[TEST 23] Flyweight: Distinct Cache Key Profiles ................ PASS
+[TEST 24] Flyweight: Multithreaded Factory Concurrency .......... PASS
+[TEST 25] Flyweight: Extrinsic State Separation ................. PASS
+[TEST 26] Flyweight: Empirical Memory Benchmark (25k Objects) ... PASS
+[TEST 27] Composite: Cycle Detection Prevention ................. PASS
+[TEST 28] Interpreter: Relational Comparison Operators .......... PASS
+[TEST 29] Interpreter: BETWEEN Range Operator Evaluation ........ PASS
+[TEST 30] Interpreter: Non-Numeric Context Value Rejection ...... PASS
+[TEST 31] Interpreter: Logical AND Conjunction .................. PASS
+[TEST 32] Interpreter: Logical OR Disjunction ................... PASS
+[TEST 33] Interpreter: Nested Parenthesized AST ................. PASS
+[TEST 34] Interpreter: Missing Context Variable ................. PASS
+[TEST 35] Interpreter: Malformed Syntax Rejection ............... PASS
 ================================================================================
 ALL 35 TESTS COMPLETED: 35 PASSED, 0 FAILED (100.0% SUCCESS RATE)
 ================================================================================
@@ -173,7 +177,7 @@ In accordance with Section 5 (Part F) of the assignment specification, all requi
 3. **Demonstration Walkthrough Script (`SmartCity360_Demo_Script.md`):**
    - Detailed 10–15 minute video script detailing scene-by-scene timing, exact screen clicks, presenter dialogue, and troubleshooting contingencies.
 4. **Automated Test Report (`SmartCity360_Test_Report.md`):**
-   - Formal test evidence documenting 31/31 passed test executions across all five patterns.
+   - Formal test evidence documenting 35/35 passed test executions across all five patterns.
 5. **Architectural Vector Graphics (`SmartCity360_UML/`):**
    - Six standalone high-resolution SVG diagrams covering all pattern structures and 4-tier system architecture.
 6. **Project Documentation Guide (`README.md`):**

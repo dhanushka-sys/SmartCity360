@@ -399,15 +399,29 @@ public class ComprehensiveTestSuite {
 
     private void testChainTerminalFallback() {
         try {
+            // 1. Verify unlinked handler returns CHAIN_EXHAUSTED to prevent null pointer drops
             ComplaintHandler singleHandler = new LocalStaffHandler();
-            Complaint c = new Complaint();
-            c.setId("C-07");
-            c.setSeverity("CRITICAL");
-            ComplaintRoutingResult r = singleHandler.handle(c);
-            boolean ok = !r.isHandled() && "CHAIN_EXHAUSTED".equals(r.getStatus());
+            Complaint c1 = new Complaint();
+            c1.setId("C-07");
+            c1.setSeverity("CRITICAL");
+            ComplaintRoutingResult r1 = singleHandler.handle(c1);
+            boolean unhandledSafe = !r1.isHandled() && "CHAIN_EXHAUSTED".equals(r1.getStatus());
+
+            // 2. Verify TerminalFallbackHandler captures unhandled requests when wired at chain terminus
+            ComplaintHandler fallback = new TerminalFallbackHandler();
+            singleHandler.setNext(fallback);
+            Complaint c2 = new Complaint();
+            c2.setId("C-07B");
+            c2.setSeverity("CRITICAL");
+            ComplaintRoutingResult r2 = singleHandler.handle(c2);
+            boolean fallbackCaptured = r2.isHandled()
+                    && "FALLBACK_ASSIGNED".equals(r2.getStatus())
+                    && "FALLBACK_DISPATCH_DESK".equals(r2.getHandledByRole());
+
+            boolean ok = unhandledSafe && fallbackCaptured;
             results.add(new TestResult("testChainTerminalFallback", "Chain of Resp",
-                    "CHAIN_EXHAUSTED returned when next handler missing",
-                    "Status=" + r.getStatus() + ", Message=" + r.getMessage(), ok));
+                    "Terminal fallback captures unhandled; CHAIN_EXHAUSTED safeguard active",
+                    "FallbackCaptured=" + fallbackCaptured + ", UnhandledSafeguard=" + unhandledSafe, ok));
         } catch (Exception e) {
             results.add(new TestResult("testChainTerminalFallback", "Chain of Resp", "Terminal drop hazard",
                     e.getMessage(), false));
@@ -564,13 +578,13 @@ public class ComprehensiveTestSuite {
             PolicyContext ctx = new PolicyContext();
             ctx.set("PARKING_HOUR", 14.0);
             Expression e = DslPolicyParser.parse("PARKING_HOUR BETWEEN 8 AND 18");
-            boolean ok1 = e.interpret(ctx);
+            boolean inRange14 = e.interpret(ctx);
 
             ctx.set("PARKING_HOUR", 21.0);
-            boolean ok2 = !e.interpret(ctx);
+            boolean inRange21 = e.interpret(ctx);
 
-            boolean ok = ok1 && ok2;
-            results.add(new TestResult("testInterpreterBetweenExpression", "Interpreter", "BETWEEN operator evaluates range boundaries [min <= x <= max]", "14 in [8,18]: " + ok1 + ", 21 in [8,18]: " + ok2, ok));
+            boolean ok = inRange14 && !inRange21;
+            results.add(new TestResult("testInterpreterBetweenExpression", "Interpreter", "BETWEEN operator evaluates range boundaries [min <= x <= max]", "14 in [8,18]: " + inRange14 + ", 21 in [8,18]: " + inRange21, ok));
         } catch (Exception e) {
             results.add(new TestResult("testInterpreterBetweenExpression", "Interpreter", "BETWEEN operator", e.getMessage(), false));
         }
