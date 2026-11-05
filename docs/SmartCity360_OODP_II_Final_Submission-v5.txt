@@ -157,7 +157,7 @@ When analyzing the initial system requirements, it became clear that conventiona
 2. The Composite Pattern (Structural): Applied to organize nested municipal zones (City, Districts, Streets, Buildings) into a unified tree structure, enabling uniform broadcasting of administrative commands (such as SHUTDOWN_POWER and RESTORE_POWER via a type-safe ZoneCommand abstraction) and recursive energy aggregation.
 3. The Chain of Responsibility Pattern (Behavioral): Employed to route citizen grievances through a decoupled, multi-tiered escalation pipeline (Validation Triage, Local Staff, Area Supervisors, City Manager, and Terminal Fallback). Critically, unclassified or missing severities are safely intercepted by a triage handler and never defaulted to LOW.
 4. The Flyweight Pattern (Structural): Implemented to optimize the heap memory footprint of 25,000 smart LED streetlights by sharing immutable hardware profiles across instances via a thread-safe ConcurrentHashMap cache. Based on the 288-byte naive object and 80-byte context assumptions in FlyweightBenchmark.java, the implementation achieves an analytical 72.2% memory layout reduction, significantly mitigating young-generation allocation pressure.
-5. The Interpreter Pattern (Behavioral): Designed to parse and safely evaluate municipal environmental ordinances written in a Domain-Specific Language (DSL) via a recursive-descent parser and sandboxed Abstract Syntax Tree (AST), executing in microseconds while drastically reducing the attack surface compared to general-purpose scripting engines by restricting evaluation to controlled Boolean threshold expressions with strict token and depth limits.
+5. The Interpreter Pattern (Behavioral): Designed to parse and evaluate municipal environmental ordinances written in a Domain-Specific Language (DSL) via a recursive-descent parser and restricted Abstract Syntax Tree (AST) evaluation environment, executing in microseconds while reducing the attack surface compared to general-purpose scripting engines by restricting evaluation to controlled Boolean threshold expressions with strict token and depth limits.
 This report documents my complete architectural reasoning, algorithmic derivations, quantitative memory calculations, anti-pattern mitigation analysis, and empirical test evidence (35/35 automated tests passing). In accordance with academic guidelines, key illustrative architectural code snippets are presented below, with the complete compilable codebase packaged in the accompanying project source archive.
 
 
@@ -173,13 +173,20 @@ In evaluating stream security architectures, I analyzed the structural consequen
 With N = 3 optional features, there are 2^3 = 8 distinct runtime feature combinations: (1) PlainStream, (2) CompressedStream, (3) EncryptedStream, (4) AuthenticatedStream, (5) CompressedEncryptedStream, (6) CompressedAuthenticatedStream, (7) EncryptedAuthenticatedStream, and (8) CompressedEncryptedAuthenticatedStream.
 Under a static inheritance architecture, supporting every combination requires authoring and maintaining 2^N separate, concrete subclasses. If the municipality subsequently introduces a fourth transformation layer (such as AnonymizedStream for data privacy compliance), the required subclasses expand exponentially to 2^4 = 16 subclasses, and a fifth feature would require 32 subclasses. This exponential class explosion severely compromises maintainability, creates pervasive code duplication, and violates the Single Responsibility Principle.
 In contrast, the Decorator pattern decouples class authoring complexity from runtime combinatorial flexibility. Rather than creating subclasses for combinations, the Decorator pattern requires authoring only N reusable concrete decorator classes (CompressionDecorator, EncryptionDecorator, and AuthenticationDecorator), alongside 1 uniform component interface (StreamData) and 1 abstract decorator base (StreamDataDecorator). The developer authors and maintains a linear number of classes—O(N)—which clients can dynamically assemble into any of the 2^N possible feature combinations at runtime through object composition. Thus, the pattern does not eliminate the 2^N runtime combinations; rather, it allows all 2^N combinations to be realized with only O(N) classes.
-    • EncryptedStream
-    • AuthenticatedStream
-    • CompressedEncryptedStream
-    • CompressedAuthenticatedStream
-    • EncryptedAuthenticatedStream
-    • CompressedEncryptedAuthenticatedStream
-If the municipality introduces a fourth requirement in the future (such as AnonymizedStream for privacy regulations), the class hierarchy would explode to 16 subclasses. In contrast, by implementing the Decorator pattern, I avoided this class explosion entirely. The Decorator pattern requires only 1 component interface, 1 concrete component, 1 abstract decorator, and N concrete decorators—reducing class complexity from exponential O(2^N) down to linear O(N).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 2. Strict Adherence to the Open/Closed Principle (OCP) (Martin, 2008):
 The core energy telemetry ingestion class (EnergyStreamData) remains completely closed for modification. Whenever security standards evolve, I can introduce new transformation layers simply by creating new decorator classes without altering a single line of existing production code.
 3. Dynamic Runtime Composition vs Compile-Time Rigidity:
@@ -198,8 +205,10 @@ The abstract StreamDataDecorator maintains a protected reference to another Stre
         protected final StreamData wrappee;
         public StreamDataDecorator(StreamData wrappee) {
             this.wrappee = wrappee;
-        }
-    }
+
+
+
+
 Because StreamDataDecorator implements StreamData while simultaneously holding a StreamData reference, any decorator can wrap either the core component or another decorator. This allows nesting decorators to an arbitrary depth at runtime:
     StreamData stream = new EnergyStreamData("STR-101", 230.5, 14.2, 3.27);
     stream = new CompressionDecorator(stream);
@@ -208,7 +217,7 @@ Because StreamDataDecorator implements StreamData while simultaneously holding a
 3. Correct Cryptographic & Compression Pipeline Ordering:
 A critical engineering rule in data transmission is that Compression Must Precede Encryption. Encrypted ciphertext produced by strong ciphers such as AES-256-GCM exhibits near-maximum Shannon entropy, appearing as uniform pseudorandom noise. Lossless compression algorithms (such as DEFLATE/GZIP) depend on detecting repeating byte patterns and statistical redundancy; attempting to compress ciphertext yields zero compression or even slight byte expansion due to format headers. Therefore, my pipeline strictly compresses raw structured JSON telemetry first, and then encrypts the compressed byte array.
 4. Authenticated Encryption with Associated Data (AEAD) & Outer HMAC (Dworkin, 2007; Krawczyk et al., 1997):
-In SmartCity360, EncryptionDecorator utilizes the AES-256-GCM (Galois/Counter Mode) authenticated encryption algorithm. Under GCM mode, the cipher provides both confidentiality and data integrity: each encryption pass generates a unique 12-byte initialization vector (IV) via SecureRandom and computes a 128-bit authentication tag appended to the ciphertext. Tampering with either the ciphertext or the IV causes Cipher.doFinal() to throw an AEADBadTagException during decryption, guaranteeing cryptographic integrity natively at the cipher level.
+In SmartCity360, EncryptionDecorator utilizes the AES-256-GCM (Galois/Counter Mode) authenticated encryption algorithm. Under GCM mode, the cipher provides both confidentiality and data integrity: each encryption pass generates a unique 12-byte initialization vector (IV) via SecureRandom and computes a 128-bit authentication tag appended to the ciphertext. Tampering with either the ciphertext or the IV causes Cipher.doFinal() to throw an AEADBadTagException during decryption, verifying cryptographic integrity natively at the cipher level.
 Why an additional outer HMAC-SHA256 layer is implemented in AuthenticationDecorator:
 • Cryptographic Key Separation: The system establishes two independent secret keys: a 256-bit symmetric cipher key (STREAM_AES_KEY) for payload confidentiality, and an independent HMAC secret key (STREAM_HMAC_KEY) for perimeter gateway authentication. This separation ensures that compromise of perimeter verification credentials does not compromise the private decryption key.
 
@@ -250,7 +259,7 @@ In initial theoretical discussions, flat claims of '55% compression' were cited.
     • Batched Telemetry Stream (1 KB to 64 KB): When telemetry readings are buffered into realistic operational batches (e.g., 20 to 100 consecutive readings), GZIP achieves 65% to 75% bandwidth reduction because repeating JSON keys ('streamId', 'voltage', 'current', 'powerKw') are compressed efficiently.
 Documenting this threshold distinction ensures engineering integrity and realistic network capacity planning.
 4. Mitigation of Object-Oriented Anti-Patterns:
-• Spaghetti Code: Completely eliminates deeply nested conditional blocks such as 'if (isCompressed) { ... } else if (isEncrypted) { ... }' inside telemetry controllers.
+• Spaghetti Code: Eliminates deeply nested conditional blocks such as 'if (isCompressed) { ... } else if (isEncrypted) { ... }' inside telemetry controllers.
 • God Object: Prevents the creation of a bloated StreamManager class that attempts to poll meters, authenticate tokens, encrypt bytes, and compress packets in a single file.
 • Copy-Paste Programming: Eradicates duplicate encryption and hashing logic across different meter ingestion handlers.
 • Long Method: Breaks down complex transformation pipelines into cohesive methods of fewer than 20 lines distributed across discrete decorator classes.
@@ -326,7 +335,8 @@ Instead of passing unrestricted strings (which cause silent failures when misspe
         SHUTDOWN_POWER,
         RESTORE_POWER,
         EMERGENCY_ISOLATE
-    }
+
+
 3. Leaf Component (BuildingLeaf):
 Represents terminal nodes in the hierarchy that have no children. A BuildingLeaf contains concrete hardware relay state (status = ONLINE/OFFLINE, baselinePowerKw, and current powerConsumptionKw).
 When executeCommand(ZoneCommand.SHUTDOWN_POWER) is called on a leaf:
@@ -340,8 +350,10 @@ Represents non-terminal container nodes (City, District, Street). It maintains a
     public void executeCommand(ZoneCommand command) {
         for (ZoneComponent child : children) {
             child.executeCommand(command);
-        }
-    }
+
+
+
+
 This recursive composition enables administrative commands to cascade smoothly down through arbitrary depths of the urban hierarchy.
 📷 [ FIGURE PLACEHOLDER — FIGURE 3.1 ]
 UML Class Diagram — Hierarchical Smart Zones Composite Pattern
@@ -393,8 +405,10 @@ Municipal operations teams require aggregate real-time power consumption analyti
 
 
 ZoneComponent also provides getTotalPowerConsumption() as a convenience alias method that delegates directly to getPowerConsumption(). Client dashboards invoke getPowerConsumption() uniformly whether querying an individual building leaf or an entire metropolitan district composite.
-    }
-Leaf nodes return their immediate meter reading; composite nodes return the recursive sum of their sub-trees. Client dashboards invoke the exact same method whether querying a single building or the entire metropolis.
+
+
+
+
 4. Method Consistency & Transparency vs Safety:
 In my implementation, method contracts are standardized across the code, UML specifications, and documentation:
     • executeCommand(ZoneCommand): Uniform command broadcast accepting type-safe enum values (SHUTDOWN_POWER, RESTORE_POWER, EMERGENCY_ISOLATE).
@@ -465,9 +479,11 @@ Maintains a protected reference to the successor handler (nextHandler) and decla
         public ComplaintHandler setNext(ComplaintHandler nextHandler) {
             this.nextHandler = nextHandler;
             return nextHandler;
-        }
+
+
         public abstract ComplaintRoutingResult handle(Complaint complaint, ComplaintRoutingResult result);
-    }
+
+
 2. Safe Triage vs Dangerous Default-to-LOW Issue:
 A critical flaw identified in legacy municipal implementations was that missing or unclassified complaint severities defaulted silently to 'LOW'. This created a severe public safety hazard: an unclassified gas leak or electrical fire complaint would be dispatched to routine street maintenance crews rather than emergency services.
 To solve this, I introduced ValidationTriageHandler at the head of the chain. If a complaint severity is null, empty, or unparseable, ValidationTriageHandler intercepts the request and routes it to an explicit 'Manual Triage Officer' with an escalation notice. It NEVER defaults an unknown complaint to LOW.
@@ -508,8 +524,8 @@ Because execution flows through loosely coupled objects, tracking where and why 
     • ISO-8601 Timestamp: Records down to the millisecond when delegation or resolution occurred.
     • Action & Reason: Captures whether the ticket was resolved, escalated, or triaged.
     • Route Trajectory: e.g., [ValidationTriageHandler -> LocalStaffHandler -> SupervisorHandler -> CityManagerHandler].
-3. Elimination of Drop Hazards:
-By implementing TerminalFallbackHandler, SmartCity360 guarantees deterministic request lifecycle management: every complaint is either processed by an authorized departmental tier (LocalStaff for LOW, Supervisor for MEDIUM, CityManager for HIGH and CRITICAL) or captured by TerminalFallbackHandler into an emergency dispatch review queue with a complete audit footprint. In ComprehensiveTestSuite.java, testChainTerminalFallback() explicitly verifies this fail-safe architecture: (1) it verifies that an unlinked handler safely returns CHAIN_EXHAUSTED when its successor reference is null, ensuring unhandled tickets do not cause null pointer exceptions or silent drops, and (2) it verifies that when TerminalFallbackHandler is wired at the terminus, unhandled complaints are successfully captured, assigned status FALLBACK_ASSIGNED, and routed to FALLBACK_DISPATCH_DESK with an audit record.
+3. Mitigation of Unhandled Request Hazards via Terminal Fallback:
+When the escalation chain is correctly wired with TerminalFallbackHandler at its terminus, SmartCity360 deterministically manages unhandled requests: complaints are either resolved by an authorized departmental tier (LocalStaff for LOW, Supervisor for MEDIUM, CityManager for HIGH and CRITICAL) or captured by TerminalFallbackHandler into an administrative review queue with a complete audit footprint. In ComprehensiveTestSuite.java, testChainTerminalFallback() explicitly verifies this fail-safe architecture: (1) it verifies that an unlinked handler safely returns CHAIN_EXHAUSTED when its successor reference is null, ensuring unhandled tickets do not cause null pointer exceptions or silent drops, and (2) it verifies that when TerminalFallbackHandler is wired at the terminus, unhandled complaints are successfully captured, assigned status FALLBACK_ASSIGNED, and routed to FALLBACK_DISPATCH_DESK with an audit record. This mechanism actively mitigates the classic Chain of Responsibility risk where unhandled requests silently drop off an open chain, though overall platform reliability remains dependent on correct pipeline assembly and handler availability.
 4. Critical Evaluation of Drawbacks & Architectural Trade-offs:
 While the Chain of Responsibility provides substantial architectural flexibility and decoupling, it introduces notable engineering trade-offs that must be evaluated (Gamma et al., 1994):
 • Traversal Latency & Request Processing Overhead: Because requests must pass sequentially through successive handler nodes until a matching handler is found, latency increases proportionally with chain length. For emergency complaints traversing ValidationTriageHandler -> LocalStaffHandler -> SupervisorHandler -> CityManagerHandler, each intermediate node executes condition checks and audit record allocations, introducing minor execution overhead compared to a direct indexed dispatch.
@@ -536,7 +552,7 @@ Key Architectural Elements & Specifications to Include:
 │                                                                        │
 └────────────────────────────────────────────────────────────────────────┘
 📌 Candidate Insertion Guide: Draw a sequence / flowchart showing the decision diamonds routing a complaint ticket from citizen submission to resolution and audit trail logging. Paste here.
-	Figure 4.2: Citizen Complaint Dynamic Escalation Workflow & Decision Flowchart — Multi-tier dynamic routing workflow illustrating condition-based escalation, zero ticket dropping, and automated audit logging.
+	Figure 4.2: Citizen Complaint Dynamic Escalation Workflow & Decision Flowchart — Multi-tier dynamic routing workflow illustrating condition-based escalation, fail-safe terminal fallback routing, and automated audit logging.
 📸 [ SOURCE CODE SCREENSHOT PLACEHOLDER — LISTING 4.1 ]
 Production Source Code Screenshot: Citizen Grievance Escalation (Chain of Responsibility Pattern)
 Target Source File: backend/src/main/java/com/smartcity/pattern/chain/ComplaintHandler.java
@@ -589,8 +605,9 @@ In a multi-threaded telemetry server, concurrent requests must not corrupt or cr
     public static SharedStreetlightProfile getProfile(String model, String lampType, int wattage, int maxLumens, int colorTemp, String firmware) {
         String key = model + "|" + lampType + "|" + wattage + "|" + maxLumens + "|" + colorTemp + "|" + firmware;
         return cache.computeIfAbsent(key, k -> new SharedStreetlightProfile(model, lampType, wattage, maxLumens, colorTemp, firmware));
-    }
-This guarantees thread-safe profile retrieval across all concurrent IoT ingestion threads, leveraging ConcurrentHashMap's non-blocking volatile reads and fine-grained, bucket-level synchronization on profile creation to eliminate global locking contention (Goetz et al., 2006).
+
+
+This ensures thread-safe profile retrieval across concurrent IoT ingestion threads, leveraging ConcurrentHashMap's non-blocking volatile reads and fine-grained, bucket-level synchronization on profile creation to eliminate global locking contention (Goetz et al., 2006).
 📷 [ FIGURE PLACEHOLDER — FIGURE 5.1 ]
 UML Class Diagram — Smart Streetlight Flyweight Pattern Architecture
 Diagram Category: UML Structural Class Diagram   •   Assessment Mapping: Part D.2 — Handling Shared Intrinsic vs Unique Extrinsic State
@@ -670,7 +687,7 @@ Complete Package File Manifest (backend/src/main/java/com/smartcity/pattern/flyw
 • SharedStreetlightProfile.java — Intrinsic Flyweight — Immutable hardware specification shared across 25,000 smart streetlight instances.
 • StreetlightProfileFactory.java — Thread-Safe Factory Pool — Manages static ConcurrentHashMap cache via computeIfAbsent.
 • StreetlightContext.java — Extrinsic Context — Lightweight object holding per-device state (GPS latitude/longitude, brightness, status).
-• FlyweightBenchmark.java — Memory Measurement Engine — Measures exact HotSpot JVM object layout footprint (72.2% reduction).
+• FlyweightBenchmark.java — Memory Measurement Engine — Evaluates analytical object layout estimation (72.2% reduction) alongside empirical runtime heap usage sampling via MemoryMXBean.
 • NaiveHeavyStreetlight.java — Unoptimized Baseline — Duplicates hardware properties across every streetlight for empirical comparison.
 • Test.java — Verification Suite — Validates reference identity across 8 concurrent threads and zero cache duplication.
 ┌────────────────────────────────────────────────────────────────────────┐
@@ -693,8 +710,8 @@ Scenario Description: The city’s operational rules (e.g., noise limits, parkin
 Selected Design Pattern: Interpreter Design Pattern (Behavioral GoF Pattern)
 To parse and evaluate municipal ordinances authored in a mini-language, I selected the Interpreter Design Pattern (Behavioral GoF; Gamma et al., 1994).
 My Architectural Justifications:
-1. Sandboxed, Safe Dynamic Rule Evaluation:
-Evaluating administrator-authored rules via general-purpose scripting engines (such as JavaScript eval() or Groovy scripts) exposes municipal infrastructure to Remote Code Execution (RCE) and arbitrary process execution vulnerabilities. By implementing a domain-specific Interpreter pattern (Gamma et al., 1994), rule evaluation is strictly confined to the defined grammar's AST nodes and variable lookup operations. Without access to reflection, class loaders, file I/O, or OS-level system calls, this design significantly minimizes the attack surface against arbitrary code execution, providing defense-in-depth when paired with input validation and recursion limits (Martin, 2008).
+1. Restricted DSL Evaluation & Attack Surface Reduction:
+Evaluating administrator-authored rules via general-purpose scripting engines (such as JavaScript eval() or Groovy scripts) introduces substantial security risks, including arbitrary code execution vulnerabilities. The restricted domain-specific language reduces the attack surface for arbitrary code execution by limiting evaluation to a controlled grammar and predefined operations (Gamma et al., 1994). Rule evaluation is strictly confined to the defined grammar's AST nodes and variable lookup operations without access to reflection, class loaders, file I/O, or OS-level system calls. However, it does not eliminate all security risks and must be supported by input validation, authorization checks, and appropriate resource limits (Martin, 2008).
 2. Direct Mapping of Grammar Rules to Object Hierarchies:
 Each grammatical production rule (terminal expressions, comparison operators, and boolean logical conjunctions) maps directly to a discrete class, making grammar extensions straightforward.
 6.2 E.2 UML Class Diagram & Mechanism of the DSL Interpreter Pattern
@@ -705,7 +722,8 @@ Maintains runtime telemetry variables and sensor data (e.g., NOISE_LEVEL = 78.5,
 Declares the fundamental interpretation contract:
     public interface Expression {
         boolean interpret(PolicyContext context);
-    }
+
+
 3. Terminal and Non-Terminal Expressions:
 • TerminalExpression: Evaluates atomic leaf predicates comparing a context variable against a numeric double threshold. It strictly supports six relational operators: '>', '>=', '<', '<=', '==', and '!='. Equality checks use a floating-point tolerance epsilon (Math.abs(val - threshold) < 0.00001) to prevent precision mismatch errors.
 • AndExpression: Non-terminal composite evaluating short-circuit logical conjunction (left.interpret(ctx) && right.interpret(ctx)).
@@ -748,13 +766,13 @@ However, domain-specific AST interpretation cannot serve as a complete, standalo
 • Context Variable Boundary Controls: The PolicyContext symbol table resolves only pre-registered municipal telemetry attributes; unregistered variables safely evaluate to false rather than raising unhandled null pointer exceptions.
 • Defense-in-Depth Separation: In an enterprise deployment, AST evaluation must be complemented by external boundary controls: endpoint authorization (ensuring only authenticated municipal managers can submit rule strings via POST /api/policies) and rate limiting at the servlet gateway tier to prevent evaluation flood attacks.
 5. Architectural Limitations & Production Trade-offs: When to Prefer Parser Generators or Scripting Engines:
-While the Interpreter pattern provides an elegant, zero-dependency, and completely sandboxed solution for SmartCity360's domain-specific policy rules, it has well-documented architectural limitations that must be critically evaluated:
+While the Interpreter pattern provides an elegant, zero-dependency, and restricted DSL evaluation environment for SmartCity360's domain-specific policy rules, it has well-documented architectural limitations that must be critically evaluated:
 • Grammar Proliferation & Maintenance Cost: In the GoF Interpreter pattern, every grammar rule and language construct requires a dedicated class hierarchy (Gamma et al., 1994). For simple expression languages (such as our 4-class AST evaluating Boolean predicates), this is clean and maintainable. However, if the municipal policy language were extended to support control flow (e.g., IF-THEN-ELSE blocks, procedural loops, user-defined functions, or multi-statement scripts), the number of AST classes would grow uncontrollably, making grammar maintenance, AST refactoring, and regression testing exponentially complex.
 • Parsing Complexity & Operator Precedence: As grammar complexity expands, hand-crafting recursive-descent parsers that correctly enforce multi-level operator precedence, associativity, and error recovery becomes notoriously difficult and bug-prone compared to formal grammar specifications (such as EBNF).
 • Enterprise Production Alternatives: In large-scale industrial architectures where rules require arbitrary Turing-complete computation, enterprise platforms typically transition from the Interpreter pattern to:
  1. Formal Parser Generators (e.g., ANTLR, JavaCC): Translating declarative grammar files into optimized lexers, parsers, and visitor ASTs with comprehensive syntax diagnostics.
- 2. Embeddable Scripting Engines (e.g., GraalVM JavaScript, MVEL, or Groovy): Executing dynamic scripts with native JIT compilation and rich standard libraries, provided strict sandbox boundaries are configured.
-For SmartCity360, the Interpreter pattern was an intentional, superior architectural decision because municipal policies are strictly declarative, non-Turing-complete Boolean thresholds. Hand-crafting an LL(1) recursive-descent parser with an immutable AST completely eliminates remote code execution (RCE) attack vectors inherent in full scripting engines, avoids bulky third-party dependencies, and achieves sub-microsecond evaluation latency (~0.4–0.8 µs per AST traversal) essential for high-throughput IoT telemetry ingestion.
+ 2. Embeddable Scripting Engines (e.g., GraalVM JavaScript, MVEL, or Groovy): Executing dynamic scripts with native JIT compilation and rich standard libraries, provided strict security boundary configurations are enforced.
+For SmartCity360, the Interpreter pattern was an intentional, superior architectural decision because municipal policies are strictly declarative, non-Turing-complete Boolean thresholds. Hand-crafting an LL(1) recursive-descent parser with an immutable AST dramatically curtails arbitrary code execution attack vectors inherent in general-purpose scripting engines, avoids bulky third-party dependencies, and achieves sub-microsecond evaluation latency (~0.4–0.8 µs per AST traversal) essential for high-throughput IoT telemetry ingestion.
 6.4 Architectural Implementation Highlights & Source Code Architecture
 📷 [ FIGURE PLACEHOLDER — FIGURE 6.2 ]
 Abstract Syntax Tree (AST) Decomposition & Boolean Evaluation Flowchart
@@ -776,7 +794,7 @@ Key Architectural Elements & Specifications to Include:
 │                                                                        │
 └────────────────────────────────────────────────────────────────────────┘
 📌 Candidate Insertion Guide: Draw the parsed Abstract Syntax Tree for the sample policy rule showing operator nodes, leaf variable comparisons, and bottom-up truth value propagation. Paste here.
-	Figure 6.2: Abstract Syntax Tree (AST) Decomposition & Boolean Evaluation Flowchart — Hierarchical AST syntax graph illustrating recursive tree traversal, context symbol evaluation, and sandboxed Boolean resolution.
+	Figure 6.2: Abstract Syntax Tree (AST) Decomposition & Boolean Evaluation Flowchart — Hierarchical AST syntax graph illustrating recursive tree traversal, context symbol evaluation, and restricted Boolean evaluation.
 📸 [ SOURCE CODE SCREENSHOT PLACEHOLDER — LISTING 6.1 ]
 Production Source Code Screenshot: City Policy DSL Mini-Language (Interpreter Pattern)
 Target Source File: backend/src/main/java/com/smartcity/pattern/interpreter/DslPolicyParser.java
@@ -907,7 +925,7 @@ Anti-Pattern
 	
 
 7.3 Empirical Automated Test Execution Results (35/35 PASS - 100% Rate)
-To provide verifiable empirical proof of correctness across all five implemented design patterns, the complete automated test suite was executed against the production codebase via com.smartcity.test.ComprehensiveTestSuite on an OpenJDK 17 64-bit Server VM (Windows 11 amd64). All 35 automated test cases executed to completion with zero failures or errors (100.0% pass rate across Decorator, Composite, Chain of Responsibility, Flyweight, and Interpreter subsystems).
+To provide automated verification of functional requirements across all five implemented design patterns, the comprehensive test suite was executed against the codebase via com.smartcity.test.ComprehensiveTestSuite on an OpenJDK 17 64-bit Server VM (Windows 11 amd64). All 35 automated test cases executed to completion with zero failures or errors (100.0% pass rate across Decorator, Composite, Chain of Responsibility, Flyweight, and Interpreter subsystems). While automated unit and integration tests verify specified functional contracts, edge-case assertions, and exception handling, they validate design pattern compliance rather than serving as proof of overall operational production reliability.
 Subsystem / Pattern
 	Tests
 	Passed
@@ -991,12 +1009,12 @@ Runtime: OpenJDK 17 64-Bit Server VM | Suite: com.smartcity.test.ComprehensiveTe
 [34] Interpreter :: testInterpreterMissingVariable       -> Missing variable returns false safely: true       [PASS]
 [35] Interpreter :: testInterpreterMalformedSyntax       -> All 4 syntax error variations caught: true        [PASS]
 ===================================================================================================================
-TOTAL TEST RESULTS: 35 / 35 PASS (100.0% SUCCESS RATE ACROSS ALL 5 PATTERNS) | ZERO REGRESSIONS
+TOTAL TEST RESULTS: 35 / 35 PASS (100.0% PASS RATE ACROSS ALL 5 DESIGN PATTERN TEST SUITES)
 ===================================================================================================================
 Empirical Measurement Methodology & Reproducible Analysis Notes:
 • Decorator Telemetry Framing vs. Bulk Stream Compression: In testDecoratorNormalPipeline, an isolated 72-byte JSON energy telemetry packet produces a 468-byte cryptographic envelope. This expansion is governed by mandatory security overhead: AES-GCM Initialization Vector (12 bytes), AEAD authentication tag (16 bytes), Base64 payload encoding (+33%), HMAC-SHA256 authentication tag (64 hex characters), and GZIP stream header/trailer framing (~20 bytes). While GZIP introduces framing overhead on isolated micro-payloads under 100 bytes, on continuous batched telemetry streams (>1 KB) GZIP achieves a 60–80% compression ratio, substantially reducing network egress costs.
 • Interpreter Microbenchmark Methodology: Benchmarking in DslPolicyParser measures execution latency across 2,000 iterations following initial C2 JIT compilation warmup loops. This separates one-time compilation overhead from steady-state AST traversal, confirming sub-microsecond evaluation (~0.4–0.8 µs per AST) and ~6.0–6.7 µs total parse-and-eval latency.
-• Fail-Safe Terminal Fallback Verification: testChainTerminalFallback explicitly exercises both conditions: verifying that an unlinked handler safely returns CHAIN_EXHAUSTED without throwing NullPointerException, and confirming that wiring TerminalFallbackHandler at the chain terminus guarantees deterministic capture into FALLBACK_DISPATCH_DESK with status FALLBACK_ASSIGNED and an audit record.
+• Fail-Safe Terminal Fallback Verification: testChainTerminalFallback explicitly exercises both conditions: verifying that an unlinked handler safely returns CHAIN_EXHAUSTED without throwing NullPointerException, and confirming that wiring TerminalFallbackHandler at the chain terminus reliably captures unhandled complaints into FALLBACK_DISPATCH_DESK with status FALLBACK_ASSIGNED and an audit record.
 
 
 7.4 Final Submission Deliverables Verification
@@ -1033,12 +1051,12 @@ Requirement
 8. CONCLUSION & ACADEMIC REFERENCES
 
 8.1 Comprehensive Architectural Synthesis & Pattern Synergy
-The SmartCity360 municipal platform demonstrates the practical application of Gang of Four object-oriented design patterns in engineering scalable, resilient, and enterprise-grade smart city infrastructure. Rather than treating design patterns as academic abstractions, each pattern was selected to solve a distinct, high-impact architectural challenge:
+The SmartCity360 municipal platform demonstrates the practical application of Gang of Four object-oriented design patterns in engineering scalable, resilient, and modular smart city infrastructure. Rather than treating design patterns as academic abstractions, each pattern was selected to solve a distinct, high-impact architectural challenge:
 1. Structural Decorator Pattern (Data Streams): Solved the combinatorial class explosion problem inherent in subclassing, allowing dynamic composition of compression (GZIP), authenticated encryption (AES-256-GCM), and outer HMAC-SHA256 message authentication and integrity verification over telemetry streams.
-2. Structural Composite Pattern (Smart Zones): Established a unified, hierarchical tree topography enabling municipal commands (power shutdown, load shedding, emergency isolation) to cascade seamlessly across cities, districts, streets, and building leaves in O(M) time while guaranteeing zero circular reference cycles.
-3. Behavioral Chain of Responsibility Pattern (Citizen Grievances): Decoupled complaint submission from administrative resolution, implementing safe validation triage, deterministic multi-tier routing (LocalStaff for LOW, Supervisor for MEDIUM, CityManager for HIGH and CRITICAL), and an audit-backed TerminalFallbackHandler that completely eliminates dropped requests.
+2. Structural Composite Pattern (Smart Zones): Established a unified, hierarchical tree topography enabling municipal commands (power shutdown, load shedding, emergency isolation) to cascade seamlessly across cities, districts, streets, and building leaves in O(M) time while preventing circular reference cycles via proactive cycle validation.
+3. Behavioral Chain of Responsibility Pattern (Citizen Grievances): Decoupled complaint submission from administrative resolution, implementing safe validation triage, deterministic multi-tier routing (LocalStaff for LOW, Supervisor for MEDIUM, CityManager for HIGH and CRITICAL), and an audit-backed TerminalFallbackHandler that, when correctly configured at the chain terminus, reliably traps unhandled complaints to mitigate request drop hazards.
 4. Structural Flyweight Pattern (Smart Streetlights): Optimized JVM heap consumption across 25,000 smart streetlights by externalizing extrinsic coordinates and sharing immutable hardware profiles via a thread-safe ConcurrentHashMap pool, achieving an analytical 72.2% layout reduction based on the benchmark model and mitigating young-generation allocation pressure.
-5. Behavioral Interpreter Pattern (Municipal DSL Policies): Provided an in-memory, sandboxed recursive-descent LL(1) parser evaluating complex Boolean environmental regulations in sub-microsecond latency (~0.4–0.8 µs per AST traversal) while mitigating code injection risks and avoiding servlet container restarts.
+5. Behavioral Interpreter Pattern (Municipal DSL Policies): Provided an in-memory, restricted recursive-descent LL(1) parser evaluating complex Boolean environmental regulations in sub-microsecond latency (~0.4–0.8 µs per AST traversal) while mitigating code injection risks and avoiding servlet container restarts.
 
 8.2 Critical Limitations & Future System Enhancements
 While the architecture achieves complete functional correctness verified by 35/35 automated unit and integration tests (100% pass rate), several production trade-offs provide avenues for future municipal enhancements:
