@@ -65,6 +65,10 @@ public class CompressionDecorator extends StreamDataDecorator {
 
     @Override
     public int getPayloadSize() {
+        return this.compressedJson.getBytes(StandardCharsets.UTF_8).length;
+    }
+
+    public int getCompressedBinarySize() {
         return this.compressedSize;
     }
 

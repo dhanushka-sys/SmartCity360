@@ -249,23 +249,39 @@ public class DslPolicyParser {
         }
     }
 
+    private static volatile Object BLACKHOLE;
+
     public static double benchmarkAverageParseMicros(String dsl, int iterations) {
-        parse(dsl);
+        if (dsl == null || iterations <= 0) {
+            return 0.0;
+        }
+        int warmup = Math.min(iterations, 20000);
+        for (int i = 0; i < warmup; i++) {
+            BLACKHOLE = parse(dsl);
+        }
         long t0 = System.nanoTime();
         for (int i = 0; i < iterations; i++) {
-            parse(dsl);
+            BLACKHOLE = parse(dsl);
         }
         long elapsedNanos = System.nanoTime() - t0;
         return (elapsedNanos / 1000.0) / iterations;
     }
 
     public static double benchmarkAverageParseAndEvalMicros(String dsl, PolicyContext context, int iterations) {
-        Expression expr = parse(dsl);
-        expr.interpret(context);
+        if (dsl == null || context == null || iterations <= 0) {
+            return 0.0;
+        }
+        int warmup = Math.min(iterations, 20000);
+        for (int i = 0; i < warmup; i++) {
+            Expression e = parse(dsl);
+            BLACKHOLE = e;
+            BLACKHOLE = e.interpret(context);
+        }
         long t0 = System.nanoTime();
         for (int i = 0; i < iterations; i++) {
             Expression e = parse(dsl);
-            e.interpret(context);
+            BLACKHOLE = e;
+            BLACKHOLE = e.interpret(context);
         }
         long elapsedNanos = System.nanoTime() - t0;
         return (elapsedNanos / 1000.0) / iterations;
@@ -275,13 +291,13 @@ public class DslPolicyParser {
         if (ast == null || context == null || iterations <= 0) {
             return 0.0;
         }
-        // JIT warm-up to eliminate cold execution bias
-        for (int i = 0; i < Math.min(iterations, 2000); i++) {
-            ast.interpret(context);
+        int warmup = Math.min(iterations, 20000);
+        for (int i = 0; i < warmup; i++) {
+            BLACKHOLE = ast.interpret(context);
         }
         long t0 = System.nanoTime();
         for (int i = 0; i < iterations; i++) {
-            ast.interpret(context);
+            BLACKHOLE = ast.interpret(context);
         }
         long elapsedNanos = System.nanoTime() - t0;
         return (elapsedNanos / 1000.0) / iterations;

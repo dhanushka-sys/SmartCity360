@@ -98,6 +98,10 @@ public class EncryptionDecorator extends StreamDataDecorator {
 
     @Override
     public int getPayloadSize() {
+        return this.encryptedJson.getBytes(StandardCharsets.UTF_8).length;
+    }
+
+    public int getCiphertextBinarySize() {
         return this.ciphertextBytes.length;
     }
 

@@ -48,12 +48,17 @@ def create_project_zip():
                 zipf.write(filepath, relpath)
                 count += 1
 
-    shutil.copyfile(out_zip_root, out_zip_doc)
-    shutil.copyfile(out_zip_root, out_zip_compat)
+    # Remove redundant duplicates in other_files to maintain a lean repository
+    for dup in [out_zip_doc, out_zip_compat]:
+        if os.path.exists(dup):
+            try:
+                os.remove(dup)
+                print(f"Removed redundant zip: {dup}")
+            except Exception as e:
+                pass
 
     zip_size_mb = os.path.getsize(out_zip_root) / (1024 * 1024)
     print(f"Successfully packaged {count} clean source files into {out_zip_root} ({zip_size_mb:.2f} MB)")
-    print(f"Copied to {out_zip_doc} and {out_zip_compat}")
 
 if __name__ == "__main__":
     create_project_zip()
