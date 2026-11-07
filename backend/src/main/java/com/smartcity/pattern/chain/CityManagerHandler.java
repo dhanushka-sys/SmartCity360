@@ -27,7 +27,7 @@ public class CityManagerHandler extends ComplaintHandler {
             );
             result.addAuditRecord(new ComplaintAuditRecord(
                     Instant.now().toString(),
-                    "SUPERVISOR",
+                    "CITY_MANAGER",
                     "CITY_MANAGER",
                     "ROUTED_" + severity.name(),
                     "Resolved at Tier 3 municipal executive leadership"

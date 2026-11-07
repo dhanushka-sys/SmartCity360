@@ -34,6 +34,9 @@ public class BuildingLeaf extends ZoneComponent {
                 this.status = "ISOLATED";
                 this.currentPowerKw = 0.0;
                 break;
+            case REPORT_USAGE:
+                // Uniform telemetry reporting: verifies operational state and returns current consumption
+                break;
         }
     }
 

@@ -23,7 +23,7 @@ public class LocalStaffHandler extends ComplaintHandler {
             );
             result.addAuditRecord(new ComplaintAuditRecord(
                     Instant.now().toString(),
-                    "ENTRY_GATEWAY",
+                    "LOCAL_STAFF",
                     "LOCAL_STAFF",
                     "ROUTED_LOW",
                     "Resolved at Tier 1 local operations level"

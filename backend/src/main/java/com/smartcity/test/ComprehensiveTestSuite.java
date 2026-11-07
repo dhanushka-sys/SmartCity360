@@ -223,11 +223,13 @@ public class ComprehensiveTestSuite {
             BuildingLeaf b2 = new BuildingLeaf("B2", "Tower 2", 150.0);
             city.add(b1);
             city.add(b2);
+            city.executeCommand("reportUsage");
+            boolean reportOk = city.getPowerConsumption() == 400.0 && "ONLINE".equals(b1.getStatus());
             city.executeCommand("shutdownPower");
-            boolean ok = city.getPowerConsumption() == 0.0 && "OFFLINE".equals(b1.getStatus())
+            boolean ok = reportOk && city.getPowerConsumption() == 0.0 && "OFFLINE".equals(b1.getStatus())
                     && "OFFLINE".equals(b2.getStatus());
             results.add(new TestResult("testCompositeCommandBroadcast", "Composite",
-                    "All leaves OFFLINE, Total Power=0.0 kW",
+                    "All leaves OFFLINE, Total Power=0.0 kW (reportUsage verified)",
                     "City Power=" + city.getPowerConsumption() + " kW, Status=" + city.getStatus(), ok));
         } catch (Exception e) {
             results.add(
@@ -435,10 +437,23 @@ public class ComprehensiveTestSuite {
             c.setId("C-08");
             c.setSeverity("CRITICAL");
             ComplaintRoutingResult r = chain.handle(c);
-            boolean ok = r.getAuditTrail().size() >= 3 && r.getAuditTrail().get(0).getTimestamp() != null;
+            List<ComplaintAuditRecord> audit = r.getAuditTrail();
+            boolean sizeOk = audit.size() == 4;
+            boolean ordered = sizeOk
+                    && "ENTRY_GATEWAY".equals(audit.get(0).getFromRole())
+                    && "LOCAL_STAFF".equals(audit.get(1).getFromRole())
+                    && "SUPERVISOR".equals(audit.get(2).getFromRole())
+                    && "CITY_MANAGER".equals(audit.get(3).getFromRole());
+            boolean immutable = false;
+            try {
+                audit.add(new ComplaintAuditRecord("now", "X", "Y", "Z", "test"));
+            } catch (UnsupportedOperationException e) {
+                immutable = true;
+            }
+            boolean ok = sizeOk && ordered && immutable;
             results.add(new TestResult("testChainAuditTrail", "Chain of Resp",
-                    "Audit records contain ISO-8601 timestamps & routing steps",
-                    "Audit entries recorded: " + r.getAuditTrail().size(), ok));
+                    "Audit records contain ISO-8601 timestamps & chronological routing steps",
+                    "Audit entries: " + audit.size() + ", Chronological: " + ordered + ", Immutable: " + immutable, ok));
         } catch (Exception e) {
             results.add(new TestResult("testChainAuditTrail", "Chain of Resp", "Audit trail", e.getMessage(), false));
         }
@@ -668,17 +683,18 @@ public class ComprehensiveTestSuite {
     private void testInterpreterMalformedSyntax() {
         try {
             boolean caughtAll = true;
-            String[] badTokens = { "", "(A > 10", "A === 10", "A >" };
+            String[] badTokens = { "", "(A > 10", "A === 10", "A >", "TEMP BETWEEN 1.2.3 AND 5" };
             for (String b : badTokens) {
                 try {
                     DslPolicyParser.parse(b);
                     caughtAll = false;
-                } catch (DslSyntaxException ignored) {
+                } catch (DslSyntaxException expected) {
+                    // Expected DslSyntaxException for syntax validation testing
                 }
             }
             results.add(new TestResult("testInterpreterMalformedSyntax", "Interpreter",
-                    "DslSyntaxException thrown for all malformed expressions",
-                    "All 4 syntax error variations caught: " + caughtAll, caughtAll));
+                    "DslSyntaxException thrown for all malformed expressions (including BETWEEN 1.2.3 AND 5)",
+                    "All 5 syntax error variations caught: " + caughtAll, caughtAll));
         } catch (Exception e) {
             results.add(new TestResult("testInterpreterMalformedSyntax", "Interpreter", "Syntax error rejection",
                     e.getMessage(), false));

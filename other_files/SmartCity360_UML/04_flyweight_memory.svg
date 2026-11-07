@@ -10,16 +10,16 @@
   
   <rect x="35" y="86" width="260" height="40" rx="3" fill="#f8fafc" stroke="#1e3a8a"/>
   <text x="45" y="100" font-size="8" font-weight="bold" fill="#0f294a">Profile 1: Philips SmartLum-150</text>
-  <text x="45" y="112" font-size="7.2" fill="#334155">150W | LED | 18,000 lm | 4000K | FW v3.2.1-SECURE</text>
-  <text x="45" y="122" font-size="7" font-weight="bold" fill="#059669">Deep layout footprint: 216 bytes (Instantiated Once)</text>
+  <text x="45" y="112" font-size="7.2" fill="#334155">150W | LED | 18,000 lm | 4000K | FW v3.2.1-prod</text>
+  <text x="45" y="122" font-size="7" font-weight="bold" fill="#059669">Deep layout footprint: 288 bytes (Instantiated Once)</text>
 
   <rect x="35" y="132" width="260" height="40" rx="3" fill="#f8fafc" stroke="#1e3a8a"/>
-  <text x="45" y="146" font-size="8" font-weight="bold" fill="#0f294a">Profile 2: Osram EcoStreet-90</text>
-  <text x="45" y="158" font-size="7.2" fill="#334155">90W | Solar LED | 10,500 lm | 3000K | FW v2.9.4</text>
-  <text x="45" y="168" font-size="7" font-weight="bold" fill="#059669">Deep layout footprint: 216 bytes (Instantiated Once)</text>
+  <text x="45" y="146" font-size="8" font-weight="bold" fill="#0f294a">Profile 2: Siemens CityRay-200</text>
+  <text x="45" y="158" font-size="7.2" fill="#334155">200W | Solar-LED | 24,000 lm | 5000K | FW v3.2.1-prod</text>
+  <text x="45" y="168" font-size="7" font-weight="bold" fill="#059669">Deep layout footprint: 288 bytes (Instantiated Once)</text>
 
   <rect x="35" y="178" width="260" height="38" rx="3" fill="#f1f5f9"/>
-  <text x="165" y="193" text-anchor="middle" font-size="7.5" font-weight="bold" fill="#0f294a">Total Pool: 4 Municipal Hardware Profiles</text>
+  <text x="165" y="193" text-anchor="middle" font-size="7.5" font-weight="bold" fill="#0f294a">Total Pool: 3 Municipal Hardware Profiles</text>
   <text x="165" y="206" text-anchor="middle" font-size="7.2" fill="#1e3a8a">Total Heap for Shared Profiles = 864 Bytes (~0.001 MB)</text>
 
   <!-- Pointer Arrow -->
@@ -34,16 +34,16 @@
   <text x="522" y="78" text-anchor="middle" font-size="7.5" fill="#475569">StreetlightContext (poleId, lat, lng, lux, status)</text>
 
   <rect x="400" y="86" width="245" height="26" rx="2" fill="#f8fafc" stroke="#cbd5e1"/>
-  <text x="408" y="102" font-size="7.5" fill="#1e293b">POLE-00001 (6.9271° N, 79.8612° E) • 80% Lux • 76 B</text>
+  <text x="408" y="102" font-size="7.5" fill="#1e293b">POLE-00001 (6.9271° N, 79.8612° E) • 80% Lux • 80 B</text>
 
   <rect x="400" y="116" width="245" height="26" rx="2" fill="#f8fafc" stroke="#cbd5e1"/>
-  <text x="408" y="132" font-size="7.5" fill="#1e293b">POLE-00002 (6.9280° N, 79.8620° E) • 60% Lux • 76 B</text>
+  <text x="408" y="132" font-size="7.5" fill="#1e293b">POLE-00002 (6.9280° N, 79.8620° E) • 60% Lux • 80 B</text>
 
   <rect x="400" y="146" width="245" height="26" rx="2" fill="#f8fafc" stroke="#cbd5e1"/>
-  <text x="408" y="162" font-size="7.5" fill="#1e293b">POLE-25000 (6.9540° N, 79.8920° E) • 40% Lux • 76 B</text>
+  <text x="408" y="162" font-size="7.5" fill="#1e293b">POLE-25000 (6.9540° N, 79.8920° E) • 40% Lux • 80 B</text>
 
   <rect x="400" y="178" width="245" height="42" rx="3" fill="#f1f5f9"/>
-  <text x="522" y="193" text-anchor="middle" font-size="7.5" font-weight="bold" fill="#0f294a">25,000 Contexts × 76 B = 1.900 MB</text>
-  <text x="522" y="206" text-anchor="middle" font-size="7.5" font-weight="bold" fill="#059669">Empirical Layout Reduction: 72.2% (1.91 MB vs 6.87 MB)</text>
-  <text x="522" y="216" text-anchor="middle" font-size="7" fill="#475569">Theoretical Un-Deduplicated Savings: up to 94.9% (25.6 MB)</text>
+  <text x="522" y="193" text-anchor="middle" font-size="7.5" font-weight="bold" fill="#0f294a">25,000 Contexts × 80 B = 2.000 MB</text>
+  <text x="522" y="206" text-anchor="middle" font-size="7.5" font-weight="bold" fill="#059669">Analytical Layout Savings: 72.2% (2.00 MB vs 7.20 MB)</text>
+  <text x="522" y="216" text-anchor="middle" font-size="7" fill="#475569">Naive Footprint: 25,000 × 288 B = 7.20 MB (Saved: 5.20 MB)</text>
 </svg>

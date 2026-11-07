@@ -3,7 +3,8 @@ package com.smartcity.pattern.composite;
 public enum ZoneCommand {
     SHUTDOWN_POWER("shutdownPower"),
     RESTORE_POWER("restorePower"),
-    EMERGENCY_ISOLATE("emergencyIsolate");
+    EMERGENCY_ISOLATE("emergencyIsolate"),
+    REPORT_USAGE("reportUsage");
 
     private final String commandName;
 
@@ -25,7 +26,7 @@ public enum ZoneCommand {
                 return cmd;
             }
         }
-        throw new IllegalArgumentException("Invalid or unsupported zone command: '" + text + "'. Supported: shutdownPower, restorePower, emergencyIsolate");
+        throw new IllegalArgumentException("Invalid or unsupported zone command: '" + text + "'. Supported: shutdownPower, restorePower, emergencyIsolate, reportUsage");
     }
 }
 

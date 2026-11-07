@@ -2,6 +2,8 @@ package com.smartcity.pattern.flyweight;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;
+import java.util.ArrayList;
+import java.util.List;
 
 public class FlyweightBenchmark {
 
@@ -11,12 +13,45 @@ public class FlyweightBenchmark {
         public long flyweightEstimatedBytes;
         public long naiveAllocatedBytes;
         public long flyweightAllocatedBytes;
-        public double savingsPercent;
-        public double measuredHeapSavingsPercent;
+        public double savingsPercent; // Analytical layout savings estimate
+        public double analyticalSavingsPercent;
+        public double measuredHeapSavingsPercent; // Measured HotSpot heap delta
         public long naiveTimeMs;
         public long flyweightTimeMs;
         public int flyweightPoolSize;
         public String jvmInfo;
+    }
+
+    public static class ScalingComparisonRow {
+        public int count;
+        public long naiveEstimatedBytes;
+        public long flyweightEstimatedBytes;
+        public double analyticalSavingsPercent;
+        public long naiveAllocatedBytes;
+        public long flyweightAllocatedBytes;
+        public double measuredHeapSavingsPercent;
+        public long naiveTimeMs;
+        public long flyweightTimeMs;
+    }
+
+    public static List<ScalingComparisonRow> runScalingSuite() {
+        int[] scales = {1000, 10000, 25000, 100000};
+        List<ScalingComparisonRow> rows = new ArrayList<>();
+        for (int scale : scales) {
+            BenchmarkResult b = runBenchmark(scale);
+            ScalingComparisonRow row = new ScalingComparisonRow();
+            row.count = scale;
+            row.naiveEstimatedBytes = b.naiveEstimatedBytes;
+            row.flyweightEstimatedBytes = b.flyweightEstimatedBytes;
+            row.analyticalSavingsPercent = b.analyticalSavingsPercent;
+            row.naiveAllocatedBytes = b.naiveAllocatedBytes;
+            row.flyweightAllocatedBytes = b.flyweightAllocatedBytes;
+            row.measuredHeapSavingsPercent = b.measuredHeapSavingsPercent;
+            row.naiveTimeMs = b.naiveTimeMs;
+            row.flyweightTimeMs = b.flyweightTimeMs;
+            rows.add(row);
+        }
+        return rows;
     }
 
     public static BenchmarkResult runBenchmark(int count) {
@@ -37,7 +72,8 @@ public class FlyweightBenchmark {
         int bytesPerSharedProfile = 288;
         res.naiveEstimatedBytes = (long) count * bytesPerNaiveObject;
         res.flyweightEstimatedBytes = ((long) count * bytesPerFlyweightContext) + (3L * bytesPerSharedProfile);
-        res.savingsPercent = ((double) (res.naiveEstimatedBytes - res.flyweightEstimatedBytes) / res.naiveEstimatedBytes) * 100.0;
+        res.analyticalSavingsPercent = ((double) (res.naiveEstimatedBytes - res.flyweightEstimatedBytes) / res.naiveEstimatedBytes) * 100.0;
+        res.savingsPercent = res.analyticalSavingsPercent;
 
         MemoryMXBean mem = ManagementFactory.getMemoryMXBean();
 
@@ -101,7 +137,10 @@ public class FlyweightBenchmark {
             System.gc();
             try {
                 Thread.sleep(50);
-            } catch (InterruptedException ignored) {}
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                break;
+            }
         }
     }
 }

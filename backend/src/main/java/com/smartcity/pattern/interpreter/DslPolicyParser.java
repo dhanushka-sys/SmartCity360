@@ -210,8 +210,18 @@ public class DslPolicyParser {
                 if (maxToken.type != TokenType.NUMBER) {
                     throw new DslSyntaxException("Expected numeric end value after AND for '" + varToken.text + "' but found '" + maxToken.text + "' in: " + originalText);
                 }
-                double minVal = Double.parseDouble(minToken.text);
-                double maxVal = Double.parseDouble(maxToken.text);
+                double minVal;
+                try {
+                    minVal = Double.parseDouble(minToken.text);
+                } catch (NumberFormatException e) {
+                    throw new DslSyntaxException("Invalid numeric literal '" + minToken.text + "' in BETWEEN clause: " + originalText, e);
+                }
+                double maxVal;
+                try {
+                    maxVal = Double.parseDouble(maxToken.text);
+                } catch (NumberFormatException e) {
+                    throw new DslSyntaxException("Invalid numeric literal '" + maxToken.text + "' in BETWEEN clause: " + originalText, e);
+                }
                 return new AndExpression(
                         new TerminalExpression(varToken.text, ">=", minVal),
                         new TerminalExpression(varToken.text, "<=", maxVal)
@@ -256,6 +266,22 @@ public class DslPolicyParser {
         for (int i = 0; i < iterations; i++) {
             Expression e = parse(dsl);
             e.interpret(context);
+        }
+        long elapsedNanos = System.nanoTime() - t0;
+        return (elapsedNanos / 1000.0) / iterations;
+    }
+
+    public static double benchmarkAveragePreParsedEvalMicros(Expression ast, PolicyContext context, int iterations) {
+        if (ast == null || context == null || iterations <= 0) {
+            return 0.0;
+        }
+        // JIT warm-up to eliminate cold execution bias
+        for (int i = 0; i < Math.min(iterations, 2000); i++) {
+            ast.interpret(context);
+        }
+        long t0 = System.nanoTime();
+        for (int i = 0; i < iterations; i++) {
+            ast.interpret(context);
         }
         long elapsedNanos = System.nanoTime() - t0;
         return (elapsedNanos / 1000.0) / iterations;

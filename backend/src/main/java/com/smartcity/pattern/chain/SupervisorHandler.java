@@ -23,7 +23,7 @@ public class SupervisorHandler extends ComplaintHandler {
             );
             result.addAuditRecord(new ComplaintAuditRecord(
                     Instant.now().toString(),
-                    "LOCAL_STAFF",
+                    "SUPERVISOR",
                     "SUPERVISOR",
                     "ROUTED_MEDIUM",
                     "Resolved at Tier 2 supervisor management level"

@@ -18,7 +18,8 @@ def create_project_zip():
         ".vscode",
         ".settings",
         ".gradle",
-        "bin"
+        "bin",
+        "scratch"
     }
     
     exclude_files = {

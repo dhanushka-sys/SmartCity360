@@ -243,7 +243,7 @@ FIGURES_METADATA = {
             "criteria": "Part F.1 — Package Organization & Modular Component Design",
             "elements": [
                 "Controller Package: com.smartcity.controller (StreamController, ZoneController, ComplaintController, StreetLightController, PolicyController)",
-                "Service Package: com.smartcity.service (StreamSecurityService, ZoneCommandService, GrievanceEscalationService, LightingOptimizationService, PolicyEngineService)",
+                "Data Access Object (DAO) Package: com.smartcity.dao (StreamDAO, ZoneDAO, ComplaintDAO, StreetlightDAO, PolicyDAO, UserDAO)",
                 "Design Pattern Core Packages: com.smartcity.pattern.decorator, com.smartcity.pattern.composite, com.smartcity.pattern.chain, com.smartcity.pattern.flyweight, com.smartcity.pattern.interpreter",
                 "Model & Value Objects: com.smartcity.model (TelemetryData, ZoneCommand, ComplaintTicket, StreetLightContext, PolicyContext)",
                 "Inter-package dependencies and unidirectional data flow maintaining clean separation of concerns"

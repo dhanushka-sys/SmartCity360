@@ -131,7 +131,9 @@ public class UserDAO {
             stmt.setString(1, newHashedPassword);
             stmt.setString(2, userId);
             stmt.executeUpdate();
-        } catch (Exception ignored) {}
+        } catch (SQLException e) {
+            System.err.println("[WARN] UserDAO: Failed to upgrade legacy password hash for user " + userId + ": " + e.getMessage());
+        }
     }
 
     public User getById(String id) throws SQLException {

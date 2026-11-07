@@ -37,7 +37,9 @@ public class DatabaseConfig {
             if (in != null) {
                 props.load(in);
             }
-        } catch (Exception ignored) {}
+        } catch (Exception e) {
+            System.err.println("[WARN] DatabaseConfig: Unable to load application.properties from classpath: " + e.getMessage());
+        }
 
         String envUrl = System.getenv("DB_URL");
         url = (envUrl != null && !envUrl.trim().isEmpty()) ? envUrl.trim() :
@@ -57,7 +59,8 @@ public class DatabaseConfig {
         String poolSizeStr = props.getProperty("db.pool.max", "10");
         try {
             maxPoolSize = Integer.parseInt(poolSizeStr.trim());
-        } catch (Exception ignored) {
+        } catch (Exception e) {
+            System.err.println("[WARN] DatabaseConfig: Invalid pool size format '" + poolSizeStr + "', defaulting to 10: " + e.getMessage());
             maxPoolSize = 10;
         }
 

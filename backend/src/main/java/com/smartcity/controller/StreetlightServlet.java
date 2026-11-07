@@ -30,7 +30,9 @@ public class StreetlightServlet extends HttpServlet {
                 if (countParam != null && !countParam.trim().isEmpty()) {
                     try {
                         count = Integer.parseInt(countParam.trim());
-                    } catch (NumberFormatException ignored) {}
+                    } catch (NumberFormatException e) {
+                        count = 25000;
+                    }
                 }
                 var benchmarkRes = com.smartcity.pattern.flyweight.FlyweightBenchmark.runBenchmark(count);
                 JsonUtil.sendJson(resp, HttpServletResponse.SC_OK, benchmarkRes);

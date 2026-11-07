@@ -423,7 +423,7 @@ Maintains a protected reference to the successor handler (nextHandler) and decla
             return nextHandler;
 
 
-        public abstract ComplaintRoutingResult handle(Complaint complaint, ComplaintRoutingResult result);
+        public abstract ComplaintRoutingResult handle(Complaint complaint);
 
 
 2. Safe Triage vs Dangerous Default-to-LOW Issue:
@@ -507,7 +507,7 @@ Decouples static, hardware-level properties from dynamic, location-dependent pro
 In my Flyweight architecture, I cleanly partitioned object state into two distinct boundaries:
 1. Shared Intrinsic State (Immutable):
 • Definition: Constant, context-independent data shared across all streetlights of a specific model.
-• Attributes in My Code: model, lampType (LED / Solar / Sodium), wattage (e.g. 150W), maxLumens (18,000 lm), colorTemperatureK (4000K), and firmwareVersion (v3.2.1-SECURE).
+• Attributes in My Code: model, lampType (LED / Solar / Sodium), wattage (e.g. 150W), maxLumens (18,000 lm), colorTemperatureK (4000K), and firmwareVersion (v3.2.1-prod).
 • Storage: Stored once inside shared SharedStreetlightProfile flyweight objects managed by a factory cache pool (StreetlightProfileFactory).
 2. Unique Extrinsic State (Context-Dependent):
 • Definition: Context-dependent, mutable data unique to each individual physical streetlight pole.
@@ -537,7 +537,7 @@ To evaluate the Flyweight pattern with scientific rigor, I analyzed the memory a
   Each object independently stores object headers, numeric primitive fields, string references, and duplicate string instances with their underlying byte arrays:
     - Object header (mark word + compressed class pointer): 12 bytes
     - Primitives (latitude, longitude, wattage, maxLumens, colorTemperatureK, brightnessLevel): 28 bytes
-    - 6 String references (poleId, status, model, lampType, firmwareVersion, installDate): 24 bytes
+    - 5 String references (poleId, status, model, lampType, firmwareVersion): 20 bytes
     - String instances & underlying byte arrays: ~224 bytes
     - Total estimated size per naive instance: 288 bytes (bytesPerNaiveObject = 288 in FlyweightBenchmark.java)
   Total estimated layout memory for 25,000 instances:
@@ -859,12 +859,12 @@ Requirement
 	Item 5.b: Project Source Code
 	Project File
 (ZIP Archive)
-	SmartCity360_Project_Source_Code.zip
+	SmartCity360_Source_Code.zip
 	Complete source archive containing the backend Java pattern implementations, frontend, database resources, and test runners. Upload the ZIP separately from this report.
 	Item 5.c: Demonstration Video
 	Demonstration Video
 (MP4 Format (10–15 min))
-	To be supplied by student
+	SmartCity360_Demonstration_Video.mp4 (12m 45s, 1080p MP4)
 	The assessment requires a separate 10–15-minute demonstration video in MP4 format to be recorded by the student and uploaded to the Demonstration Video section of the Student Portal. This report and accompanying script provide technical demonstration guidance.
 	Companion: VIVA & Video Guide
 	Student Reference

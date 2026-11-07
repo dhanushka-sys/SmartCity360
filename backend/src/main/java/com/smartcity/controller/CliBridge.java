@@ -83,7 +83,8 @@ public class CliBridge {
                 if (obj.has("voltage")) voltage = obj.get("voltage").getAsDouble();
                 if (obj.has("currentAmps")) currentAmps = obj.get("currentAmps").getAsDouble();
                 if (obj.has("powerKw")) powerKw = obj.get("powerKw").getAsDouble();
-            } catch (Exception ignored) {
+            } catch (Exception e) {
+                System.err.println("[WARN] CliBridge: Custom telemetry JSON unparseable, using standard baseline: " + e.getMessage());
             }
         }
 
@@ -247,20 +248,32 @@ public class CliBridge {
     private static void handleTest() {
         PrintStream originalOut = System.out;
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ComprehensiveTestSuite suite = new ComprehensiveTestSuite();
         try {
             System.setOut(new PrintStream(baos, true, StandardCharsets.UTF_8));
-            ComprehensiveTestSuite.main(new String[0]);
+            suite.runAllTests();
+            suite.printMarkdownReport();
         } finally {
             System.setOut(originalOut);
         }
 
         String rawOutput = baos.toString(StandardCharsets.UTF_8);
+        List<ComprehensiveTestSuite.TestResult> testResults = suite.getResults();
+        int total = testResults.size();
+        int passed = 0;
+        for (ComprehensiveTestSuite.TestResult r : testResults) {
+            if (r.passed) passed++;
+        }
+        int failed = total - passed;
+        double passPct = total > 0 ? ((double) passed / total) * 100.0 : 0.0;
+
         Map<String, Object> resp = new LinkedHashMap<>();
-        resp.put("success", true);
+        resp.put("success", failed == 0);
         resp.put("output", rawOutput);
-        resp.put("testsRun", 35);
-        resp.put("testsPassed", 35);
-        resp.put("passRate", "100.0%");
+        resp.put("testsRun", total);
+        resp.put("testsPassed", passed);
+        resp.put("testsFailed", failed);
+        resp.put("passRate", String.format(Locale.US, "%.1f%%", passPct));
 
         System.out.println(gson.toJson(resp));
     }

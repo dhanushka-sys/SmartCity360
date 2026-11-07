@@ -30,7 +30,9 @@ public class EncryptionDecorator extends StreamDataDecorator {
             try {
                 byte[] decoded = Base64.getDecoder().decode(envKey.trim());
                 if (decoded.length == 32) return decoded;
-            } catch (Exception ignored) {}
+            } catch (IllegalArgumentException e) {
+                System.err.println("[WARN] EncryptionDecorator: Invalid Base64 for STREAM_ENCRYPTION_KEY; using default 256-bit key.");
+            }
         }
         return FALLBACK_KEY;
     }

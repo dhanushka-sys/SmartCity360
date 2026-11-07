@@ -1,6 +1,7 @@
 package com.smartcity.pattern.chain;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class ComplaintRoutingResult {
@@ -11,8 +12,8 @@ public class ComplaintRoutingResult {
     private String status;
     private String message;
     private boolean handled;
-    private List<String> routeHistory = new ArrayList<>();
-    private List<ComplaintAuditRecord> auditTrail = new ArrayList<>();
+    private final List<String> routeHistory = new ArrayList<>();
+    private final List<ComplaintAuditRecord> auditTrail = new ArrayList<>();
 
     public ComplaintRoutingResult() {}
 
@@ -74,23 +75,32 @@ public class ComplaintRoutingResult {
     }
 
     public List<String> getRouteHistory() {
-        return routeHistory;
+        return Collections.unmodifiableList(routeHistory);
     }
 
     public void setRouteHistory(List<String> routeHistory) {
-        this.routeHistory = routeHistory;
+        this.routeHistory.clear();
+        if (routeHistory != null) {
+            this.routeHistory.addAll(routeHistory);
+        }
     }
 
     public List<ComplaintAuditRecord> getAuditTrail() {
-        return auditTrail;
+        return Collections.unmodifiableList(auditTrail);
     }
 
     public void setAuditTrail(List<ComplaintAuditRecord> auditTrail) {
-        this.auditTrail = auditTrail;
+        this.auditTrail.clear();
+        if (auditTrail != null) {
+            this.auditTrail.addAll(auditTrail);
+        }
     }
 
     public void addAuditRecord(ComplaintAuditRecord record) {
-        this.auditTrail.add(record);
-        this.routeHistory.add(record.getFromRole() + " -> " + record.getToRole());
+        if (record != null) {
+            this.auditTrail.add(0, record);
+            this.routeHistory.add(0, record.getFromRole() + " -> " + record.getToRole());
+        }
     }
 }
+

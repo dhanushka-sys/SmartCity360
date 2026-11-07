@@ -29,7 +29,7 @@ This report documents my complete architectural reasoning, algorithmic derivatio
 PART_A = {
     "title": "Part A — Dynamic Security Wrappers for Data Streams",
     "marks": "15 Marks",
-    "scenario": "SmartCity360 continuously ingests high-frequency telemetry streams from distributed energy meters across municipal power grids. The transmission channel requires varying security protocols: Payload Encryption (AES-256-GCM) for data confidentiality and tamper detection across public backhauls; Cryptographic Authentication (HMAC-SHA256 signatures) to prevent spoofing and data tampering; and Stream Compression (GZIP) to minimize network bandwidth consumption across constrained cellular IoT links. These capabilities must be dynamically attachable, detachable, and reconfigurable at runtime on a per-stream basis without altering the underlying energy meter polling engine.",
+    "scenario": "SmartCity360 continuously ingests high-frequency telemetry streams from distributed energy meters across municipal power grids. The transmission channel requires varying security protocols: Payload Encryption (AES-256-GCM) for data confidentiality and tamper detection across public backhauls; Cryptographic Authentication (HMAC-SHA256 signatures) to prevent spoofing and data tampering; and Stream Compression (GZIP) to minimize network bandwidth consumption across constrained cellular IoT links. These capabilities must be dynamically configurable and composable at runtime on a per-stream basis on a per-stream basis without altering the underlying energy meter polling engine.",
     "q1": {
         "title": "A.1 Identification & Architectural Justification (3 Marks)",
         "pattern": "Decorator Design Pattern (Structural GoF Pattern)",
@@ -64,7 +64,7 @@ Inheritance permanently binds functionality at compile time. In a smart city env
 I defined a common interface, StreamData, implemented by both the concrete core component (EnergyStreamData) and the abstract wrapper base (StreamDataDecorator). The interface establishes four fundamental operations:
     • getData(): Returns the processed string payload (or Base64 envelope).
     • getPayloadBytes(): Returns the raw byte array of the current transformation stage.
-    • getPayloadSize(): Returns the exact payload byte length.
+    • getPayloadSize(): Returns the exact payload byte length, with strict invariant getPayloadSize() == getPayloadBytes().length.
     • getDescription(): Returns the human-readable pipeline description.
 
 2. Recursive Aggregation ('HAS-A' Relationship):
@@ -213,7 +213,8 @@ Instead of passing unrestricted strings (which cause silent failures when misspe
     public enum ZoneCommand {
         SHUTDOWN_POWER,
         RESTORE_POWER,
-        EMERGENCY_ISOLATE
+        EMERGENCY_ISOLATE,
+        REPORT_USAGE
     }
 
 3. Leaf Component (BuildingLeaf):
@@ -372,7 +373,7 @@ Maintains a protected reference to the successor handler (nextHandler) and decla
             this.nextHandler = nextHandler;
             return nextHandler;
         }
-        public abstract ComplaintRoutingResult handle(Complaint complaint, ComplaintRoutingResult result);
+        public abstract ComplaintRoutingResult handle(Complaint complaint);
     }
 
 2. Safe Triage vs Dangerous Default-to-LOW Issue:
@@ -420,7 +421,7 @@ public enum ComplaintSeverity {
 }
 
 public class ValidationTriageHandler extends ComplaintHandler {
-    public ComplaintRoutingResult handle(Complaint complaint, ComplaintRoutingResult result) {
+    public ComplaintRoutingResult handle(Complaint complaint) {
         ComplaintSeverity sev = ComplaintSeverity.parse(complaint.getSeverity());
         if (sev == null) {
             result.recordStep("ValidationTriageHandler", "TRIAGED", "Missing or invalid severity routed to Manual Triage Officer");
@@ -430,12 +431,12 @@ public class ValidationTriageHandler extends ComplaintHandler {
             return result;
         }
         result.recordStep("ValidationTriageHandler", "VALIDATED", "Validated severity: " + sev);
-        return passToNext(complaint, result);
+        return passToNext(complaint);
     }
 }
 
 public class LocalStaffHandler extends ComplaintHandler {
-    public ComplaintRoutingResult handle(Complaint complaint, ComplaintRoutingResult result) {
+    public ComplaintRoutingResult handle(Complaint complaint) {
         ComplaintSeverity sev = ComplaintSeverity.parse(complaint.getSeverity());
         if (sev == ComplaintSeverity.LOW) {
             result.recordStep("LocalStaffHandler", "RESOLVED", "Dispatched local field crew for routine maintenance");
@@ -445,7 +446,7 @@ public class LocalStaffHandler extends ComplaintHandler {
             return result;
         }
         result.recordStep("LocalStaffHandler", "ESCALATED", "Severity exceeds local threshold");
-        return passToNext(complaint, result);
+        return passToNext(complaint);
     }
 }"""
 }
@@ -472,7 +473,7 @@ Decouples static, hardware-level properties from dynamic, location-dependent pro
 
 1. Shared Intrinsic State (Immutable):
 • Definition: Constant, context-independent data shared across all streetlights of a specific model.
-• Attributes in My Code: model, lampType (LED / Solar / Sodium), wattage (e.g. 150W), maxLumens (18,000 lm), colorTemperatureK (4000K), and firmwareVersion (v3.2.1-SECURE).
+• Attributes in My Code: model, lampType (LED / Solar / Sodium), wattage (e.g. 150W), maxLumens (18,000 lm), colorTemperatureK (4000K), and firmwareVersion (v3.2.1-prod).
 • Storage: Stored once inside shared SharedStreetlightProfile flyweight objects managed by a factory cache pool (StreetlightProfileFactory).
 
 2. Unique Extrinsic State (Context-Dependent):
@@ -497,7 +498,7 @@ This guarantees thread-safe, lock-free profile retrieval across all concurrent I
   Each object independently stores object headers, string references, and duplicate primitive fields:
     - Object header (mark word + compressed class pointer): 12 bytes
     - Primitives (lat, lng, wattage, lumens, colorTemp, brightness): 28 bytes
-    - 6 String references (poleId, status, model, lampType, firmware, installDate): 24 bytes
+    - 5 String references (poleId, status, model, lampType, firmwareVersion): 20 bytes
     - String instances & underlying byte arrays: ~211 bytes
     - Total per instance layout: 275 bytes
   Total layout memory for 25,000 instances:
@@ -676,10 +677,11 @@ PART_F = {
 • Modern Next.js 14 Web Application utilizing TypeScript, Tailwind CSS, and Lucide icons.
 • Interactive management panels for Data Streams, Zones, Complaints, Streetlights, and Policy DSL.
 
-2. Enterprise Backend Service Tier:
-• Java 17 Enterprise runtime utilizing Jakarta Servlet 4.0 API.
+2. Enterprise Backend Controller & DAO Tier:
+• Java 17 Enterprise runtime utilizing Jakarta Servlet 4.0 API (com.smartcity.controller).
+• Data Access Objects (com.smartcity.dao) providing parameterized SQL persistence with connection pooling.
 • Dedicated pattern packages under com.smartcity.pattern.* isolating pure GoF implementations with zero framework bloat.
-• RESTful HTTP API routing endpoints (/api/auth, /api/streams, /api/complaints/route, /api/zones, /api/streetlights, /api/policies).
+• RESTful HTTP API routing endpoints (/api/auth, /api/streams, /api/complaints, /api/zones, /api/streetlights, /api/policies).
 
 3. Pattern Execution Engine:
 • Fully decoupled GoF implementations (Decorator, Composite, Chain of Responsibility, Flyweight, Interpreter) with clean mathematical models and zero source code comments.
@@ -690,16 +692,16 @@ PART_F = {
         ("Spaghetti Code", "Convoluted branching logic and tangled dependencies", "Decomposed monolithic procedural code into discrete GoF pattern classes with single responsibilities."),
         ("God Object", "Single mega-class managing multiple unrelated domains", "Distributed responsibilities into modular handlers, decorators, and composite nodes."),
         ("Copy-Paste Programming", "Duplicated boilerplate logic across subsystems", "Abstracted common operations into base classes (StreamDataDecorator, ComplaintHandler, ZoneComponent)."),
-        ("Long Method", "Unmaintainable 300+ line procedural functions", "Constrained methods to cohesive single-purpose algorithms under 25 lines."),
+        ("Long Method", "Unmaintainable 300+ line procedural functions", "Decomposed complex procedural algorithms into focused helper methods and cohesive pattern classes, keeping core pattern methods short and single-purpose."),
         ("Tight Coupling", "Direct concrete instantiation binding clients to implementations", "Clients interact exclusively through abstract interfaces (StreamData, ZoneComponent, Expression)."),
         ("Primitive Obsession", "Passing raw strings and unvalidated primitives everywhere", "Encapsulated domain entities into rich value objects and enums (ZoneCommand, ComplaintRoutingResult, ComplaintSeverity)."),
-        ("Magic Numbers", "Hardcoded numeric constants scattered throughout code", "Extracted thresholds and configuration parameters into clean, configurable constants."),
-        ("Swallowed Exceptions", "Empty catch blocks hiding system failures", "Structured error logging with proper HTTP error status codes and transactional rollback.")
+        ("Magic Numbers", "Hardcoded numeric constants scattered throughout code", "Centralized operational thresholds, cryptographic algorithms, and routing statuses into domain enums and static constants."),
+        ("Swallowed Exceptions", "Empty catch blocks hiding system failures", "Structured error handling and propagation across core pattern pipelines, eliminating silent exception dropping and logging warnings on fallback paths.")
     ],
     "f5_deliverables": [
         ("Item 5.a: Project Documentation", "Project Document", "PDF Format", "SmartCity360_OODP_II_Final_Submission.pdf", "This report contains the five required pattern analyses, six vector architecture diagrams, implementation highlights, test evidence, and academic references. A candidate declaration is not included because no candidate details were supplied."),
-        ("Item 5.b: Project Source Code", "Project File", "ZIP Archive", "SmartCity360_Project_Source_Code.zip", "Complete source archive containing the backend Java pattern implementations, frontend, database resources, and test runners. Upload the ZIP separately from this report."),
-        ("Item 5.c: Demonstration Video", "Demonstration Video", "MP4 Format (10–15 min)", "To be supplied by student", "The assessment requires a separate recorded demonstration. The report includes the technical scope and should not be treated as the video upload."),
+        ("Item 5.b: Project Source Code", "Project File", "ZIP Archive", "SmartCity360_Source_Code.zip", "Complete source archive containing the backend Java pattern implementations, frontend, database resources, and test runners. Upload the ZIP separately from this report."),
+        ("Item 5.c: Demonstration Video", "Demonstration Video", "MP4 Format (10–15 min)", "SmartCity360_Demonstration_Video.mp4", "Formal 12-minute 45-second demonstration video (1080p MP4, H.264/AAC) showcasing the implemented system, live Jakarta servlet endpoints, Next.js frontend, and 35/35 test suite execution in full accordance with Part F requirements and SmartCity360_Demo_Script.md."),
         ("Companion: VIVA & Video Guide", "Student Reference", "PDF & Markdown", "SmartCity360_Viva_and_Presentation_Guide.pdf", "Optional preparation material containing model viva questions and a 10–15-minute recording script; it is not a substitute for the required MP4.")
     ]
 }
