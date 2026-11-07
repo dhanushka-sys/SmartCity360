@@ -1,17 +1,13 @@
 import { fetchFromBackend } from "./backend-client";
 import {
-  initialPolicies,
-  initialPolicyEvaluationLogs,
-} from "@/lib/mock-data/policies-data";
-import {
   PolicyEvaluationContext,
   PolicyEvaluationResult,
   PolicyRule,
   PolicyValidationResult,
 } from "@/types/policy";
 
-let policiesState: PolicyRule[] = [...initialPolicies];
-let evaluationLogsState: PolicyEvaluationResult[] = [...initialPolicyEvaluationLogs];
+let policiesState: PolicyRule[] = [];
+let evaluationLogsState: PolicyEvaluationResult[] = [];
 
 const delay = (ms = 180) => new Promise((resolve) => setTimeout(resolve, ms));
 

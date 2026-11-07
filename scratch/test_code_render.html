@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+  body { margin: 0; background: #1e1f22; font-family: 'Consolas', 'JetBrains Mono', monospace; font-size: 14px; color: #bcbec4; }
+  .window { width: 900px; background: #1e1f22; border-radius: 8px; border: 1px solid #393b40; box-shadow: 0 10px 30px rgba(0,0,0,0.5); overflow: hidden; margin: 20px; }
+  .titlebar { background: #2b2d30; padding: 10px 15px; display: flex; align-items: center; border-bottom: 1px solid #393b40; }
+  .dots { display: flex; gap: 6px; margin-right: 15px; }
+  .dot { width: 12px; height: 12px; border-radius: 50%; }
+  .dot-red { background: #ed6a5e; } .dot-yellow { background: #f5bf4f; } .dot-green { background: #62c554; }
+  .tab { color: #dfe1e5; font-size: 13px; font-weight: 500; }
+  .code-body { padding: 15px; line-height: 1.5; }
+</style>
+</head>
+<body>
+<div class="window">
+  <div class="titlebar">
+    <div class="dots"><div class="dot dot-red"></div><div class="dot dot-yellow"></div><div class="dot dot-green"></div></div>
+    <div class="tab">EncryptionDecorator.java</div>
+  </div>
+  <div class="code-body">
+    <pre><code>public class EncryptionDecorator extends StreamDataDecorator { ... }</code></pre>
+  </div>
+</div>
+</body>
+</html>
+

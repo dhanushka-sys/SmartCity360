@@ -1,17 +1,13 @@
 import { fetchFromBackend } from "./backend-client";
 import {
-  initialStreetlightProfiles,
-  initialStreetlights,
-} from "@/lib/mock-data/streetlights-data";
-import {
   FlyweightMemoryAnalysis,
   Streetlight,
   StreetlightProfile,
   StreetlightStatus,
 } from "@/types/streetlight";
 
-let profilesState: StreetlightProfile[] = [...initialStreetlightProfiles];
-let streetlightsState: Streetlight[] = [...initialStreetlights];
+let profilesState: StreetlightProfile[] = [];
+let streetlightsState: Streetlight[] = [];
 
 const delay = (ms = 180) => new Promise((resolve) => setTimeout(resolve, ms));
 

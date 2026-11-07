@@ -1,5 +1,4 @@
 import { fetchFromBackend } from "./backend-client";
-import { initialEnergyStreams } from "@/lib/mock-data/streams-data";
 import {
   DataStream,
   EnergyReading,
@@ -8,7 +7,7 @@ import {
   TransformationStepResult,
 } from "@/types/data-stream";
 
-let streamsState: DataStream[] = [...initialEnergyStreams];
+let streamsState: DataStream[] = [];
 
 const delay = (ms = 180) => new Promise((resolve) => setTimeout(resolve, ms));
 

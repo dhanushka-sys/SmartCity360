@@ -41,7 +41,7 @@ public class DatabaseConfig {
 
         String envUrl = System.getenv("DB_URL");
         url = (envUrl != null && !envUrl.trim().isEmpty()) ? envUrl.trim() :
-                props.getProperty("db.url", "jdbc:mysql://localhost:3306/smartcity360_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC");
+                props.getProperty("db.url", "jdbc:mysql://localhost:3306/smartcity360?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC");
 
         String envUser = System.getenv("DB_USER");
         user = (envUser != null && !envUser.trim().isEmpty()) ? envUser.trim() :

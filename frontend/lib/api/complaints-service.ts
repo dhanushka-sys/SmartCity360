@@ -1,4 +1,3 @@
-import { initialComplaints } from "@/lib/mock-data/complaints-data";
 import {
   CitizenComplaint,
   ComplaintCategory,
@@ -9,7 +8,7 @@ import {
 } from "@/types/complaint";
 import { fetchFromBackend } from "./backend-client";
 
-let complaintsState: CitizenComplaint[] = [...initialComplaints];
+let complaintsState: CitizenComplaint[] = [];
 
 const delay = (ms = 180) => new Promise((resolve) => setTimeout(resolve, ms));
 
