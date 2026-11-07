@@ -49,7 +49,7 @@ TABLE OF CONTENTS
     7.1 Overall System Architecture & Multi-Tier Enterprise Design
         [Figure 7.1 — End-to-End SmartCity360 Multi-Tier Enterprise Platform Architecture]
         [Figure 7.2 — SmartCity360 Comprehensive System Use Case Diagram]
-        [Figure 7.3 — Architectural Package Structure & Component Interaction Diagram]
+        [Figure 7.3 — Subsystem Component Interaction & Complaint Escalation Sequence Diagram]
     7.2 Key Architectural Choices & Anti-Pattern Defense Matrix
     7.3 Empirical Automated Test Execution Results (35/35 Tests Passing - 100%)
     7.4 Final Submission Deliverables Verification
@@ -63,7 +63,7 @@ TABLE OF CONTENTS
 
 
 LIST OF ARCHITECTURAL FIGURES & DIAGRAMS
-This technical assessment report incorporates 13 dedicated architectural diagrams, UML class models, behavioral sequence workflows, and system enterprise designs mapped directly to the assessment rubric. Each architectural figure is embedded within its designated system specification section below:
+This technical assessment report incorporates 15 dedicated architectural diagrams, UML class models, behavioral sequence workflows, and system enterprise designs mapped directly to the assessment rubric. Each architectural figure is embedded within its designated system specification section below:
 Figure ID
 	Diagram Title & Description
 	Rubric Mapping
@@ -163,7 +163,7 @@ This report documents my complete architectural reasoning, algorithmic derivatio
 
 2. Part A — Dynamic Security Wrappers for Data Streams
 Scenario Description: SmartCity360 continuously ingests high-frequency telemetry streams from distributed energy meters across municipal power grids. The transmission channel requires varying security protocols: Payload Encryption (AES-256-GCM) for data confidentiality and tamper detection across public backhauls; Cryptographic Authentication (HMAC-SHA256 authentication tags) to verify shared-secret authenticity and detect payload tampering; and Stream Compression (GZIP) to minimize network bandwidth consumption across constrained cellular IoT links. These capabilities must be dynamically attachable, detachable, and reconfigurable at runtime on a per-stream basis without altering the underlying energy meter polling engine.
-2.1 A.1 Identification & Architectural Justification
+Part A.1: Identification & Architectural Justification (3 Marks)
 Selected Design Pattern: Decorator Design Pattern (Structural GoF Pattern; Gamma et al., 1994)
 When evaluating the requirements for securing data streams in SmartCity360, I selected the Decorator Pattern (Structural GoF) as the most appropriate architectural solution.
 My Architectural Justifications:
@@ -191,7 +191,7 @@ In contrast, the Decorator pattern decouples class authoring complexity from run
 The core energy telemetry ingestion class (EnergyStreamData) remains completely closed for modification. Whenever security standards evolve, I can introduce new transformation layers simply by creating new decorator classes without altering a single line of existing production code.
 3. Dynamic Runtime Composition vs Compile-Time Rigidity:
 Inheritance permanently binds functionality at compile time. In a smart city environment, network conditions and security alert levels change dynamically. With the Decorator pattern, municipal operators can dynamically compose, wrap, or unwrap optional transformation layers on an active data stream at runtime—adapting instantaneously to threat escalations (e.g., selectively enabling encryption across untrusted WAN links) or cellular bandwidth constraints (e.g., enabling compression on metered cellular backhaul)—while strictly preserving the required cryptographic pipeline ordering (Compression -> Encryption -> Authentication).
-2.2 A.2 Flexible & Layered Enhancement Mechanism
+Part A.2: Mechanism of Flexible & Layered Enhancement (4 Marks)
 To achieve flexible and layered enhancements, I structured the Decorator implementation around recursive object aggregation, strict interface conformance, and a mathematically sound transformation pipeline:
 1. Unified Component Contract (StreamData Interface):
 I defined a common interface, StreamData, implemented by both the concrete core component (EnergyStreamData) and the abstract wrapper base (StreamDataDecorator). The interface establishes four fundamental operations:
@@ -205,6 +205,11 @@ The abstract StreamDataDecorator maintains a protected reference to another Stre
         protected final StreamData wrappee;
         public StreamDataDecorator(StreamData wrappee) {
             this.wrappee = wrappee;
+        }
+        public String getData() { return wrappee.getData(); }
+        public byte[] getPayloadBytes() { return wrappee.getPayloadBytes(); }
+        public int getPayloadSize() { return wrappee.getPayloadSize(); }
+    }
 
 
 
@@ -238,7 +243,7 @@ Key Architectural Elements & Specifications to Include:
 • Concrete Decorators: EncryptionDecorator (AES-256-GCM AEAD encryption), CompressionDecorator (GZIP stream compaction), AuthenticationDecorator (HMAC-SHA256 authentication tag generator)
 • UML Relationships: Realization of StreamData, Aggregation (1 StreamDataDecorator wraps 1 StreamData), Generalization (concrete decorators extend StreamDataDecorator)
 	Figure 2.1: UML Class Diagram — Dynamic Security Decorator Pattern Architecture — Structural hierarchy depicting component interface, concrete component, abstract decorator aggregation, and specialized encryption/compression/authentication wrapper classes.
-2.3 A.3 Long-Term Evaluation: Reusability, Extensibility & Anti-Pattern Mitigation
+Part A.3: Evaluation of Long-Term Reusability & System Extensibility (8 Marks)
 1. Long-Term Reusability Benefits:
 • Orthogonal Separation of Concerns: In my implementation, stream compression logic resides strictly inside CompressionDecorator, AES-256-GCM encryption inside EncryptionDecorator, and cryptographic signing inside AuthenticationDecorator. None of the decorators have compile-time dependencies on each other.
 • Mix-and-Match Composability: Different municipal sensors have radically different transmission priorities. High-voltage power grid substations require [Compression -> Encryption -> Authentication]; low-power environmental air quality sensors on isolated networks require only [Compression]; public analytic feeds require only [Authentication]. By isolating responsibilities into single-purpose decorators, all configurations reuse the exact same classes without code duplication.
@@ -282,7 +287,7 @@ Complete Package File Manifest (backend/src/main/java/com/smartcity/pattern/deco
 
 3. Part B — Hierarchical Structure of Smart Zones
 Scenario Description: City zones (city -> district -> street -> building) need to be represented hierarchically so that operations commands like 'shutdown power' or 'report usage' can be applied uniformly at any level of the municipal topography.
-3.1 B.1 Identification & Architectural Justification
+Part B.1: Identification & Architectural Justification (3 Marks)
 Selected Design Pattern: Composite Design Pattern (Structural GoF Pattern; Gamma et al., 1994)
 When designing the structural representation for the municipal boundaries of Metropolis Neo-Prime, I selected the Composite Design Pattern (Structural GoF) as the most appropriate architectural solution.
 My Architectural Justifications:
@@ -296,16 +301,22 @@ Without the Composite pattern, client controllers would need to traverse nested 
 This creates rigid, error-prone spaghetti code. With the Composite pattern, the client simply executes:
     zoneComponent.executeCommand(ZoneCommand.SHUTDOWN_POWER);
 Polymorphic dynamic dispatch takes care of recursively navigating the tree structure automatically, decoupling the invoker from the structural depth of the city.
-3.2 B.2 UML Class Diagram & Mechanism of the Hierarchical Composition
+Part B.2: Mechanism of the Hierarchical Composition (4 Marks)
 In my implementation, the Composite pattern is organized into three distinct structural roles as illustrated in the accompanying UML Class Diagram:
 1. Abstract Component (ZoneComponent):
 Declares the common interface for all elements in the municipal tree, including operational methods (executeCommand, getPowerConsumption, getTotalPowerConsumption, getStatus) and child management contracts (add, remove, getChildren).
 2. Type-Safe Command Abstraction (ZoneCommand Enum):
 Instead of passing unrestricted strings (which cause silent failures when misspelled, e.g. 'shutDownPower'), I encapsulated valid operations in a robust Java enum:
     public enum ZoneCommand {
-        SHUTDOWN_POWER,
-        RESTORE_POWER,
-        EMERGENCY_ISOLATE
+        SHUTDOWN_POWER("shutdownPower"),
+        RESTORE_POWER("restorePower"),
+        EMERGENCY_ISOLATE("emergencyIsolate"),
+        REPORT_USAGE("reportUsage");
+
+        private final String commandName;
+        ZoneCommand(String commandName) { this.commandName = commandName; }
+        public String getCommandName() { return commandName; }
+    }
 
 
 3. Leaf Component (BuildingLeaf):
@@ -321,6 +332,8 @@ Represents non-terminal container nodes (City, District, Street). It maintains a
     public void executeCommand(ZoneCommand command) {
         for (ZoneComponent child : children) {
             child.executeCommand(command);
+        }
+    }
 
 
 
@@ -336,7 +349,7 @@ Key Architectural Elements & Specifications to Include:
 • Command Abstraction / Enum: ZoneCommand (SHUTDOWN_POWER, RESTORE_POWER, EMERGENCY_ISOLATE)
 • UML Relationships: Generalization of ZoneComponent by BuildingLeaf and ZoneComposite; 1-to-many recursive Composition (ZoneComposite contains 0..* ZoneComponent instances)
 	Figure 3.1: UML Class Diagram — Hierarchical Smart Zones Composite Pattern — Formal structural class diagram demonstrating recursive composition, uniform client interface, and polymorphic command delegation across urban zones.
-3.3 B.3 Evaluation: Scalability & Growing Infrastructure Management
+Part B.3: Evaluation of Scalability & Growing Infrastructure Management (8 Marks)
 1. Cascading Command Execution Across Complex Topographies:
 When executeCommand(ZoneCommand.SHUTDOWN_POWER) is dispatched to a top-level City composite:
     • The City composite iterates through its child collection and invokes executeCommand on each District.
@@ -373,7 +386,7 @@ ZoneComponent also provides getTotalPowerConsumption() as a convenience alias me
 
 4. Method Consistency & Transparency vs Safety:
 In my implementation, method contracts are standardized across the code, UML specifications, and documentation:
-    • executeCommand(ZoneCommand): Uniform command broadcast accepting type-safe enum values (SHUTDOWN_POWER, RESTORE_POWER, EMERGENCY_ISOLATE).
+    • executeCommand(ZoneCommand): Uniform command broadcast accepting type-safe enum values (SHUTDOWN_POWER, RESTORE_POWER, EMERGENCY_ISOLATE, REPORT_USAGE).
     • getPowerConsumption(): Primary polymorphic operation returning local power draw for BuildingLeaf, and the recursive sum of children for ZoneComposite.
     • getTotalPowerConsumption(): Non-abstract convenience method defined on ZoneComponent delegating directly to getPowerConsumption().
     • add(), remove(), getChildren(): Composite child management operations. Leaf nodes throw UnsupportedOperationException to enforce structural safety, while ZoneComposite validates against null references, self-addition, and circular hierarchy loops.
@@ -402,7 +415,7 @@ Complete Package File Manifest (backend/src/main/java/com/smartcity/pattern/comp
 
 4. Part C — Escalation of Citizen Complaints
 Scenario Description: When a resident submits a complaint, the system should escalate it from local staff to supervisors to city managers depending on severity.
-4.1 C.1 Identification & Architectural Justification
+Part C.1: Identification & Architectural Justification (3 Marks)
 Selected Design Pattern: Chain of Responsibility Design Pattern (Behavioral GoF Pattern)
 To manage the dynamic escalation of citizen grievances in SmartCity360, I selected the Chain of Responsibility Design Pattern (Behavioral GoF; Gamma et al., 1994).
 My Architectural Justifications:
@@ -412,7 +425,7 @@ The resident submitting a grievance is completely decoupled from the municipal a
 The Chain of Responsibility decouples the sender from the receivers through runtime object composition. In the core SmartCity360 platform, ComplaintChainFactory assembles a sequential 5-tier escalation pipeline. Because handlers are linked via the setNext() delegation template, the architecture provides strong extensibility: as a planned operational extension during civil emergencies or severe weather alerts, a specialized handler (such as a proposed EmergencyResponseHandler) could be prepended to the handler chain without altering existing handler classes or modifying client servlet invocation logic.
 3. Single Responsibility Principle (SRP) (Martin, 2008):
 Each administrative level (Local Staff, Area Supervisors, City Manager) is encapsulated in its own discrete class, containing strictly its own resolution thresholds, authority limits, and routing decisions.
-4.2 C.2 Mechanism of Decoupled Request Handling & Safe Triage
+Part C.2: Mechanism of Decoupled Request Handling & Safe Triage (4 Marks)
 The Chain of Responsibility decouples request execution through sequential successor delegation, augmented by a safe triage validation layer:
 1. Abstract Base Handler (ComplaintHandler):
 Maintains a protected reference to the successor handler (nextHandler) and declares the template processing contract:
@@ -447,7 +460,7 @@ Key Architectural Elements & Specifications to Include:
 • Severity Enum: SeverityLevel (LOW, MEDIUM, HIGH, CRITICAL, UNASSIGNED)
 • UML Relationships: Generalization from ComplaintHandler to all concrete handlers; Unidirectional self-association (ComplaintHandler has 0..1 nextHandler: ComplaintHandler); Dependency on ComplaintTicket
 	Figure 4.1: UML Class Diagram — Multi-Tier Complaint Escalation Chain of Responsibility — Class hierarchy demonstrating decoupled request processing, linear handler chaining, and encapsulating the ticket payload.
-4.3 C.3 Evaluation of Flexibility, Traceability, Benefits & Trade-offs
+Part C.3: Evaluation of Flexibility & Traceability in Complaint Handling (8 Marks)
 1. Architectural Benefits:
 • Enhanced Flexibility & Modularity: Administrative chains can be instantiated and configured per department (e.g., Police Chain, Public Works Chain) using specialized factory builders without touching client controllers.
 • Elimination of Monolithic Branching: Completely removes giant switch-case blocks inside complaint controllers that violate the Open/Closed Principle.
@@ -497,7 +510,7 @@ Complete Package File Manifest (backend/src/main/java/com/smartcity/pattern/chai
 
 5. Part D — Efficient Management of Smart Street Lights
 Scenario Description: The city uses thousands of smart streetlights with identical behavior and configuration but different locations. The system must minimize memory usage.
-5.1 D.1 Identification & Architectural Justification
+Part D.1: Identification & Architectural Justification (3 Marks)
 Selected Design Pattern: Flyweight Design Pattern (Structural GoF Pattern; Gamma et al., 1994)
 To solve the severe memory scalability bottleneck presented by managing 25,000 smart streetlights in Metropolis Neo-Prime, I selected the Flyweight Design Pattern (Structural GoF).
 My Architectural Justifications:
@@ -505,7 +518,7 @@ My Architectural Justifications:
 Instantiating 25,000 heavy, independent Java objects causes severe heap memory fragmentation, excessive garbage collection pauses, and potential Out-Of-Memory (OOM) crashes. In reality, thousands of streetlights share identical hardware specifications (model name, lamp type, wattage, lumen capacity, color temperature, and firmware version). The Flyweight pattern shares immutable hardware metadata across instances, storing shared data only once in memory.
 2. Clean Separation of State Mutability:
 Decouples static, hardware-level properties from dynamic, location-dependent properties, allowing municipal telemetry servers to manage massive IoT fleets within minimal RAM boundaries.
-5.2 D.2 Handling Shared Intrinsic vs Unique Extrinsic State
+Part D.2: Mechanism of Shared (Intrinsic) & Unique (Extrinsic) Properties (4 Marks)
 In my Flyweight architecture, I cleanly partitioned object state into two distinct boundaries:
 1. Shared Intrinsic State (Immutable):
 • Definition: Constant, context-independent data shared across all streetlights of a specific model.
@@ -532,7 +545,7 @@ Key Architectural Elements & Specifications to Include:
 • Client / Context Class: StreetLight (Extrinsic state: poleId: String, latitude: double, longitude: double, currentBrightness: int, status: String, profile: LightModelProfile; operations: turnOn(): void, turnOff(): void, dim(level: int): void, reportStatus(): String)
 • UML Relationships: Dependency from StreetLight to StreetLightFactory; Unidirectional association from StreetLight to shared LightModelProfile; Flyweight Factory aggregates the pool of LightModelProfile objects
 	Figure 5.1: UML Class Diagram — Smart Streetlight Flyweight Pattern Architecture — Structural design separating immutable intrinsic hardware specifications from mutable extrinsic spatial coordinates.
-5.3 D.3 Quantitative Memory & Performance Impact Analysis
+Part D.3: Performance Analysis & Scaling to Tens of Thousands of Objects (8 Marks)
 To evaluate the Flyweight pattern with scientific rigor, I analyzed the memory architecture of managing 25,000 smart streetlight entities in Metropolis Neo-Prime, comparing the theoretical model with empirical measurements on a 64-bit Java HotSpot Virtual Machine with Compressed OOPs enabled (-XX:+UseCompressedOops) (Oracle, 2024):
 1. Analytical Object Layout Model (Matching FlyweightBenchmark.java Constants):
 • NaiveHeavyStreetlight (Without Flyweight):
@@ -592,7 +605,7 @@ Complete Package File Manifest (backend/src/main/java/com/smartcity/pattern/flyw
 
 6. Part E — Interpreting City Policies Defined in DSL
 Scenario Description: The city’s operational rules (e.g., noise limits, parking hours) are defined in a mini-language that must be parsed and evaluated dynamically by the system.
-6.1 E.1 Identification & Architectural Justification
+Part E.1: Identification & Architectural Justification (3 Marks)
 Selected Design Pattern: Interpreter Design Pattern (Behavioral GoF Pattern)
 To parse and evaluate municipal ordinances authored in a mini-language, I selected the Interpreter Design Pattern (Behavioral GoF; Gamma et al., 1994).
 My Architectural Justifications:
@@ -600,10 +613,10 @@ My Architectural Justifications:
 Evaluating administrator-authored rules via general-purpose scripting engines (such as JavaScript eval() or Groovy scripts) introduces substantial security risks, including arbitrary code execution vulnerabilities. The restricted domain-specific language reduces the attack surface for arbitrary code execution by limiting evaluation to a controlled grammar and predefined operations (Gamma et al., 1994). Rule evaluation is strictly confined to the defined grammar's AST nodes and variable lookup operations without access to reflection, class loaders, file I/O, or OS-level system calls. However, it does not eliminate all security risks and must be supported by input validation, authorization checks, and appropriate resource limits (Martin, 2008).
 2. Direct Mapping of Grammar Rules to Object Hierarchies:
 Each grammatical production rule (terminal expressions, comparison operators, and boolean logical conjunctions) maps directly to a discrete class, making grammar extensions straightforward.
-6.2 E.2 UML Class Diagram & Mechanism of the DSL Interpreter Pattern
+Part E.2: Mechanism of the DSL Interpreter Pattern (4 Marks)
 In my implementation, the Interpreter pattern is structured around three core elements as demonstrated in the UML Class Diagram:
 1. State Context (PolicyContext):
-Maintains runtime telemetry variables and sensor data (e.g., NOISE_LEVEL = 78.5, CURRENT_HOUR = 23, AIR_QUALITY_INDEX = 142.0) against which rules are interpreted in a case-insensitive, type-safe manner.
+Maintains runtime telemetry variables and sensor data (e.g., NOISE_LEVEL = 78.5, CURRENT_HOUR = 23, AIR_QUALITY_AQI = 142.0) against which rules are interpreted in a case-insensitive, type-safe manner.
 2. Abstract Expression Interface (Expression):
 Declares the fundamental interpretation contract:
     public interface Expression {
@@ -628,7 +641,7 @@ Key Architectural Elements & Specifications to Include:
 • Context Class: PolicyContext (symbol table: lookup(variableName: String): Object, set(variableName: String, value: Object): void; encapsulates runtime sensor data)
 • UML Relationships: Realization of Expression by TerminalExpression, AndExpression, OrExpression; Composite aggregation of Expression instances within AndExpression and OrExpression
 	Figure 6.1: UML Class Diagram — Municipal Policy DSL Grammar & Interpreter Pattern — Abstract Syntax Tree grammar hierarchy demonstrating composite non-terminal Boolean operations and terminal relational evaluations.
-6.3 E.3 Critical Assessment: Rule Updates, Extensibility & Security
+Part E.3: Critical Assessment of Rule Updates & Extensibility (8 Marks)
 1. Dynamic Rule Updates & Safe Concurrent Replacement:
 Municipal regulations evolve frequently (such as modifying night-time noise curfew thresholds or tightening particulate limits). In SmartCity360, policies are persisted as declarative DSL strings in the MySQL database. When an administrator updates a policy via the web dashboard or POST /api/policies, the updated rule string is saved to the database. Because DslPolicyParser and the resulting AST expressions are completely stateless and instantiated on-demand per request during POST /api/policies/evaluate, subsequent incoming telemetry evaluations immediately parse and interpret the new rule string. This ensures safe concurrent rule replacement without shared mutable state across HTTP threads, eliminating the need to recompile Java bytecode or restart the servlet container.
 2. Empirical Benchmark Evidence & Methodology:
@@ -681,7 +694,7 @@ Complete Package File Manifest (backend/src/main/java/com/smartcity/pattern/inte
 	Listing 6.1: Production Source Code Implementation Screenshot — Municipal Policy DSL Grammar Interpreter — backend/src/main/java/com/smartcity/pattern/interpreter/DslPolicyParser.java
 
 
-7. PART F — FINAL PROJECT DEMONSTRATION, VIVA DEFENSE & DOCUMENTATION
+7. PART F — FINAL PROJECT DEMONSTRATION, VIVA DEFENSE & DOCUMENTATION (25 MARKS)
 7.1 Overall System Architecture & Multi-Tier Enterprise Design
 I designed SmartCity360 as a modular, four-tier municipal management platform following enterprise layering principles (Fowler, 2002):
 1. Client Presentation Tier:
@@ -756,7 +769,9 @@ Anti-Pattern
 	
 
 7.3 Empirical Automated Test Execution Results (35/35 PASS - 100% Rate)
-To provide automated verification of functional requirements across all five implemented design patterns, the comprehensive test suite was executed against the codebase via com.smartcity.test.ComprehensiveTestSuite on an OpenJDK 17 64-bit Server VM (Windows 11 amd64). All 35 automated test cases executed to completion with zero failures or errors (100.0% pass rate across Decorator, Composite, Chain of Responsibility, Flyweight, and Interpreter subsystems). While automated unit and integration tests verify specified functional contracts, edge-case assertions, and exception handling, they validate design pattern compliance rather than serving as proof of overall operational production reliability.
+To provide automated verification of functional requirements across all five implemented design patterns, the comprehensive test suite was executed against the codebase via com.smartcity.test.ComprehensiveTestSuite on an OpenJDK 17 64-bit Server VM (Windows 11 amd64). All 35 automated test cases executed to completion with zero failures or errors (100.0% pass rate across Decorator, Composite, Chain of Responsibility, Flyweight, and Interpreter subsystems).
+
+Architectural Test Runner Design Rationale: com.smartcity.test.ComprehensiveTestSuite was purposefully engineered as an autonomous, zero-dependency test execution harness. By avoiding external testing framework bindings (such as JUnit or TestNG), the test suite guarantees 100% turnkey portability and immediate reproducibility on any clean OpenJDK 17 evaluation machine without requiring Maven plugin configuration, surefire plugins, or internet-based JAR downloads. It enforces strict contract assertions, isolates pattern state, and aggregates test statistics directly consumed by CliBridge and the Next.js Test Center dashboard. While automated unit and integration tests verify specified functional contracts, edge-case assertions, and exception handling, they validate design pattern compliance rather than serving as proof of overall operational production reliability.
 Subsystem / Pattern
 	Tests
 	Passed

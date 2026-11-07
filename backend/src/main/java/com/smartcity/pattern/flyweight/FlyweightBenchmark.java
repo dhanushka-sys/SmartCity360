@@ -67,19 +67,17 @@ public class FlyweightBenchmark {
         int[] temps = {4000, 5000, 3000};
         String firmware = "v3.2.1-prod";
 
-        int bytesPerNaiveObject = 288;
-        int bytesPerFlyweightContext = 80;
-        int bytesPerSharedProfile = 288;
+        int bytesPerNaiveObject = 288; // 64 B shallow + 224 B retained strings
+        int bytesPerFlyweightContext = 80; // 48 B shallow + 32 B unique pole ID
+        int bytesPerSharedProfile = 208; // 40 B shallow + 168 B shared strings (JOL layout model)
         res.naiveEstimatedBytes = (long) count * bytesPerNaiveObject;
         res.flyweightEstimatedBytes = ((long) count * bytesPerFlyweightContext) + (3L * bytesPerSharedProfile);
         res.analyticalSavingsPercent = ((double) (res.naiveEstimatedBytes - res.flyweightEstimatedBytes) / res.naiveEstimatedBytes) * 100.0;
         res.savingsPercent = res.analyticalSavingsPercent;
 
-        MemoryMXBean mem = ManagementFactory.getMemoryMXBean();
-
         // 1. Measure Naive Heavy allocation in isolation
         settleGc();
-        long memBeforeNaive = mem.getHeapMemoryUsage().getUsed();
+        long memBeforeNaive = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
         long t0 = System.currentTimeMillis();
         NaiveHeavyStreetlight[] naiveArray = new NaiveHeavyStreetlight[count];
         for (int i = 0; i < count; i++) {
@@ -92,7 +90,8 @@ public class FlyweightBenchmark {
             );
         }
         res.naiveTimeMs = System.currentTimeMillis() - t0;
-        long memAfterNaive = mem.getHeapMemoryUsage().getUsed();
+        settleGc();
+        long memAfterNaive = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
         res.naiveAllocatedBytes = Math.max(1, memAfterNaive - memBeforeNaive);
 
         // Discard naive array and settle GC before measuring Flyweight
@@ -101,7 +100,8 @@ public class FlyweightBenchmark {
 
         // 2. Measure Flyweight pattern allocation in isolation
         StreetlightProfileFactory.clear();
-        long memBeforeFly = mem.getHeapMemoryUsage().getUsed();
+        settleGc();
+        long memBeforeFly = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
         long t1 = System.currentTimeMillis();
         StreetlightContext[] flyArray = new StreetlightContext[count];
         for (int i = 0; i < count; i++) {
@@ -117,7 +117,8 @@ public class FlyweightBenchmark {
             );
         }
         res.flyweightTimeMs = System.currentTimeMillis() - t1;
-        long memAfterFly = mem.getHeapMemoryUsage().getUsed();
+        settleGc();
+        long memAfterFly = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
         res.flyweightAllocatedBytes = Math.max(1, memAfterFly - memBeforeFly);
         res.flyweightPoolSize = StreetlightProfileFactory.getFlyweightCount();
 
@@ -142,5 +143,23 @@ public class FlyweightBenchmark {
                 break;
             }
         }
+    }
+
+    public static void main(String[] args) {
+        System.out.println("=== SmartCity360 Flyweight Benchmark Suite ===");
+        int count = args.length > 0 ? Integer.parseInt(args[0]) : 25000;
+        BenchmarkResult r = runBenchmark(count);
+        System.out.println("Object Count: " + r.objectCount);
+        System.out.printf("Analytical Layout: Naive=%.2f MB, Flyweight=%.2f MB (Savings: %.1f%%)%n",
+                r.naiveEstimatedBytes / (1024.0 * 1024.0),
+                r.flyweightEstimatedBytes / (1024.0 * 1024.0),
+                r.analyticalSavingsPercent);
+        System.out.printf("Measured Live Heap: Naive=%.2f MB, Flyweight=%.2f MB (Savings: %.1f%%)%n",
+                r.naiveAllocatedBytes / (1024.0 * 1024.0),
+                r.flyweightAllocatedBytes / (1024.0 * 1024.0),
+                r.measuredHeapSavingsPercent);
+        System.out.printf("Execution Time: Naive=%d ms, Flyweight=%d ms%n", r.naiveTimeMs, r.flyweightTimeMs);
+        System.out.println("Flyweight Pool Size: " + r.flyweightPoolSize);
+        System.out.println("JVM Info: " + r.jvmInfo);
     }
 }

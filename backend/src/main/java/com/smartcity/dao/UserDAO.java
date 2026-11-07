@@ -31,6 +31,14 @@ public class UserDAO {
     private static final Map<String, UserSession> activeTokens = new ConcurrentHashMap<>();
     private static final SecureRandom secureRandom = new SecureRandom();
 
+    /**
+     * Architectural Security Design Note:
+     * SHA-256 with static application-level salting is utilized here using standard JDK libraries
+     * to provide a self-contained, zero-dependency educational authentication engine.
+     * In an enterprise production deployment, this should be upgraded to an adaptive work-factor
+     * key-stretching function (such as BCrypt, Argon2id, or PBKDF2) with random per-user salts
+     * to resist GPU-accelerated dictionary and rainbow table attacks.
+     */
     public static String hashPassword(String password) {
         if (password == null) return null;
         try {

@@ -1,0 +1,428 @@
+import os
+from playwright.sync_api import sync_playwright
+
+def generate_diagram():
+    svg_dir = os.path.join(os.path.dirname(__file__), "SmartCity360_UML")
+    os.makedirs(svg_dir, exist_ok=True)
+    svg_path = os.path.join(svg_dir, "08_system_class_diagram.svg")
+    png_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "screenshots", "figure_7_5_system_class_diagram.png")
+    os.makedirs(os.path.dirname(png_path), exist_ok=True)
+
+    svg_content = """<svg width="1240" height="880" viewBox="0 0 1240 880" xmlns="http://www.w3.org/2000/svg" style="background:#ffffff; font-family:'Segoe UI', -apple-system, BlinkMacSystemFont, Arial, sans-serif;">
+  <defs>
+    <!-- Arrowhead markers -->
+    <marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <polygon points="0 0, 7 4, 0 8" fill="#1e3a8a"/>
+    </marker>
+    <marker id="realize" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto">
+      <polygon points="0 0, 9 5, 0 10" fill="#ffffff" stroke="#1e3a8a" stroke-width="1.5"/>
+    </marker>
+    <marker id="inherit" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto">
+      <polygon points="0 0, 9 5, 0 10" fill="#ffffff" stroke="#0f294a" stroke-width="1.5"/>
+    </marker>
+    <marker id="diamond" markerWidth="12" markerHeight="8" refX="0" refY="4" orient="auto">
+      <polygon points="0 4, 6 0, 12 4, 6 8" fill="#ffffff" stroke="#0f294a" stroke-width="1.5"/>
+    </marker>
+    <marker id="comp-diamond" markerWidth="12" markerHeight="8" refX="0" refY="4" orient="auto">
+      <polygon points="0 4, 6 0, 12 4, 6 8" fill="#0f294a" stroke="#0f294a" stroke-width="1.5"/>
+    </marker>
+  </defs>
+
+  <!-- Canvas Border -->
+  <rect x="8" y="8" width="1224" height="864" rx="8" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+
+  <!-- Diagram Title Header -->
+  <rect x="8" y="8" width="1224" height="42" rx="8" fill="#0f294a"/>
+  <text x="620" y="34" text-anchor="middle" font-size="14" font-weight="bold" fill="#ffffff" letter-spacing="0.5">SMARTCITY360 ENTERPRISE WHOLE-SYSTEM UML CLASS DIAGRAM (FIVE GOF PATTERN SYNERGY)</text>
+
+  <!-- ========================================== -->
+  <!-- TOP TIER: CONTROLLER & API GATEWAY SUBSYSTEM -->
+  <!-- ========================================== -->
+  <rect x="25" y="60" width="1190" height="95" rx="6" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1.2" stroke-dasharray="4,2"/>
+  <text x="40" y="78" font-size="10.5" font-weight="bold" fill="#0f294a">CONTROLLER GATEWAY &amp; REST HTTP ROUTING TIER (com.smartcity.controller)</text>
+
+  <!-- CliBridge -->
+  <rect x="40" y="90" width="280" height="55" rx="5" fill="#ffffff" stroke="#1e3a8a" stroke-width="1.5"/>
+  <rect x="40" y="90" width="280" height="18" rx="5" fill="#1e3a8a"/>
+  <text x="180" y="103" text-anchor="middle" font-size="9" font-weight="bold" fill="#ffffff">CliBridge</text>
+  <text x="50" y="122" font-size="7.5" fill="#334155">+ main(args: String[]): void</text>
+  <text x="50" y="135" font-size="7.5" fill="#334155">+ handleStreams(), handleZones(), handleComplaints(), handleBenchmark()</text>
+
+  <!-- REST Servlets Box -->
+  <rect x="350" y="90" width="850" height="55" rx="5" fill="#ffffff" stroke="#1e3a8a" stroke-width="1.5"/>
+  <rect x="350" y="90" width="850" height="18" rx="5" fill="#1e3a8a"/>
+  <text x="775" y="103" text-anchor="middle" font-size="9" font-weight="bold" fill="#ffffff">HttpServlet Subsystem Endpoints (Java Servlet API 4.0 - javax.servlet)</text>
+  <text x="365" y="125" font-size="8" fill="#1e293b">• StreamServlet (/api/streams)</text>
+  <text x="535" y="125" font-size="8" fill="#1e293b">• ZoneServlet (/api/zones)</text>
+  <text x="690" y="125" font-size="8" fill="#1e293b">• ComplaintServlet (/api/complaints)</text>
+  <text x="880" y="125" font-size="8" fill="#1e293b">• StreetlightServlet (/api/streetlights)</text>
+  <text x="1065" y="125" font-size="8" fill="#1e293b">• PolicyServlet (/api/policies)</text>
+
+  <!-- ========================================== -->
+  <!-- MODULE A: DECORATOR PATTERN (TOP LEFT) -->
+  <!-- ========================================== -->
+  <rect x="25" y="170" width="370" height="325" rx="6" fill="#f8fafc" stroke="#3b82f6" stroke-width="1.5"/>
+  <rect x="25" y="170" width="370" height="24" rx="6" fill="#3b82f6"/>
+  <text x="210" y="186" text-anchor="middle" font-size="9.5" font-weight="bold" fill="#ffffff">PART A: DECORATOR PATTERN (DATA STREAM SECURITY)</text>
+
+  <!-- <<interface>> StreamData -->
+  <rect x="135" y="205" width="165" height="60" rx="4" fill="#ffffff" stroke="#1e3a8a" stroke-width="1.5"/>
+  <rect x="135" y="205" width="165" height="18" rx="4" fill="#1e3a8a"/>
+  <text x="217" y="217" text-anchor="middle" font-size="8" font-style="italic" fill="#ffffff">&lt;&lt;interface&gt;&gt; StreamData</text>
+  <text x="145" y="235" font-size="7.5" fill="#1e293b">+ getData(): String</text>
+  <text x="145" y="247" font-size="7.5" fill="#1e293b">+ getPayloadBytes(): byte[]</text>
+  <text x="145" y="259" font-size="7.5" fill="#1e293b">+ getPayloadSize(): int</text>
+
+  <!-- EnergyStreamData -->
+  <rect x="35" y="295" width="145" height="55" rx="4" fill="#ffffff" stroke="#1e3a8a" stroke-width="1.2"/>
+  <rect x="35" y="295" width="145" height="16" rx="4" fill="#0f294a"/>
+  <text x="107" y="307" text-anchor="middle" font-size="8" font-weight="bold" fill="#ffffff">EnergyStreamData</text>
+  <text x="42" y="323" font-size="7" fill="#475569">- meterId: String, kw: double</text>
+  <text x="42" y="335" font-size="7" fill="#1e293b">+ getData(): String (Raw JSON)</text>
+  <text x="42" y="345" font-size="7" fill="#059669">Invariant: 72 B = 72 B</text>
+
+  <!-- StreamDataDecorator -->
+  <rect x="225" y="295" width="160" height="55" rx="4" fill="#ffffff" stroke="#1e3a8a" stroke-width="1.2"/>
+  <rect x="225" y="295" width="160" height="16" rx="4" fill="#1e3a8a"/>
+  <text x="305" y="307" text-anchor="middle" font-size="8" font-style="italic" fill="#ffffff">&lt;&lt;abstract&gt;&gt; StreamDataDecorator</text>
+  <text x="232" y="323" font-size="7" fill="#475569"># wrappee: StreamData</text>
+  <text x="232" y="335" font-size="7" fill="#1e293b">+ StreamDataDecorator(w: StreamData)</text>
+  <text x="232" y="345" font-size="7" fill="#1e293b">+ getData(): String</text>
+
+  <!-- Decorator Realization/Aggregation lines -->
+  <line x1="107" y1="295" x2="165" y2="265" stroke="#1e3a8a" stroke-width="1.2" stroke-dasharray="3,3" marker-end="url(#realize)"/>
+  <line x1="285" y1="295" x2="250" y2="265" stroke="#1e3a8a" stroke-width="1.2" stroke-dasharray="3,3" marker-end="url(#realize)"/>
+  <!-- Aggregation loop -->
+  <path d="M 385 320 L 400 320 L 400 235 L 300 235" fill="none" stroke="#0f294a" stroke-width="1.2" marker-start="url(#diamond)"/>
+
+  <!-- Concrete Decorators -->
+  <rect x="35" y="375" width="105" height="55" rx="4" fill="#ffffff" stroke="#1e3a8a" stroke-width="1"/>
+  <text x="87" y="390" text-anchor="middle" font-size="7.5" font-weight="bold" fill="#0f294a">CompressionDec</text>
+  <text x="42" y="405" font-size="6.8" fill="#475569">- GZIP Deflate</text>
+  <text x="42" y="417" font-size="6.8" fill="#1e293b">+ getPayloadSize()</text>
+  <text x="42" y="427" font-size="6.8" fill="#059669">Invariant: 191 B</text>
+
+  <rect x="150" y="375" width="115" height="55" rx="4" fill="#ffffff" stroke="#1e3a8a" stroke-width="1"/>
+  <text x="207" y="390" text-anchor="middle" font-size="7.5" font-weight="bold" fill="#0f294a">EncryptionDec</text>
+  <text x="156" y="405" font-size="6.8" fill="#475569">- AES-256-GCM AEAD</text>
+  <text x="156" y="417" font-size="6.8" fill="#1e293b">+ getPayloadSize()</text>
+  <text x="156" y="427" font-size="6.8" fill="#059669">Invariant: 356 B</text>
+
+  <rect x="275" y="375" width="110" height="55" rx="4" fill="#ffffff" stroke="#1e3a8a" stroke-width="1"/>
+  <text x="330" y="390" text-anchor="middle" font-size="7.5" font-weight="bold" fill="#0f294a">AuthenticationDec</text>
+  <text x="281" y="405" font-size="6.8" fill="#475569">- HMAC-SHA256</text>
+  <text x="281" y="417" font-size="6.8" fill="#1e293b">+ verify(): boolean</text>
+  <text x="281" y="427" font-size="6.8" fill="#059669">Invariant: 468 B</text>
+
+  <line x1="87" y1="375" x2="250" y2="350" stroke="#0f294a" stroke-width="1" marker-end="url(#inherit)"/>
+  <line x1="207" y1="375" x2="295" y2="350" stroke="#0f294a" stroke-width="1" marker-end="url(#inherit)"/>
+  <line x1="330" y1="375" x2="335" y2="350" stroke="#0f294a" stroke-width="1" marker-end="url(#inherit)"/>
+  <text x="210" y="450" text-anchor="middle" font-size="7.5" font-weight="bold" fill="#1e3a8a">Pipeline: Raw(72B) -&gt; GZIP(191B) -&gt; AES(356B) -&gt; HMAC(468B)</text>
+  <text x="210" y="462" text-anchor="middle" font-size="7.2" fill="#059669">Strict Invariant: getPayloadSize() == getPayloadBytes().length</text>
+
+  <!-- ========================================== -->
+  <!-- MODULE B: COMPOSITE PATTERN (TOP RIGHT) -->
+  <!-- ========================================== -->
+  <rect x="415" y="170" width="400" height="325" rx="6" fill="#f8fafc" stroke="#10b981" stroke-width="1.5"/>
+  <rect x="415" y="170" width="400" height="24" rx="6" fill="#10b981"/>
+  <text x="615" y="186" text-anchor="middle" font-size="9.5" font-weight="bold" fill="#ffffff">PART B: COMPOSITE PATTERN (URBAN ZONE HIERARCHY)</text>
+
+  <!-- <<interface>> ZoneComponent -->
+  <rect x="525" y="205" width="180" height="60" rx="4" fill="#ffffff" stroke="#047857" stroke-width="1.5"/>
+  <rect x="525" y="205" width="180" height="18" rx="4" fill="#047857"/>
+  <text x="615" y="217" text-anchor="middle" font-size="8" font-style="italic" fill="#ffffff">&lt;&lt;interface&gt;&gt; ZoneComponent</text>
+  <text x="532" y="235" font-size="7.5" fill="#1e293b">+ executeCommand(cmd: ZoneCommand): void</text>
+  <text x="532" y="247" font-size="7.5" fill="#1e293b">+ getPowerConsumption(): double</text>
+  <text x="532" y="259" font-size="7.5" fill="#1e293b">+ add(c: ZoneComponent), remove(c)</text>
+
+  <!-- BuildingLeaf -->
+  <rect x="430" y="295" width="165" height="75" rx="4" fill="#ffffff" stroke="#047857" stroke-width="1.2"/>
+  <rect x="430" y="295" width="165" height="16" rx="4" fill="#0f294a"/>
+  <text x="512" y="307" text-anchor="middle" font-size="8" font-weight="bold" fill="#ffffff">BuildingLeaf (Leaf)</text>
+  <text x="438" y="323" font-size="7" fill="#475569">- baselinePowerKw: double, status: String</text>
+  <text x="438" y="335" font-size="7" fill="#1e293b">+ executeCommand(cmd: ZoneCommand): void</text>
+  <text x="438" y="347" font-size="7" fill="#1e293b">+ getPowerConsumption(): double</text>
+  <text x="438" y="359" font-size="7" fill="#dc2626">+ add(c): UnsupportedOperationException</text>
+
+  <!-- ZoneComposite -->
+  <rect x="630" y="295" width="175" height="75" rx="4" fill="#ffffff" stroke="#047857" stroke-width="1.2"/>
+  <rect x="630" y="295" width="175" height="16" rx="4" fill="#047857"/>
+  <text x="717" y="307" text-anchor="middle" font-size="8" font-weight="bold" fill="#ffffff">ZoneComposite (Composite)</text>
+  <text x="638" y="323" font-size="7" fill="#475569">- children: List&lt;ZoneComponent&gt;</text>
+  <text x="638" y="335" font-size="7" fill="#1e293b">+ executeCommand(cmd: ZoneCommand): void</text>
+  <text x="638" y="347" font-size="7" fill="#1e293b">+ getPowerConsumption(): double (Rollup)</text>
+  <text x="638" y="359" font-size="7" fill="#059669">+ add(c: ZoneComponent): with cycle check</text>
+
+  <!-- ZoneCommand Enum -->
+  <rect x="480" y="390" width="270" height="65" rx="4" fill="#ffffff" stroke="#0f294a" stroke-width="1.2"/>
+  <rect x="480" y="390" width="270" height="16" rx="4" fill="#0f294a"/>
+  <text x="615" y="402" text-anchor="middle" font-size="8" font-weight="bold" fill="#ffffff">&lt;&lt;enumeration&gt;&gt; ZoneCommand</text>
+  <text x="490" y="418" font-size="7.5" fill="#1e293b">• SHUTDOWN_POWER ("shutdownPower")</text>
+  <text x="490" y="430" font-size="7.5" fill="#1e293b">• RESTORE_POWER ("restorePower")</text>
+  <text x="490" y="442" font-size="7.5" fill="#1e293b">• EMERGENCY_ISOLATE ("emergencyIsolate")</text>
+  <text x="630" y="442" font-size="7.5" font-weight="bold" fill="#059669">• REPORT_USAGE ("reportUsage")</text>
+
+  <line x1="512" y1="295" x2="570" y2="265" stroke="#047857" stroke-width="1.2" stroke-dasharray="3,3" marker-end="url(#realize)"/>
+  <line x1="717" y1="295" x2="660" y2="265" stroke="#047857" stroke-width="1.2" stroke-dasharray="3,3" marker-end="url(#realize)"/>
+  <!-- Composite Aggregation loop -->
+  <path d="M 805 330 L 820 330 L 820 235 L 705 235" fill="none" stroke="#0f294a" stroke-width="1.2" marker-start="url(#comp-diamond)"/>
+  <text x="750" y="248" font-size="7" fill="#0f294a">0..*</text>
+
+  <text x="615" y="475" text-anchor="middle" font-size="7.5" font-weight="bold" fill="#047857">Topography: City -&gt; District -&gt; Street -&gt; BuildingLeaf [O(M) DFS Cascade]</text>
+
+  <!-- ========================================== -->
+  <!-- MODULE D: FLYWEIGHT PATTERN (TOP FAR-RIGHT) -->
+  <!-- ========================================== -->
+  <rect x="835" y="170" width="380" height="325" rx="6" fill="#f8fafc" stroke="#f59e0b" stroke-width="1.5"/>
+  <rect x="835" y="170" width="380" height="24" rx="6" fill="#f59e0b"/>
+  <text x="1025" y="186" text-anchor="middle" font-size="9.5" font-weight="bold" fill="#ffffff">PART D: FLYWEIGHT PATTERN (25,000 SMART STREETLIGHTS)</text>
+
+  <!-- StreetlightProfileFactory -->
+  <rect x="850" y="205" width="350" height="60" rx="4" fill="#ffffff" stroke="#b45309" stroke-width="1.5"/>
+  <rect x="850" y="205" width="350" height="18" rx="4" fill="#b45309"/>
+  <text x="1025" y="217" text-anchor="middle" font-size="8" font-weight="bold" fill="#ffffff">StreetlightProfileFactory (Flyweight Factory)</text>
+  <text x="860" y="235" font-size="7.5" fill="#475569">- pool: ConcurrentHashMap&lt;String, SharedStreetlightProfile&gt;</text>
+  <text x="860" y="247" font-size="7.5" fill="#1e293b">+ getProfile(model, type, wattage, lumens, temp, firmware): SharedStreetlightProfile</text>
+  <text x="860" y="259" font-size="7.5" fill="#059669">+ getFlyweightCount(): int [Exactly 3 distinct profiles for 25,000 poles]</text>
+
+  <!-- SharedStreetlightProfile (Intrinsic) -->
+  <rect x="850" y="290" width="170" height="85" rx="4" fill="#ffffff" stroke="#b45309" stroke-width="1.2"/>
+  <rect x="850" y="290" width="170" height="16" rx="4" fill="#0f294a"/>
+  <text x="935" y="302" text-anchor="middle" font-size="8" font-weight="bold" fill="#ffffff">SharedStreetlightProfile (Intrinsic)</text>
+  <text x="858" y="318" font-size="7" fill="#475569">- model, lampType, firmware: String</text>
+  <text x="858" y="330" font-size="7" fill="#475569">- wattage, maxLumens, colorTempK: int</text>
+  <text x="858" y="342" font-size="7" fill="#1e293b">+ render(poleId, lat, lng, b, s): String</text>
+  <text x="858" y="356" font-size="7" font-weight="bold" fill="#059669">JOL Size: 208 Bytes (Shared: 624 B total)</text>
+  <text x="858" y="368" font-size="6.8" fill="#1e293b">Immutable &amp; Thread-Safe</text>
+
+  <!-- StreetlightContext (Extrinsic) -->
+  <rect x="1040" y="290" width="160" height="85" rx="4" fill="#ffffff" stroke="#b45309" stroke-width="1.2"/>
+  <rect x="1040" y="290" width="160" height="16" rx="4" fill="#b45309"/>
+  <text x="1120" y="302" text-anchor="middle" font-size="8" font-weight="bold" fill="#ffffff">StreetlightContext (Extrinsic)</text>
+  <text x="1048" y="318" font-size="7" fill="#475569">- poleId, status: String</text>
+  <text x="1048" y="330" font-size="7" fill="#475569">- latitude, longitude: double</text>
+  <text x="1048" y="342" font-size="7" fill="#475569">- profile: SharedStreetlightProfile</text>
+  <text x="1048" y="356" font-size="7" font-weight="bold" fill="#059669">JOL Size: 80 Bytes per Context</text>
+  <text x="1048" y="368" font-size="6.8" fill="#1e293b">+ display(): delegates to profile</text>
+
+  <!-- Flyweight relationship -->
+  <line x1="935" y1="265" x2="935" y2="290" stroke="#b45309" stroke-width="1.2" marker-end="url(#arrow)"/>
+  <line x1="1040" y1="330" x2="1020" y2="330" stroke="#0f294a" stroke-width="1.2" marker-start="url(#diamond)"/>
+
+  <!-- Benchmark Summary Box -->
+  <rect x="850" y="390" width="350" height="85" rx="4" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+  <text x="860" y="405" font-size="7.5" font-weight="bold" fill="#0f294a">Flyweight Memory &amp; Benchmark Metrics (25,000 Poles):</text>
+  <text x="860" y="420" font-size="7.2" fill="#334155">• Naive Unoptimized: 25,000 × 288 B = 7.20 MB (6.87 MiB)</text>
+  <text x="860" y="433" font-size="7.2" fill="#334155">• Flyweight Optimized: (25k × 80 B) + (3 × 208 B) = 2.00 MB (1.91 MiB)</text>
+  <text x="860" y="446" font-size="7.5" font-weight="bold" fill="#059669">• Analytical JOL Layout Savings: 72.2% Constant Reduction</text>
+  <text x="860" y="459" font-size="7.2" fill="#1e3a8a">• Measured Live Heap Delta (after GC): ~45.1% Live Heap Reduction</text>
+  <text x="860" y="470" font-size="7" fill="#475569">Mitigates Young-Gen GC Churn; Zero Stop-The-World Pauses</text>
+
+  <!-- ========================================== -->
+  <!-- MODULE C: CHAIN OF RESPONSIBILITY (BOTTOM LEFT) -->
+  <!-- ========================================== -->
+  <rect x="25" y="515" width="580" height="345" rx="6" fill="#f8fafc" stroke="#8b5cf6" stroke-width="1.5"/>
+  <rect x="25" y="515" width="580" height="24" rx="6" fill="#8b5cf6"/>
+  <text x="315" y="531" text-anchor="middle" font-size="9.5" font-weight="bold" fill="#ffffff">PART C: CHAIN OF RESPONSIBILITY (CITIZEN COMPLAINT ESCALATION)</text>
+
+  <!-- <<abstract>> ComplaintHandler -->
+  <rect x="220" y="550" width="200" height="65" rx="4" fill="#ffffff" stroke="#6d28d9" stroke-width="1.5"/>
+  <rect x="220" y="550" width="200" height="18" rx="4" fill="#6d28d9"/>
+  <text x="320" y="562" text-anchor="middle" font-size="8" font-style="italic" fill="#ffffff">&lt;&lt;abstract&gt;&gt; ComplaintHandler</text>
+  <text x="230" y="580" font-size="7.5" fill="#475569"># nextHandler: ComplaintHandler</text>
+  <text x="230" y="593" font-size="7.5" fill="#1e293b">+ setNext(n: ComplaintHandler): ComplaintHandler</text>
+  <text x="230" y="605" font-size="7.5" fill="#1e293b">+ handle(c: Complaint): ComplaintRoutingResult</text>
+
+  <!-- Successor Self-reference -->
+  <path d="M 420 580 L 435 580 L 435 560 L 420 560" fill="none" stroke="#6d28d9" stroke-width="1.2" marker-start="url(#diamond)"/>
+
+  <!-- Request & Result entities -->
+  <rect x="40" y="550" width="160" height="65" rx="4" fill="#ffffff" stroke="#0f294a" stroke-width="1.2"/>
+  <rect x="40" y="550" width="160" height="16" rx="4" fill="#0f294a"/>
+  <text x="120" y="562" text-anchor="middle" font-size="8" font-weight="bold" fill="#ffffff">Complaint (Request)</text>
+  <text x="48" y="580" font-size="7" fill="#475569">- ticketId, citizenId: String</text>
+  <text x="48" y="593" font-size="7" fill="#475569">- severity: SeverityLevel</text>
+  <text x="48" y="605" font-size="7" fill="#1e293b">+ getSeverity(): SeverityLevel</text>
+
+  <rect x="440" y="550" width="150" height="65" rx="4" fill="#ffffff" stroke="#0f294a" stroke-width="1.2"/>
+  <rect x="440" y="550" width="150" height="16" rx="4" fill="#0f294a"/>
+  <text x="515" y="562" text-anchor="middle" font-size="8" font-weight="bold" fill="#ffffff">ComplaintRoutingResult</text>
+  <text x="448" y="580" font-size="7" fill="#475569">- handled: boolean, status: String</text>
+  <text x="448" y="593" font-size="7" fill="#475569">- auditTrail: List&lt;AuditRecord&gt;</text>
+  <text x="448" y="605" font-size="7" font-weight="bold" fill="#059669">Chronological &amp; Immutable</text>
+
+  <!-- 5 Concrete Handlers in Line -->
+  <!-- 1. ValidationTriageHandler -->
+  <rect x="35" y="640" width="105" height="70" rx="4" fill="#ffffff" stroke="#dc2626" stroke-width="1.5"/>
+  <rect x="35" y="640" width="105" height="18" rx="4" fill="#dc2626"/>
+  <text x="87" y="652" text-anchor="middle" font-size="7" font-weight="bold" fill="#ffffff">ValidationTriageHandler</text>
+  <text x="40" y="670" font-size="6.8" font-weight="bold" fill="#dc2626">Safe Triage Layer</text>
+  <text x="40" y="682" font-size="6.5" fill="#1e293b">Intercepts NULL / BAD</text>
+  <text x="40" y="694" font-size="6.5" font-weight="bold" fill="#0f294a">Never Defaults to LOW</text>
+  <text x="40" y="704" font-size="6.2" fill="#475569">Status: VALIDATION_REQ</text>
+
+  <!-- 2. LocalStaffHandler -->
+  <rect x="150" y="640" width="100" height="70" rx="4" fill="#ffffff" stroke="#6d28d9" stroke-width="1.2"/>
+  <rect x="150" y="640" width="100" height="18" rx="4" fill="#6d28d9"/>
+  <text x="200" y="652" text-anchor="middle" font-size="7.5" font-weight="bold" fill="#ffffff">LocalStaffHandler</text>
+  <text x="156" y="670" font-size="6.8" font-weight="bold" fill="#047857">Severity: LOW</text>
+  <text x="156" y="682" font-size="6.5" fill="#1e293b">Local Field Dispatch</text>
+  <text x="156" y="694" font-size="6.5" fill="#475569">Status: ASSIGNED</text>
+  <text x="156" y="704" font-size="6.2" fill="#475569">Audits forward stamp</text>
+
+  <!-- 3. SupervisorHandler -->
+  <rect x="260" y="640" width="105" height="70" rx="4" fill="#ffffff" stroke="#6d28d9" stroke-width="1.2"/>
+  <rect x="260" y="640" width="105" height="18" rx="4" fill="#6d28d9"/>
+  <text x="312" y="652" text-anchor="middle" font-size="7.5" font-weight="bold" fill="#ffffff">SupervisorHandler</text>
+  <text x="266" y="670" font-size="6.8" font-weight="bold" fill="#d97706">Severity: MEDIUM</text>
+  <text x="266" y="682" font-size="6.5" fill="#1e293b">Escalated Allocation</text>
+  <text x="266" y="694" font-size="6.5" fill="#475569">Status: ESCALATED_SUP</text>
+  <text x="266" y="704" font-size="6.2" fill="#475569">Audits forward stamp</text>
+
+  <!-- 4. CityManagerHandler -->
+  <rect x="375" y="640" width="110" height="70" rx="4" fill="#ffffff" stroke="#6d28d9" stroke-width="1.2"/>
+  <rect x="375" y="640" width="110" height="18" rx="4" fill="#6d28d9"/>
+  <text x="430" y="652" text-anchor="middle" font-size="7.5" font-weight="bold" fill="#ffffff">CityManagerHandler</text>
+  <text x="381" y="670" font-size="6.8" font-weight="bold" fill="#dc2626">Severity: HIGH / CRIT</text>
+  <text x="381" y="682" font-size="6.5" fill="#1e293b">Executive Remediation</text>
+  <text x="381" y="694" font-size="6.5" fill="#475569">Status: EXEC_ESCALATION</text>
+  <text x="381" y="704" font-size="6.2" fill="#475569">Audits forward stamp</text>
+
+  <!-- 5. TerminalFallbackHandler -->
+  <rect x="495" y="640" width="100" height="70" rx="4" fill="#ffffff" stroke="#0f294a" stroke-width="1.2"/>
+  <rect x="495" y="640" width="100" height="18" rx="4" fill="#0f294a"/>
+  <text x="545" y="652" text-anchor="middle" font-size="7" font-weight="bold" fill="#ffffff">TerminalFallback</text>
+  <text x="500" y="670" font-size="6.8" font-weight="bold" fill="#64748b">Defensive Sentinel</text>
+  <text x="500" y="682" font-size="6.5" fill="#1e293b">Catches unhandled drops</text>
+  <text x="500" y="694" font-size="6.5" fill="#475569">Status: FALLBACK_ASSGN</text>
+  <text x="500" y="704" font-size="6.2" fill="#059669">Safeguard Active</text>
+
+  <!-- Handlers Inheritance Arrows -->
+  <line x1="87" y1="640" x2="260" y2="615" stroke="#0f294a" stroke-width="1" marker-end="url(#inherit)"/>
+  <line x1="200" y1="640" x2="290" y2="615" stroke="#0f294a" stroke-width="1" marker-end="url(#inherit)"/>
+  <line x1="312" y1="640" x2="320" y2="615" stroke="#0f294a" stroke-width="1" marker-end="url(#inherit)"/>
+  <line x1="430" y1="640" x2="350" y2="615" stroke="#0f294a" stroke-width="1" marker-end="url(#inherit)"/>
+  <line x1="545" y1="640" x2="380" y2="615" stroke="#0f294a" stroke-width="1" marker-end="url(#inherit)"/>
+
+  <!-- Delegation Sequence Arrows -->
+  <line x1="140" y1="675" x2="150" y2="675" stroke="#6d28d9" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="250" y1="675" x2="260" y2="675" stroke="#6d28d9" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="365" y1="675" x2="375" y2="675" stroke="#6d28d9" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="485" y1="675" x2="495" y2="675" stroke="#6d28d9" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Flow Explanation Box -->
+  <rect x="35" y="725" width="560" height="120" rx="4" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+  <text x="45" y="742" font-size="7.5" font-weight="bold" fill="#0f294a">Architectural Chain Guarantees &amp; Defensive Sentinel Rationale:</text>
+  <text x="45" y="757" font-size="7.2" fill="#334155">• Safe Triage Defense: ValidationTriageHandler actively validates ticket severity. Unrecognized/missing severities trigger</text>
+  <text x="55" y="769" font-size="7.2" font-weight="bold" fill="#dc2626">TRIAGE_DISPATCH_OFFICER (VALIDATION_REQUIRED) — NEVER defaulting to LOW (eliminating public safety hazards).</text>
+  <text x="45" y="783" font-size="7.2" fill="#334155">• TerminalFallbackHandler Reachability: Operates as an intentional defensive Null Object sentinel. In the default 4-tier chain it is</text>
+  <text x="55" y="795" font-size="7.2" fill="#475569">unreachable because tiers LOW..CRITICAL cover all valid inputs. It safeguards modular custom departmental sub-chains.</text>
+  <text x="45" y="809" font-size="7.2" fill="#334155">• Immutable Forward Chronological Audit Trail: Audit records contain ISO-8601 timestamps, routing stage, handler role, and</text>
+  <text x="55" y="821" font-size="7.2" font-weight="bold" fill="#059669">action taken. Exposed via Collections.unmodifiableList(auditTrail) to guarantee non-repudiation in municipal governance.</text>
+
+  <!-- ========================================== -->
+  <!-- MODULE E: INTERPRETER PATTERN (BOTTOM RIGHT) -->
+  <!-- ========================================== -->
+  <rect x="625" y="515" width="590" height="345" rx="6" fill="#f8fafc" stroke="#ec4899" stroke-width="1.5"/>
+  <rect x="625" y="515" width="590" height="24" rx="6" fill="#ec4899"/>
+  <text x="920" y="531" text-anchor="middle" font-size="9.5" font-weight="bold" fill="#ffffff">PART E: INTERPRETER PATTERN (MUNICIPAL POLICY DSL GRAMMAR)</text>
+
+  <!-- <<interface>> Expression -->
+  <rect x="800" y="550" width="180" height="50" rx="4" fill="#ffffff" stroke="#be185d" stroke-width="1.5"/>
+  <rect x="800" y="550" width="180" height="18" rx="4" fill="#be185d"/>
+  <text x="890" y="562" text-anchor="middle" font-size="8" font-style="italic" fill="#ffffff">&lt;&lt;interface&gt;&gt; Expression</text>
+  <text x="810" y="583" font-size="8" fill="#1e293b">+ interpret(context: PolicyContext): boolean</text>
+
+  <!-- PolicyContext -->
+  <rect x="640" y="550" width="145" height="75" rx="4" fill="#ffffff" stroke="#0f294a" stroke-width="1.2"/>
+  <rect x="640" y="550" width="145" height="16" rx="4" fill="#0f294a"/>
+  <text x="712" y="562" text-anchor="middle" font-size="8" font-weight="bold" fill="#ffffff">PolicyContext (Symbol Table)</text>
+  <text x="648" y="580" font-size="7" fill="#475569">- variables: Map&lt;String, Object&gt;</text>
+  <text x="648" y="593" font-size="7" fill="#1e293b">+ set(key, val): void</text>
+  <text x="648" y="605" font-size="7" fill="#1e293b">+ getDouble(key): double</text>
+  <text x="648" y="617" font-size="7" fill="#059669">+ has(key): boolean (safe false)</text>
+
+  <!-- DslPolicyParser -->
+  <rect x="1000" y="550" width="200" height="75" rx="4" fill="#ffffff" stroke="#be185d" stroke-width="1.2"/>
+  <rect x="1000" y="550" width="200" height="16" rx="4" fill="#be185d"/>
+  <text x="1100" y="562" text-anchor="middle" font-size="8" font-weight="bold" fill="#ffffff">DslPolicyParser (LL(1) Recursive)</text>
+  <text x="1008" y="580" font-size="7" fill="#1e293b">+ parse(dsl: String): Expression</text>
+  <text x="1008" y="593" font-size="7" fill="#475569">- parseExpression(), parseOr(), parseAnd()</text>
+  <text x="1008" y="605" font-size="7" fill="#059669">+ benchmarkAverageParseMicros: 1.99 µs</text>
+  <text x="1008" y="617" font-size="7" fill="#059669">+ benchmarkAveragePreParsedEval: 0.07 µs</text>
+
+  <!-- AST Expressions -->
+  <!-- TerminalExpression -->
+  <rect x="640" y="640" width="170" height="70" rx="4" fill="#ffffff" stroke="#be185d" stroke-width="1.2"/>
+  <rect x="640" y="640" width="170" height="16" rx="4" fill="#0f294a"/>
+  <text x="725" y="652" text-anchor="middle" font-size="7.5" font-weight="bold" fill="#ffffff">TerminalExpression (Leaf)</text>
+  <text x="648" y="670" font-size="7" fill="#475569">- variable: String, operator: String, value: double</text>
+  <text x="648" y="682" font-size="7" fill="#1e293b">+ interpret(context: PolicyContext): boolean</text>
+  <text x="648" y="694" font-size="6.8" fill="#475569">Supports: &gt;, &gt;=, &lt;, &lt;=, ==, !=, BETWEEN</text>
+  <text x="648" y="704" font-size="6.5" fill="#059669">Wrapped DslSyntaxException on parse</text>
+
+  <!-- AndExpression -->
+  <rect x="830" y="640" width="180" height="70" rx="4" fill="#ffffff" stroke="#be185d" stroke-width="1.2"/>
+  <rect x="830" y="640" width="180" height="16" rx="4" fill="#be185d"/>
+  <text x="920" y="652" text-anchor="middle" font-size="7.5" font-weight="bold" fill="#ffffff">AndExpression (Composite Non-Terminal)</text>
+  <text x="838" y="670" font-size="7" fill="#475569">- left: Expression, right: Expression</text>
+  <text x="838" y="682" font-size="7" fill="#1e293b">+ interpret(context: PolicyContext): boolean</text>
+  <text x="838" y="694" font-size="6.8" fill="#475569">Evaluates: left.interpret() &amp;&amp; right.interpret()</text>
+  <text x="838" y="704" font-size="6.5" fill="#059669">Short-circuit Boolean evaluation</text>
+
+  <!-- OrExpression -->
+  <rect x="1030" y="640" width="175" height="70" rx="4" fill="#ffffff" stroke="#be185d" stroke-width="1.2"/>
+  <rect x="1030" y="640" width="175" height="16" rx="4" fill="#be185d"/>
+  <text x="1117" y="652" text-anchor="middle" font-size="7.5" font-weight="bold" fill="#ffffff">OrExpression (Composite Non-Terminal)</text>
+  <text x="1038" y="670" font-size="7" fill="#475569">- left: Expression, right: Expression</text>
+  <text x="1038" y="682" font-size="7" fill="#1e293b">+ interpret(context: PolicyContext): boolean</text>
+  <text x="1038" y="694" font-size="6.8" fill="#475569">Evaluates: left.interpret() || right.interpret()</text>
+  <text x="1038" y="704" font-size="6.5" fill="#059669">Short-circuit Boolean evaluation</text>
+
+  <line x1="725" y1="640" x2="850" y2="600" stroke="#be185d" stroke-width="1.2" stroke-dasharray="3,3" marker-end="url(#realize)"/>
+  <line x1="920" y1="640" x2="890" y2="600" stroke="#be185d" stroke-width="1.2" stroke-dasharray="3,3" marker-end="url(#realize)"/>
+  <line x1="1117" y1="640" x2="930" y2="600" stroke="#be185d" stroke-width="1.2" stroke-dasharray="3,3" marker-end="url(#realize)"/>
+
+  <!-- Aggregation loops back to Expression -->
+  <path d="M 1010 670 L 1025 670 L 1025 575 L 980 575" fill="none" stroke="#be185d" stroke-width="1" marker-start="url(#diamond)"/>
+
+  <!-- Interpreter Benchmarks Box -->
+  <rect x="640" y="725" width="565" height="120" rx="4" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+  <text x="650" y="742" font-size="7.5" font-weight="bold" fill="#0f294a">Microbenchmark Latency &amp; Attack Surface Reduction (OpenJDK 17 JIT C2):</text>
+  <text x="650" y="757" font-size="7.2" fill="#334155">• Pre-Parsed In-Memory AST Traversal: 0.07 µs per evaluation (&gt;14 Million Operations / Second)</text>
+  <text x="650" y="770" font-size="7.2" fill="#334155">• Isolated Recursive-Descent Parsing &amp; AST Construction: 1.99 µs per rule (~500k rules / sec)</text>
+  <text x="650" y="783" font-size="7.2" fill="#334155">• Combined Tokenization, Parsing &amp; Evaluation: 2.11 µs per request (Satisfies Parse+Eval &gt;= Parse)</text>
+  <text x="650" y="798" font-size="7.2" font-weight="bold" fill="#047857">• Security Boundary: Non-Turing-complete restricted grammar prevents Remote Code Execution (RCE), script</text>
+  <text x="660" y="810" font-size="7.2" fill="#475569">injection, and unauthorized reflection. Enforces MAX_TOKENS=120 and MAX_RECURSION_DEPTH=25 anti-DoS.</text>
+  <text x="650" y="824" font-size="7.2" fill="#1e3a8a">• Syntax Robustness: Wrapped numeric formatting in DslSyntaxException for 'BETWEEN 1.2.3 AND 5' (Test 35 PASS).</text>
+</svg>"""
+
+    with open(svg_path, "w", encoding="utf-8") as f:
+        f.write(svg_content)
+    print(f"Created SVG at {svg_path}")
+
+    # Render to PNG using Playwright
+    with sync_playwright() as p:
+        browser = p.chromium.launch()
+        page = browser.new_page(viewport={"width": 1260, "height": 900}, device_scale_factor=2)
+        page.set_content(f"""<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+body {{ margin: 0; padding: 10px; background: white; }}
+</style>
+</head>
+<body>
+{svg_content}
+</body>
+</html>""")
+        svg_elem = page.locator("svg")
+        svg_elem.screenshot(path=png_path)
+        browser.close()
+
+    print(f"Rendered high-resolution PNG at {png_path} ({os.path.getsize(png_path)} bytes)")
+
+if __name__ == "__main__":
+    generate_diagram()
+

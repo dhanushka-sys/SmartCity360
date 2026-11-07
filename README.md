@@ -17,7 +17,7 @@
 
 **SmartCity360** is an enterprise-grade municipal digital operations platform engineered to manage large-scale municipal infrastructure, high-frequency IoT telemetry streams, urban zoning hierarchies, citizen grievances, smart streetlight energy grids, and environmental ordinances.
 
-The architecture strictly implements **five core Gang of Four (GoF) design patterns** in pure, comment-free Java 17, paired with an interactive Next.js 14 presentation layer and a MySQL 8.0 relational persistence tier:
+The architecture strictly implements **five core Gang of Four (GoF) design patterns** in pure, idiomatic Java 17, paired with an interactive Next.js 14 presentation layer and a MySQL 8.0 relational persistence tier:
 
 | Module / Topic | Real-World Municipal Problem | Applied GoF Pattern | Architectural Role & Implementation Guarantee |
 |---|---|---|---|
@@ -25,7 +25,7 @@ The architecture strictly implements **five core Gang of Four (GoF) design patte
 | **Part B: Zone Hierarchy** | Representing City → District → Street → Building hierarchy for uniform command broadcast and power rollup. | **Composite Pattern** *(Structural)* | `ZoneComponent` interface with type-safe `ZoneCommand` enum (`SHUTDOWN_POWER`, `RESTORE_POWER`, `EMERGENCY_ISOLATE`, `REPORT_USAGE`) and baseline power restoration. |
 | **Part C: Citizen Complaints** | Routing grievances through municipal administrative levels according to severity. | **Chain of Responsibility** *(Behavioral)* | Safe triage via `ValidationTriageHandler` (missing/unknown severity **never defaults to LOW**), local staff, supervisors, city managers, and terminal fallback. **Audit trail is strictly forward chronological, deduplicated, and immutable.** |
 | **Part D: Streetlights** | Managing 25,000 smart LED streetlights without heap memory bloat or GC pause latency. | **Flyweight Pattern** *(Structural)* | Clean separation of immutable intrinsic hardware profiles from mutable extrinsic pole coordinates. **Analytical layout memory reduction: 72.2% (saving 5.20 MB at 25,000 poles; verified scaling from 1k to 100k)**. |
-| **Part E: City Policies** | Dynamic runtime evaluation of municipal environmental ordinances without code deployment. | **Interpreter Pattern** *(Behavioral)* | True recursive-descent `DslPolicyParser` compiling mini-language expressions into a sandboxed AST with sub-microsecond pre-parsed evaluation latency (0.10 µs) and robust syntax validation (wrapping malformed `BETWEEN` in `DslSyntaxException`). |
+| **Part E: City Policies** | Dynamic runtime evaluation of municipal environmental ordinances without code deployment. | **Interpreter Pattern** *(Behavioral)* | True recursive-descent `DslPolicyParser` compiling mini-language expressions into a sandboxed AST with sub-microsecond pre-parsed evaluation latency (0.07 µs) and robust syntax validation (wrapping malformed `BETWEEN` in `DslSyntaxException`). |
 | **Part F: Demonstration & Tests** | Automated test evidence and comprehensive 10–15 minute presentation defense. | **VIVA & Test Suite** | 35/35 automated tests passing (100% pass rate), detailed demo script, full Tomcat/MySQL & CLI deployment paths, and academic report. |
 
 ---
@@ -41,10 +41,10 @@ SmartCity360/
 │   │   └── schema.sql                        # Complete MySQL 8.0 DDL & seed data
 │   ├── src/main/java/com/smartcity/
 │   │   ├── config/                           # Database connection pool & app configuration
-│   │   ├── controller/                       # Jakarta Servlet REST API endpoints & CliBridge
+│   │   ├── controller/                       # Java Servlet API 4.0 (javax.servlet) endpoints & CliBridge
 │   │   ├── dao/                              # Data Access Objects (parameterized SQL)
 │   │   ├── model/                            # Domain entities & transfer objects
-│   │   ├── pattern/                          # Pure GoF Pattern Implementations (Zero Comments)
+│   │   ├── pattern/                          # Pure GoF Pattern Implementations (Domain Core)
 │   │   │   ├── decorator/                    # Part A: StreamData, AES-GCM, GZIP, HMAC
 │   │   │   ├── composite/                    # Part B: ZoneComponent, BuildingLeaf, ZoneCommand
 │   │   │   ├── chain/                        # Part C: ValidationTriage, LocalStaff, Fallback
@@ -130,7 +130,7 @@ ALL 35 TESTS COMPLETED: 35 PASSED, 0 FAILED (100.0% SUCCESS RATE)
    catalina.bat run   # Windows
    ./catalina.sh run  # Linux / macOS
    ```
-3. The Jakarta Servlet REST API is live at `http://localhost:8080/smartcity360-backend/api`.
+3. The Java Servlet REST API is live at `http://localhost:8080/smartcity360-backend/api`.
 
 #### Option B: Quickstart Standalone Mode (Python Server + CliBridge)
 If Apache Tomcat or MySQL is not installed on the evaluation machine, run the lightweight standalone server. It bridges directly to the compiled Java 17 GoF pattern classes via `CliBridge`:
