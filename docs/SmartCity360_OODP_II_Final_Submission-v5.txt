@@ -162,7 +162,7 @@ This report documents my complete architectural reasoning, algorithmic derivatio
 
 
 2. Part A — Dynamic Security Wrappers for Data Streams
-Scenario Description: SmartCity360 continuously ingests high-frequency telemetry streams from distributed energy meters across municipal power grids. The transmission channel requires varying security protocols: Payload Encryption (AES-256-GCM) for data confidentiality and tamper detection across public backhauls; Cryptographic Authentication (HMAC-SHA256 authentication tags) to verify shared-secret authenticity and detect payload tampering; and Stream Compression (GZIP) to minimize network bandwidth consumption across constrained cellular IoT links. These capabilities must be dynamically attachable, detachable, and reconfigurable at runtime on a per-stream basis without altering the underlying energy meter polling engine.
+Municipal Operational Context: The Metropolis Neo-Prime smart grid continuously streams high-throughput power readings across public and private networks. To safeguard this telemetry without modifying sensor pollers, the platform requires modular runtime pipeline stages: GZIP data compression for bandwidth conservation, AES-256-GCM cipher suites for authenticated confidentiality, and HMAC-SHA256 digests to reject unauthorized or corrupted packets.
 Part A.1: Identification & Architectural Justification (3 Marks)
 Selected Design Pattern: Decorator Design Pattern (Structural GoF Pattern; Gamma et al., 1994)
 When evaluating the requirements for securing data streams in SmartCity360, I selected the Decorator Pattern (Structural GoF) as the most appropriate architectural solution.
@@ -286,7 +286,7 @@ Complete Package File Manifest (backend/src/main/java/com/smartcity/pattern/deco
 
 
 3. Part B — Hierarchical Structure of Smart Zones
-Scenario Description: City zones (city -> district -> street -> building) need to be represented hierarchically so that operations commands like 'shutdown power' or 'report usage' can be applied uniformly at any level of the municipal topography.
+Municipal Operational Context: Urban infrastructure in Metropolis Neo-Prime is organized across nested topological tiers, spanning whole metropolitan territories, municipal sectors, road corridors, and monitored building facilities. Platform operators require a unified control mechanism capable of dispatching operational directives—such as load shedding or power rollup queries—transparently across any tier without writing custom traversal logic for every level.
 Part B.1: Identification & Architectural Justification (3 Marks)
 Selected Design Pattern: Composite Design Pattern (Structural GoF Pattern; Gamma et al., 1994)
 When designing the structural representation for the municipal boundaries of Metropolis Neo-Prime, I selected the Composite Design Pattern (Structural GoF) as the most appropriate architectural solution.
@@ -414,7 +414,7 @@ Complete Package File Manifest (backend/src/main/java/com/smartcity/pattern/comp
 
 
 4. Part C — Escalation of Citizen Complaints
-Scenario Description: When a resident submits a complaint, the system should escalate it from local staff to supervisors to city managers depending on severity.
+Municipal Operational Context: Citizen grievances across the metropolitan area span diverse urgency levels, ranging from routine civic maintenance requests to critical urban utility outages. The grievance system must decouple intake dispatch from administrative investigation, systematically directing each case along an escalating sequence of officials—local staff officers, district supervisors, and senior municipal directors—based on verified severity while preserving an immutable, forward-chronological audit log.
 Part C.1: Identification & Architectural Justification (3 Marks)
 Selected Design Pattern: Chain of Responsibility Design Pattern (Behavioral GoF Pattern)
 To manage the dynamic escalation of citizen grievances in SmartCity360, I selected the Chain of Responsibility Design Pattern (Behavioral GoF; Gamma et al., 1994).
@@ -509,7 +509,7 @@ Complete Package File Manifest (backend/src/main/java/com/smartcity/pattern/chai
 
 
 5. Part D — Efficient Management of Smart Street Lights
-Scenario Description: The city uses thousands of smart streetlights with identical behavior and configuration but different locations. The system must minimize memory usage.
+Municipal Operational Context: Metropolis Neo-Prime operates an urban lighting network of 25,000 intelligent LED streetlights. While each pole occupies distinct geospatial coordinates and carries an individual pole identifier, large clusters share identical manufacturer models, wattage ratings, lumen capacities, and firmware versions. The platform must isolate immutable hardware specifications from location-dependent state to prevent memory bloat and garbage collection latency spikes.
 Part D.1: Identification & Architectural Justification (3 Marks)
 Selected Design Pattern: Flyweight Design Pattern (Structural GoF Pattern; Gamma et al., 1994)
 To solve the severe memory scalability bottleneck presented by managing 25,000 smart streetlights in Metropolis Neo-Prime, I selected the Flyweight Design Pattern (Structural GoF).
@@ -604,7 +604,7 @@ Complete Package File Manifest (backend/src/main/java/com/smartcity/pattern/flyw
 
 
 6. Part E — Interpreting City Policies Defined in DSL
-Scenario Description: The city’s operational rules (e.g., noise limits, parking hours) are defined in a mini-language that must be parsed and evaluated dynamically by the system.
+Municipal Operational Context: Municipal ordinances governing environmental regulations, noise ceilings, and operational curfew hours evolve continuously in response to administrative decisions. The system requires an extensible, lightweight evaluation engine to parse and evaluate domain-specific municipal rules at runtime against live environmental sensor feeds without recompiling the platform or exposing the JVM to unsafe arbitrary script execution.
 Part E.1: Identification & Architectural Justification (3 Marks)
 Selected Design Pattern: Interpreter Design Pattern (Behavioral GoF Pattern)
 To parse and evaluate municipal ordinances authored in a mini-language, I selected the Interpreter Design Pattern (Behavioral GoF; Gamma et al., 1994).
@@ -649,7 +649,7 @@ To measure parsing and evaluation performance, DslPolicyParser includes built-in
 • Pre-parsed in-memory AST evaluation (benchmarkAveragePreParsedEvalMicros): 0.07 µs per traversal (sub-microsecond evaluation exceeding 14 million ops/sec).
 • Combined tokenization, parsing, and evaluation (benchmarkAverageParseAndEvalMicros): 2.11 µs per expression.
 • Isolated recursive-descent parsing and AST instantiation (benchmarkAverageParseMicros): 1.99 µs per expression.
-Furthermore, robust syntax validation was verified by wrapping numeric parsing in DslSyntaxException for malformed range expressions (such as 'BETWEEN 1.2.3 AND 5'), validated by automated test suite case 35.
+We also confirmed syntax validation by wrapping numeric parsing in DslSyntaxException for malformed range expressions (such as 'BETWEEN 1.2.3 AND 5'), validated by automated test suite case 35.
 3. Grammatical Extensibility:
 The AST architecture strictly adheres to the Open/Closed Principle. Implemented expression types currently comprise Expression (interface), TerminalExpression (leaf comparisons), AndExpression (composite conjunction), and OrExpression (composite disjunction). If future municipal requirements necessitate new operators—such as a unary NotExpression, an InListExpression for enumerated zones, or geospatial radius filters—these can be introduced as proposed future extensions by creating new classes implementing Expression, without modifying existing AST nodes or client evaluation code.
 4. Security Scope, Attack Surface Reduction & Defense-in-Depth Boundaries:
