@@ -156,7 +156,7 @@ In strict accordance with **Part F (Section 5)** of assessment specification **J
 
 | Deliverable | Portal Section | Target Format | Filename / Artifact | Scope & Verification |
 |---|---|---|---|---|
-| **Project Documentation** | *Project Document* | PDF Document | `docs/SmartCity360_OODP_II_Final_Submission.pdf` | Comprehensive 45+ page formal academic report containing all five pattern analyses, UML class diagrams, scaling benchmarks, anti-pattern defense matrix, and test run evidence. |
+| **Project Documentation** | *Project Document* | PDF Document | `docs/SmartCity360_OODP_II_Final_Submission.pdf` | Comprehensive 40-page formal academic report containing all five pattern analyses, UML class diagrams, scaling benchmarks, anti-pattern defense matrix, and test run evidence. |
 | **Project Source Code** | *Project File* | ZIP Archive | `SmartCity360_Source_Code.zip` | Complete, clean compilable codebase containing backend Java GoF implementations, Next.js frontend, database schemas, and regression tests (excluding `node_modules` and build caches). |
 | **Demonstration Video** | *Demonstration Video* | MP4 Video (10–15 min) | `SmartCity360_Demonstration_Video.mp4` | 12m 45s demonstration video showcasing system architecture, live UI operation, pattern walkthroughs, and 35/35 automated test suite execution mapped to `SmartCity360_Demo_Script.md`. |
 | **Companion Guide** | *Student Reference* | PDF & Markdown | `other_files/SmartCity360_Viva_and_Presentation_Guide.pdf` | Model viva questions with architectural answers, defense strategies, and presenter scripts. |
