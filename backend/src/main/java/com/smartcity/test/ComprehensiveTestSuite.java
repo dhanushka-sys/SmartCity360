@@ -560,10 +560,11 @@ public class ComprehensiveTestSuite {
             FlyweightBenchmark.BenchmarkResult b = FlyweightBenchmark.runBenchmark(25000);
             boolean ok = b.flyweightPoolSize == 3 && b.savingsPercent > 50.0;
             results.add(new TestResult("testFlyweightEmpiricalBenchmark", "Flyweight",
-                    "Significant heap footprint reduction on 25,000 objects (>50%)",
-                    "Calculated layout savings: " + String.format("%.1f%%", b.savingsPercent) + " (Naive: "
+                    "Analytical layout footprint reduction on 25,000 objects (>50% analytical estimate; ~45.1% live heap)",
+                    "Analytical layout estimate: " + String.format("%.1f%%", b.savingsPercent) + " (Naive: "
                             + String.format("%.2f MB", b.naiveEstimatedBytes / 1048576.0) + ", Flyweight: "
-                            + String.format("%.2f MB", b.flyweightEstimatedBytes / 1048576.0) + ")",
+                            + String.format("%.2f MB", b.flyweightEstimatedBytes / 1048576.0) + "; Live heap measured: "
+                            + String.format("%.1f%%", b.measuredHeapSavingsPercent) + ")",
                     ok));
         } catch (Exception e) {
             results.add(new TestResult("testFlyweightEmpiricalBenchmark", "Flyweight", "Benchmark execution",

@@ -1,6 +1,6 @@
 # SmartCity360 — Next-Generation Municipal Infrastructure Platform
 
-[![Coursework](https://img.shields.io/badge/Coursework-JIAT%2FOODP%20II%2FEX%2F01-blue.svg)](docs/SmartCity360_OODP_II_Final_Submission.pdf)
+[![Coursework](https://img.shields.io/badge/Coursework-JIAT%2FOODP%20II%2FEX%2F01-blue.svg)](docs/SmartCity360_OODP_II_Final_Submission_v6.pdf)
 [![Java](https://img.shields.io/badge/Java-17%20LTS-orange.svg)](https://www.oracle.com/java/)
 [![Next.js](https://img.shields.io/badge/Next.js-14.2%20App%20Router-black.svg)](https://nextjs.org/)
 [![Database](https://img.shields.io/badge/Database-MySQL%208.0-blue.svg)](https://www.mysql.com/)
@@ -24,7 +24,7 @@ The architecture strictly implements **five core Gang of Four (GoF) design patte
 | **Part A: Data Streams** | Ingesting high-frequency telemetry from energy meters across cellular IoT links with dynamic security layers. | **Decorator Pattern** *(Structural)* | Dynamically layers GZIP compression, AES-256-GCM authenticated encryption, and HMAC-SHA256 signatures. **Order strictly enforces compression before encryption; invariant `getPayloadSize() == getPayloadBytes().length` is strictly guaranteed.** |
 | **Part B: Zone Hierarchy** | Representing City → District → Street → Building hierarchy for uniform command broadcast and power rollup. | **Composite Pattern** *(Structural)* | `ZoneComponent` interface with type-safe `ZoneCommand` enum (`SHUTDOWN_POWER`, `RESTORE_POWER`, `EMERGENCY_ISOLATE`, `REPORT_USAGE`) and baseline power restoration. |
 | **Part C: Citizen Complaints** | Routing grievances through municipal administrative levels according to severity. | **Chain of Responsibility** *(Behavioral)* | Safe triage via `ValidationTriageHandler` (missing/unknown severity **never defaults to LOW**), local staff, supervisors, city managers, and terminal fallback. **Audit trail is strictly forward chronological, deduplicated, and immutable.** |
-| **Part D: Streetlights** | Managing 25,000 smart LED streetlights without heap memory bloat or GC pause latency. | **Flyweight Pattern** *(Structural)* | Clean separation of immutable intrinsic hardware profiles from mutable extrinsic pole coordinates. **Analytical layout memory reduction: 72.2% (saving 5.20 MB at 25,000 poles; verified scaling from 1k to 100k)**. |
+| **Part D: Streetlights** | Managing 25,000 smart LED streetlights without heap memory bloat or GC pause latency. | **Flyweight Pattern** *(Structural)* | Clean separation of immutable intrinsic hardware profiles from mutable extrinsic pole coordinates. **Analytical layout memory reduction: 72.2% analytical estimate (~45.1% measured live HotSpot heap savings; saving 5.20 MB analytical layout at 25,000 poles; verified scaling from 1k to 100k)**. |
 | **Part E: City Policies** | Dynamic runtime evaluation of municipal environmental ordinances without code deployment. | **Interpreter Pattern** *(Behavioral)* | True recursive-descent `DslPolicyParser` compiling mini-language expressions into a sandboxed AST with sub-microsecond pre-parsed evaluation latency (0.07 µs) and robust syntax validation (wrapping malformed `BETWEEN` in `DslSyntaxException`). |
 | **Part F: Demonstration & Tests** | Automated test evidence and comprehensive 10–15 minute presentation defense. | **VIVA & Test Suite** | 35/35 automated tests passing (100% pass rate), detailed demo script, full Tomcat/MySQL & CLI deployment paths, and academic report. |
 
@@ -58,8 +58,8 @@ SmartCity360/
 │   ├── components/                           # Modular UI widgets, modals, and telemetry graphs
 │   └── lib/api/                              # TypeScript REST API client services
 ├── docs/                                     # Official Submission Documents & PDF Deliverables
-│   ├── SmartCity360_OODP_II_Final_Submission.pdf
-│   ├── SmartCity360_OODP_II_Final_Submission-v5.docx
+│   ├── SmartCity360_OODP_II_Final_Submission_v6.pdf
+│   ├── SmartCity360_OODP_II_Final_Submission_v6.docx
 │   └── 1793255323861-OODP_II_Final_Assessment.pdf
 ├── other_files/                              # Supporting Engineering Artifacts & UML Diagrams
 │   ├── SmartCity360_UML/                     # High-resolution architectural SVG diagrams
@@ -106,7 +106,11 @@ ALL 67 BACKEND JAVA FILES COMPILED SUCCESSFULLY WITH ZERO ERRORS!
 ### 4. Run the Automated Test Suite (35 / 35 PASS - 100%)
 Execute the comprehensive regression test suite directly on OpenJDK 17:
 ```bash
+# Windows (PowerShell / Command Prompt)
 java -cp "backend/target/classes;backend/lib/*" com.smartcity.test.ComprehensiveTestSuite
+
+# Linux / macOS (bash / zsh)
+java -cp "backend/target/classes:backend/lib/*" com.smartcity.test.ComprehensiveTestSuite
 ```
 *Expected Result:*
 ```
@@ -117,6 +121,8 @@ ALL 35 TESTS COMPLETED: 35 PASSED, 0 FAILED (100.0% SUCCESS RATE)
 ```
 
 ### 5. Launch the Application
+
+> **Note on Test Center:** Start the backend (Option A or Option B) before launching the frontend so the interactive Test Center connects to the live Java REST API (`http://localhost:8080/api/test`) rather than using the in-memory fallback state.
 
 #### Option A: Production Mode (Apache Tomcat 9/10 + MySQL 8.0)
 1. Package the WAR file or deploy the servlet context:
@@ -156,10 +162,13 @@ In strict accordance with **Part F (Section 5)** of assessment specification **J
 
 | Deliverable | Portal Section | Target Format | Filename / Artifact | Scope & Verification |
 |---|---|---|---|---|
-| **Project Documentation** | *Project Document* | PDF Document | `docs/SmartCity360_OODP_II_Final_Submission.pdf` | Comprehensive 40-page formal academic report containing all five pattern analyses, UML class diagrams, scaling benchmarks, anti-pattern defense matrix, and test run evidence. |
+| **Project Documentation** | *Project Document* | PDF Document | `docs/SmartCity360_OODP_II_Final_Submission_v6.pdf` | Comprehensive 27-page formal academic report containing all five pattern analyses, UML class diagrams, scaling benchmarks, anti-pattern defense matrix, and test run evidence. |
 | **Project Source Code** | *Project File* | ZIP Archive | `SmartCity360_Source_Code.zip` | Complete, clean compilable codebase containing backend Java GoF implementations, Next.js frontend, database schemas, and regression tests (excluding `node_modules` and build caches). |
-| **Demonstration Video** | *Demonstration Video* | MP4 Video (10–15 min) | `SmartCity360_Demonstration_Video.mp4` | 12m 45s demonstration video showcasing system architecture, live UI operation, pattern walkthroughs, and 35/35 automated test suite execution mapped to `SmartCity360_Demo_Script.md`. |
+| **Demonstration Video** | *Demonstration Video* | MP4 Video (10–15 min) | `SmartCity360_Demonstration_Video.mp4` | 10–15 min comprehensive demonstration video submitted via Student Portal and Google Drive, walking through system architecture, live UI operation, pattern walkthroughs, and 35/35 automated test suite execution mapped to `other_files/SmartCity360_Demo_Script.md`. |
 | **Companion Guide** | *Student Reference* | PDF & Markdown | `other_files/SmartCity360_Viva_and_Presentation_Guide.pdf` | Model viva questions with architectural answers, defense strategies, and presenter scripts. |
+
+> 📁 **Public Google Drive Submission Repository:**  
+> [https://drive.google.com/drive/folders/1QfsqC0LrUwc90z1MmWNa70eIKZ0xDpaF](https://drive.google.com/drive/folders/1QfsqC0LrUwc90z1MmWNa70eIKZ0xDpaF) *(Configured with public view access for academic evaluation)*
 
 ---
 

@@ -34,6 +34,10 @@ yarn-error.log*
 
 # Temporary / Scratch
 scratch/
+__pycache__/
+*.py[cod]
+*_sources.txt
+backend.zip
 
 # OS metadata
 .DS_Store
