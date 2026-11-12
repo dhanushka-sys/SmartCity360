@@ -132,7 +132,7 @@ export default function TestCenterPage() {
             <div className="flex items-center gap-2">
               <span className="flex h-2.5 w-2.5 rounded-full bg-emerald-500 dark:bg-emerald-400 animate-pulse" />
               <Badge variant="success" className="text-[10px] font-semibold">
-                {isAcademic ? "VIVA SESSION & EXAMINER DEMONSTRATOR" : "SYSTEM INTEGRATION DIAGNOSTICS"}
+                {isAcademic ? "SYSTEM INTEGRATION & PATTERN DIAGNOSTICS" : "SYSTEM INTEGRATION DIAGNOSTICS"}
               </Badge>
               <span className="text-xs text-slate-500 dark:text-slate-400 font-mono">
                 {isAcademic ? "JIAT/OODP II/EX/01" : "SmartCity360 Diagnostic Engine"}
@@ -360,7 +360,7 @@ export default function TestCenterPage() {
                   <div className="flex items-center gap-2">
                     <BookOpen className="h-4 w-4 text-cyan-600 dark:text-cyan-400" />
                     <CardTitle className="text-sm text-slate-900 dark:text-white">
-                      {isAcademic ? "VIVA Academic Justification & UML Role" : "Subsystem Architectural Specification"}
+                      {isAcademic ? "Design Pattern Specification & UML Role" : "Subsystem Architectural Specification"}
                     </CardTitle>
                   </div>
                 </CardHeader>

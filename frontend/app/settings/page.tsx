@@ -57,44 +57,24 @@ export default function SettingsPage() {
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4 text-xs">
-          {/* Mode Selector: Normal vs Academic */}
+          {/* Mode Info: Locked to Normal Enterprise Operations */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-800 gap-3">
             <div>
               <p className="font-semibold text-slate-900 dark:text-white flex items-center gap-1.5">
                 <span>Application Mode</span>
-                <Badge variant={isAcademic ? "purple" : "info"} className="text-[9px]">
-                  {isAcademic ? "Academic / Pattern Mode" : "Real-World Enterprise Mode"}
+                <Badge variant="info" className="text-[9px]">
+                  Real-World Enterprise Mode
                 </Badge>
               </p>
               <p className="text-[11px] text-slate-500 dark:text-slate-400 max-w-md mt-0.5">
-                {isAcademic
-                  ? "Academic Mode reveals GoF Design Pattern banners, UML class roles, AST grammar trees, and VIVA examination test scenarios."
-                  : "Normal Mode hides academic pattern labels and displays a realistic, production-ready smart city operations platform."}
+                Active municipal operations platform configured for city management and live telemetry monitoring.
               </p>
             </div>
             <div className="flex items-center gap-2 shrink-0">
-              <button
-                onClick={() => setMode("normal")}
-                className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition-all border ${
-                  mode === "normal"
-                    ? "border-cyan-500 bg-cyan-50 text-cyan-800 dark:bg-cyan-950/40 dark:text-cyan-300 shadow-xs"
-                    : "border-slate-200 bg-slate-50 text-slate-600 hover:text-slate-900 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-400"
-                }`}
-              >
+              <span className="flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold border border-cyan-500 bg-cyan-50 text-cyan-800 dark:bg-cyan-950/40 dark:text-cyan-300 shadow-xs">
                 <Building2 className="h-3.5 w-3.5 text-cyan-600 dark:text-cyan-400" />
                 <span>Normal Mode</span>
-              </button>
-              <button
-                onClick={() => setMode("academic")}
-                className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition-all border ${
-                  mode === "academic"
-                    ? "border-purple-400 bg-purple-50 text-purple-800 dark:bg-purple-950/40 dark:text-purple-300 shadow-xs ring-1 ring-purple-400/40"
-                    : "border-slate-200 bg-slate-50 text-slate-600 hover:text-slate-900 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-400"
-                }`}
-              >
-                <GraduationCap className="h-3.5 w-3.5 text-purple-600 dark:text-purple-400" />
-                <span>Pattern Mode 🎓</span>
-              </button>
+              </span>
             </div>
           </div>
 

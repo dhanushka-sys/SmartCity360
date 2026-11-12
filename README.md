@@ -1,6 +1,6 @@
 # SmartCity360 — Next-Generation Municipal Infrastructure Platform
 
-[![Coursework](https://img.shields.io/badge/Coursework-JIAT%2FOODP%20II%2FEX%2F01-blue.svg)](docs/SmartCity360_OODP_II_Final_Submission_v6.pdf)
+[![Coursework](https://img.shields.io/badge/Coursework-JIAT%2FOODP%20II%2FEX%2F01-blue.svg)](other_files/docs/SmartCity360_OODP_II_Final_Submission.pdf)
 [![Java](https://img.shields.io/badge/Java-17%20LTS-orange.svg)](https://www.oracle.com/java/)
 [![Next.js](https://img.shields.io/badge/Next.js-14.2%20App%20Router-black.svg)](https://nextjs.org/)
 [![Database](https://img.shields.io/badge/Database-MySQL%208.0-blue.svg)](https://www.mysql.com/)
@@ -38,10 +38,10 @@ SmartCity360 is built upon a decoupled, four-tier enterprise architecture:
 SmartCity360/
 ├── backend/                                  # Pure Java 17 Enterprise Backend
 │   ├── database/
-│   │   └── schema.sql                        # Complete MySQL 8.0 DDL & seed data
+│   │   └── schema.sql                        # Complete MySQL 8.0 DDL & seed data (smartcity360_db)
 │   ├── src/main/java/com/smartcity/
 │   │   ├── config/                           # Database connection pool & app configuration
-│   │   ├── controller/                       # Java Servlet API 4.0 (javax.servlet) endpoints & CliBridge
+│   │   ├── controller/                       # Java Servlet API 4.0 (javax.servlet) REST endpoints
 │   │   ├── dao/                              # Data Access Objects (parameterized SQL)
 │   │   ├── model/                            # Domain entities & transfer objects
 │   │   ├── pattern/                          # Pure GoF Pattern Implementations (Domain Core)
@@ -52,22 +52,21 @@ SmartCity360/
 │   │   │   └── interpreter/                  # Part E: DslPolicyParser, AST Nodes, PolicyContext
 │   │   ├── test/                             # Automated Comprehensive Regression Test Suite (35/35)
 │   │   └── util/                             # Json serialization & utility helpers
-│   └── lib/                                  # Bundled production libraries (Servlet, MySQL, Gson)
+│   ├── src/main/resources/
+│   │   └── application.properties            # Database connection & pool configuration
+│   ├── src/main/webapp/
+│   │   └── WEB-INF/web.xml                   # Web application deployment descriptor
+│   └── lib/                                  # Bundled production libraries (Servlet API, MySQL Connector, Gson)
 ├── frontend/                                 # Next.js 14 Web Application
-│   ├── app/                                  # App Router pages (Dashboard, Streams, Zones, etc.)
-│   ├── components/                           # Modular UI widgets, modals, and telemetry graphs
+│   ├── app/                                  # App Router pages (Dashboard, Streams, Zones, Streetlights, Policies, Test Center)
+│   ├── components/                           # Modular UI widgets, diagnostics, and telemetry graphs
 │   └── lib/api/                              # TypeScript REST API client services
-├── docs/                                     # Official Submission Documents & PDF Deliverables
-│   ├── SmartCity360_OODP_II_Final_Submission_v6.pdf
-│   ├── SmartCity360_OODP_II_Final_Submission_v6.docx
-│   └── 1793255323861-OODP_II_Final_Assessment.pdf
-├── other_files/                              # Supporting Engineering Artifacts & UML Diagrams
-│   ├── SmartCity360_UML/                     # High-resolution architectural SVG diagrams
-│   ├── SmartCity360_Test_Report.md           # Real OpenJDK 17 execution evidence (35/35 PASS)
-│   ├── SmartCity360_Demo_Script.md           # 10–15 min video demonstration presenter guide
-│   └── SmartCity360_Viva_and_Presentation_Guide.pdf
-├── compile_backend.py                        # Zero-dependency Java 17 backend compilation tool
-└── run_backend.py                            # Standalone backend server with CliBridge connection
+└── other_files/                              # Supporting Artifacts, Docs, Scripts & Video Assets
+    ├── docs/                                 # Video guides, presentations, and submissions
+    ├── SmartCity360_UML/                     # High-resolution architectural SVG diagrams
+    ├── SmartCity360_Test_Report.md           # Real OpenJDK 17 execution evidence (35/35 PASS)
+    ├── compile_backend.py                    # Archived helper script
+    └── run_backend.py                        # Archived helper script
 ```
 
 ---
@@ -76,42 +75,61 @@ SmartCity360/
 
 ### 1. Prerequisites
 - **Java Development Kit (JDK):** Version 17 LTS or higher (`java -version`, `javac -version`)
-- **Node.js:** Version 18 LTS or higher (`node -v`, `npm -v`)
-- **Python:** Version 3.9 or higher (`python --version`)
-- **MySQL Database Server (Optional for standalone mode, required for full Tomcat mode):** Version 8.0
+- **IDE for Backend:** IntelliJ IDEA (Ultimate or Community) with JDK 17 configured
+- **IDE for Frontend:** Visual Studio Code (VS Code) with Node.js 18+ LTS (`node -v`, `npm -v`)
+- **Servlet Container:** Apache Tomcat 9 (or IntelliJ integrated Tomcat 9 server)
+- **Database Server:** MySQL 8.0 Server
 
-### 2. Database Setup (Production / MySQL Mode)
-1. Start your local MySQL 8.0 instance on default port `3306`.
-2. Execute the initialization script:
+---
+
+### 2. Database Setup (MySQL)
+1. Start your local MySQL 8.0 server on default port `3306`.
+2. Import the database schema and municipal seed data:
    ```bash
    mysql -u root -p < backend/database/schema.sql
    ```
-3. Update connection credentials if needed in `backend/src/main/resources/application.properties` or set environment variables:
-   ```bash
-   export DB_URL="jdbc:mysql://localhost:3306/smartcity360?useSSL=false&serverTimezone=UTC"
-   export DB_USER="root"
-   export DB_PASSWORD="your_password"
+   *This initializes the `smartcity360_db` database and populates all municipal tables (zones, streetlights, complaints, streams, policies, and users).*
+
+3. Configure your database credentials:
+   Open `backend/src/main/resources/application.properties` and set your MySQL password:
+   ```properties
+   db.url=jdbc:mysql://localhost:3306/smartcity360_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+   db.user=root
+   db.password=YOUR_MYSQL_PASSWORD
+   db.pool.max=10
    ```
+   *(Note: `db.password` is kept blank by default for security; simply type your local MySQL password).*
 
-### 3. Compile the Java Backend
-Compile all 67 Java source files (Controllers, DAOs, Filters, Models, GoF Patterns, and Test Suite) using the included zero-dependency compiler script:
-```bash
-python compile_backend.py
-```
-*Expected Output:*
-```
-ALL 67 BACKEND JAVA FILES COMPILED SUCCESSFULLY WITH ZERO ERRORS!
-```
+---
 
-### 4. Run the Automated Test Suite (35 / 35 PASS - 100%)
-Execute the comprehensive regression test suite directly on OpenJDK 17:
-```bash
-# Windows (PowerShell / Command Prompt)
-java -cp "backend/target/classes;backend/lib/*" com.smartcity.test.ComprehensiveTestSuite
+### 3. Backend Execution in IntelliJ IDEA
 
-# Linux / macOS (bash / zsh)
-java -cp "backend/target/classes:backend/lib/*" com.smartcity.test.ComprehensiveTestSuite
-```
+#### A. Running the Enterprise Servlet Backend (Tomcat 9)
+1. Open the project in **IntelliJ IDEA**.
+2. Verify the Project SDK is set to **Java 17**:
+   - Navigate to `File` → `Project Structure` → `Project` → Set SDK to `Java 17`.
+3. Configure the Tomcat Server run configuration:
+   - Click `Run` → `Edit Configurations...` → click `+` (Add New Configuration) → select `Tomcat Server` → `Local`.
+   - Under **Server** tab, ensure the Tomcat home points to your Apache Tomcat 9 directory.
+   - Under **Deployment** tab, click `+` → `Artifact...` → select `smartcity360-backend:war exploded` (or select `backend/src/main/webapp`).
+   - Set the Application Context to `/` or `/smartcity360-backend`.
+4. Click **Run** or **Debug** (`Shift + F10`).
+   - The Java Servlet REST API is live at:
+     - `http://localhost:8080/api` (if context is `/`)
+     - or `http://localhost:8080/smartcity360-backend/api` (if context is `/smartcity360-backend`).
+   *(The Next.js frontend automatically probes and supports both endpoints).*
+
+#### B. Running the Automated Test Suite (35 / 35 PASS - 100%)
+Execute the comprehensive test suite to verify all 5 design patterns and municipal logic:
+- **Inside IntelliJ IDEA:** Open `backend/src/main/java/com/smartcity/test/ComprehensiveTestSuite.java`, right-click anywhere in the editor, and select **Run 'ComprehensiveTestSuite.main()'**.
+- **Via Terminal / PowerShell:**
+  ```bash
+  # Windows
+  java -cp "backend/target/classes;backend/lib/*" com.smartcity.test.ComprehensiveTestSuite
+
+  # macOS / Linux
+  java -cp "backend/target/classes:backend/lib/*" com.smartcity.test.ComprehensiveTestSuite
+  ```
 *Expected Result:*
 ```
 ================================================================================
@@ -120,39 +138,29 @@ SMARTCITY360 AUTOMATED COMPREHENSIVE TEST REPORT
 ALL 35 TESTS COMPLETED: 35 PASSED, 0 FAILED (100.0% SUCCESS RATE)
 ```
 
-### 5. Launch the Application
+---
 
-> **Note on Test Center:** Start the backend (Option A or Option B) before launching the frontend so the interactive Test Center connects to the live Java REST API (`http://localhost:8080/api/test`) rather than using the in-memory fallback state.
+### 4. Frontend Execution in VS Code
 
-#### Option A: Production Mode (Apache Tomcat 9/10 + MySQL 8.0)
-1. Package the WAR file or deploy the servlet context:
+1. Open the `SmartCity360` (or `frontend`) directory in **Visual Studio Code**.
+2. Open an integrated terminal (`Ctrl + ~` or `Terminal` → `New Terminal`).
+3. Navigate to the `frontend` directory:
    ```bash
-   cd backend
-   # Build WAR archive using Maven or jar tool:
-   jar -cvf target/smartcity360-backend.war -C target/classes . -C src/main/webapp .
+   cd frontend
    ```
-2. Copy `smartcity360-backend.war` to `$CATALINA_HOME/webapps/` and start Tomcat:
+4. Install frontend dependencies (if not already installed):
    ```bash
-   catalina.bat run   # Windows
-   ./catalina.sh run  # Linux / macOS
+   npm install
    ```
-3. The Java Servlet REST API is live at `http://localhost:8080/smartcity360-backend/api`.
-
-#### Option B: Quickstart Standalone Mode (Python Server + CliBridge)
-If Apache Tomcat or MySQL is not installed on the evaluation machine, run the lightweight standalone server. It bridges directly to the compiled Java 17 GoF pattern classes via `CliBridge`:
-```bash
-python run_backend.py
-```
-*The server starts listening on `http://localhost:8080/api`.*
-
-#### Option C: Start the Next.js Frontend Dashboard
-In a second terminal:
-```bash
-cd frontend
-npm install
-npm run dev
-```
-Open [http://localhost:3000](http://localhost:3000) in your browser to access the interactive SmartCity360 operations dashboard.
+5. Start the development server:
+   ```bash
+   npm run dev
+   ```
+6. Open your web browser at:
+   ```
+   http://localhost:3000
+   ```
+   The dashboard will automatically connect to your live MySQL database through the Tomcat backend running in IntelliJ IDEA.
 
 ---
 
@@ -162,8 +170,8 @@ In strict accordance with **Part F (Section 5)** of assessment specification **J
 
 | Deliverable | Portal Section | Target Format | Filename / Artifact | Scope & Verification |
 |---|---|---|---|---|
-| **Project Documentation** | *Project Document* | PDF Document | `docs/SmartCity360_OODP_II_Final_Submission_v6.pdf` | Comprehensive 27-page formal academic report containing all five pattern analyses, UML class diagrams, scaling benchmarks, anti-pattern defense matrix, and test run evidence. |
-| **Project Source Code** | *Project File* | ZIP Archive | `SmartCity360_Source_Code.zip` | Complete, clean compilable codebase containing backend Java GoF implementations, Next.js frontend, database schemas, and regression tests (excluding `node_modules` and build caches). |
+| **Project Documentation** | *Project Document* | PDF Document | `other_files/docs/SmartCity360_OODP_II_Final_Submission_v6.pdf` | Comprehensive 27-page formal academic report containing all five pattern analyses, UML class diagrams, scaling benchmarks, anti-pattern defense matrix, and test run evidence. |
+| **Project Source Code** | *Project File* | ZIP Archive | `other_files/SmartCity360_Source_Code.zip` | Complete, clean compilable codebase containing backend Java GoF implementations, Next.js frontend, database schemas, and regression tests (excluding `node_modules` and build caches). |
 | **Demonstration Video** | *Demonstration Video* | MP4 Video (10–15 min) | `SmartCity360_Demonstration_Video.mp4` | 10–15 min comprehensive demonstration video submitted via Student Portal and Google Drive, walking through system architecture, live UI operation, pattern walkthroughs, and 35/35 automated test suite execution mapped to `other_files/SmartCity360_Demo_Script.md`. |
 | **Companion Guide** | *Student Reference* | PDF & Markdown | `other_files/SmartCity360_Viva_and_Presentation_Guide.pdf` | Model viva questions with architectural answers, defense strategies, and presenter scripts. |
 

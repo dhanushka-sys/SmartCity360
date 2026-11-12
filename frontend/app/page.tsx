@@ -61,7 +61,7 @@ export default function DashboardPage() {
             <div className="flex items-center gap-2">
               <span className="flex h-2 w-2 rounded-full bg-cyan-500 animate-pulse" />
               <Badge variant={isAcademic ? "purple" : "info"} className="text-[10px] font-semibold">
-                {isAcademic ? "OODP II ACADEMIC DEMONSTRATOR" : "MUNICIPAL OPERATIONS COMMAND"}
+                {isAcademic ? "DESIGN PATTERNS SUITE" : "MUNICIPAL OPERATIONS COMMAND"}
               </Badge>
               <span className="text-xs text-slate-500 dark:text-slate-400">UrbanTech Solutions • Metropolis Neo-Prime</span>
             </div>
@@ -71,25 +71,14 @@ export default function DashboardPage() {
                 : "Metropolis Smart City Operations Center"}
             </h2>
             <p className="text-xs text-slate-600 dark:text-slate-300 max-w-3xl leading-relaxed">
-              {isAcademic
-                ? "Demonstrating 5 core object-oriented design patterns across modular city services. Frontend-only architecture with decoupled service interfaces ready for backend phase integration."
-                : "Centralized real-time monitoring and control of municipal energy grids, urban zone hierarchies, citizen incident dispatch, smart streetlight fleets, and automated compliance policies."}
+              Centralized real-time monitoring and control of municipal energy grids, urban zone hierarchies, citizen incident dispatch, smart streetlight fleets, and automated compliance policies.
             </p>
           </div>
           <div className="flex items-center gap-2 shrink-0">
             <Link href="/test-center">
               <Button variant="default" size="sm" className="gap-2">
-                {isAcademic ? (
-                  <>
-                    <Sparkles className="h-4 w-4" />
-                    <span>Launch VIVA Test Suite</span>
-                  </>
-                ) : (
-                  <>
-                    <Activity className="h-4 w-4" />
-                    <span>System Diagnostics</span>
-                  </>
-                )}
+                <Activity className="h-4 w-4" />
+                <span>Run System Diagnostics</span>
               </Button>
             </Link>
           </div>

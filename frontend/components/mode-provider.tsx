@@ -2,7 +2,7 @@
 
 import * as React from "react";
 
-export type AppMode = "normal" | "academic";
+export type AppMode = "normal";
 
 interface ModeContextType {
   mode: AppMode;
@@ -14,44 +14,27 @@ interface ModeContextType {
 const ModeContext = React.createContext<ModeContextType | undefined>(undefined);
 
 export function AppModeProvider({ children }: { children: React.ReactNode }) {
-  const [mode, setModeState] = React.useState<AppMode>("normal");
-  const [mounted, setMounted] = React.useState(false);
+  // Always stay strictly in Normal Mode (Enterprise Municipal Operations)
+  const [mode] = React.useState<AppMode>("normal");
 
   React.useEffect(() => {
     try {
-      const saved = localStorage.getItem("smartcity_app_mode") as AppMode | null;
-      if (saved === "normal" || saved === "academic") {
-        setModeState(saved);
-      } else {
-        setModeState("normal"); // Default to real-world normal mode
-      }
+      localStorage.setItem("smartcity_app_mode", "normal");
     } catch {
-      setModeState("normal");
+      // ignore
     }
-    setMounted(true);
   }, []);
 
-  const setMode = (m: AppMode) => {
-    setModeState(m);
-    try {
-      localStorage.setItem("smartcity_app_mode", m);
-    } catch (e) {
-      console.error(e);
-    }
-  };
-
-  const toggleMode = () => {
-    const next: AppMode = mode === "normal" ? "academic" : "normal";
-    setMode(next);
-  };
+  const setMode = () => {};
+  const toggleMode = () => {};
 
   return (
     <ModeContext.Provider
       value={{
-        mode,
+        mode: "normal",
         setMode,
         toggleMode,
-        isAcademic: mounted ? mode === "academic" : false,
+        isAcademic: false,
       }}
     >
       {children}

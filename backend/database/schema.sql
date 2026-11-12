@@ -1,5 +1,5 @@
-CREATE DATABASE IF NOT EXISTS smartcity360;
-USE smartcity360;
+CREATE DATABASE IF NOT EXISTS smartcity360_db;
+USE smartcity360_db;
 
 DROP TABLE IF EXISTS complaint_notes;
 DROP TABLE IF EXISTS complaints;

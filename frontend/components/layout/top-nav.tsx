@@ -83,7 +83,7 @@ const pageTitles: Record<
   "/test-center": {
     title: "System Diagnostics & Scenarios",
     subtitleNormal: "Deterministic scenario verification for smart city subsystems",
-    subtitleAcademic: "Interactive VIVA test suite & GoF design pattern academic justifications",
+    subtitleAcademic: "Automated test suite & GoF design pattern verification",
     pattern: "All 5 Patterns",
   },
   "/settings": {
@@ -202,53 +202,13 @@ export function TopNav({ onMobileMenuOpen }: TopNavProps) {
             <Search className="h-4 w-4" />
           </button>
 
-          {/* Test Center Quick Link */}
+          {/* Diagnostics Quick Link */}
           <Link href="/test-center" className="hidden lg:block">
             <Button variant="glass" size="sm" className="gap-1.5 text-xs">
-              {isAcademic ? (
-                <>
-                  <ShieldCheck className="h-3.5 w-3.5 text-purple-600 dark:text-purple-400" />
-                  <span>VIVA Suite</span>
-                </>
-              ) : (
-                <>
-                  <Activity className="h-3.5 w-3.5 text-cyan-600 dark:text-cyan-400" />
-                  <span>Diagnostics</span>
-                </>
-              )}
+              <Activity className="h-3.5 w-3.5 text-cyan-600 dark:text-cyan-400" />
+              <span>Diagnostics</span>
             </Button>
           </Link>
-
-          {/* MODE TOGGLE BUTTON: Real-World Normal Mode vs Academic / Pattern Mode */}
-          <button
-            onClick={toggleMode}
-            className={`flex items-center gap-1.5 sm:gap-2 rounded-xl px-2.5 sm:px-3 py-1.5 text-xs font-semibold transition-all shadow-xs border ${
-              isAcademic
-                ? "border-purple-300 dark:border-purple-500/60 bg-purple-50 dark:bg-purple-950/40 text-purple-800 dark:text-purple-300 ring-1 ring-purple-400/30 hover:bg-purple-100 dark:hover:bg-purple-900/50"
-                : "border-slate-200 dark:border-slate-700/80 bg-white dark:bg-slate-900/80 text-slate-700 dark:text-slate-300 hover:border-cyan-400 dark:hover:border-cyan-500"
-            }`}
-            title={
-              isAcademic
-                ? "Academic & Pattern Mode is ON (showing GoF pattern labels, UML notes, and VIVA banners). Click to switch to clean Real-World Normal Mode."
-                : "Normal Mode is active (clean enterprise interface). Click to reveal GoF Design Pattern banners and VIVA academic demonstrator."
-            }
-          >
-            {isAcademic ? (
-              <>
-                <GraduationCap className="h-4 w-4 text-purple-600 dark:text-purple-400" />
-                <span className="hidden sm:inline">Pattern Mode</span>
-                <span className="rounded bg-purple-200 dark:bg-purple-800/80 px-1.5 py-0.2 text-[9px] font-mono text-purple-900 dark:text-purple-200 font-bold">
-                  ON
-                </span>
-              </>
-            ) : (
-              <>
-                <Building2 className="h-4 w-4 text-cyan-600 dark:text-cyan-400" />
-                <span className="hidden sm:inline">Normal Mode</span>
-                <span className="text-[10px] text-cyan-700 dark:text-cyan-400 font-medium">Show Patterns 🎓</span>
-              </>
-            )}
-          </button>
 
           {/* Theme Toggle Button (Light / Dark) */}
           <button
